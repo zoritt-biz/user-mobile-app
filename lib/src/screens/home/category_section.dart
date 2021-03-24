@@ -23,7 +23,9 @@ class CategorySection extends StatelessWidget {
                       padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
                           EdgeInsets.all(10)),
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pushNamed(context, "/categories");
+                    },
                     child: Column(
                       children: [
                         Icon(Icons.category, color: Colors.black),

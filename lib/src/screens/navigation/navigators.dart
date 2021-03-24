@@ -7,6 +7,10 @@ abstract class TabNavigator extends StatelessWidget {}
 
 class HomeNavigatorRoutes {
   static const String root = "/";
+  static const String categories = "/categories";
+  static const String events = "/events";
+  static const String posts = "/posts";
+  static const String sponsored_posts = "/sponsored_posts";
 }
 
 class HomeNavigator extends TabNavigator {
@@ -16,9 +20,11 @@ class HomeNavigator extends TabNavigator {
 
   Map<String, WidgetBuilder> _routeBuilder(BuildContext context) {
     return {
-      HomeNavigatorRoutes.root: (ctx) => Container(
-        child: Home(),
-      ),
+      HomeNavigatorRoutes.root: (ctx) => Home(),
+      HomeNavigatorRoutes.categories: (ctx) => CategoriesPage(),
+      HomeNavigatorRoutes.events: (ctx) => EventsPage(),
+      HomeNavigatorRoutes.posts: (ctx) => PostsPage(),
+      HomeNavigatorRoutes.sponsored_posts: (ctx) => SponsoredPostsPage(),
     };
   }
 
@@ -82,11 +88,7 @@ class FavoritesNavigator extends TabNavigator {
 
   Map<String, WidgetBuilder> _routeBuilder(BuildContext context) {
     return {
-      FavoriteNavigatorRoutes.root: (ctx) => Container(
-        child: Center(
-          child: Text("Favorites"),
-        ),
-      ),
+      FavoriteNavigatorRoutes.root: (ctx) => FavoritesPage(),
     };
   }
 
@@ -150,11 +152,7 @@ class ProfileNavigator extends TabNavigator {
 
   Map<String, WidgetBuilder> _routeBuilder(BuildContext context) {
     return {
-      ProfileNavigatorRoutes.root: (ctx) => Container(
-        child: Center(
-          child: Text("Profile"),
-        ),
-      ),
+      ProfileNavigatorRoutes.root: (ctx) => ProfilePage(),
     };
   }
 

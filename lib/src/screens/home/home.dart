@@ -66,10 +66,41 @@ class _HomeState extends State<Home> {
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.all(20),
-            child: Text("Sponsored Posts", style: TextStyle(fontSize: 25),),
+            child: TextButton(
+              onPressed: () {
+                Navigator.pushNamed(context, "/sponsored_posts");
+              },
+              style: ButtonStyle(alignment: Alignment.centerLeft),
+              child: Text(
+                "Sponsored Posts",
+                style: TextStyle(fontSize: 25, color: Colors.black),
+              ),
+            ),
           ),
         ),
         SponsoredPostsOverview(),
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 20),
+            child: Center(
+              child: ElevatedButton(
+                style: ButtonStyle(
+                    padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                      EdgeInsets.all(15),
+                    ),
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        Theme.of(context).primaryColor)),
+                onPressed: () {
+                  Navigator.pushNamed(context, "/sponsored_posts");
+                },
+                child: Text(
+                  "See More",
+                  style: TextStyle(fontSize: 18),
+                ),
+              ),
+            ),
+          ),
+        ),
       ],
     );
   }
