@@ -1,0 +1,9 @@
+export 'auth/sign_in.dart';
+export 'auth/sign_up.dart';
+export 'first_page/first_page.dart';
+export 'home/home.dart';
+export 'navigation/bottom_navigation.dart';
+export 'root/root.dart';
+export 'routes/route_generator.dart';
+export 'auth/reset.dart';
+export 'first_page/splash_screen.dart';
