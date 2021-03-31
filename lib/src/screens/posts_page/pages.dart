@@ -84,8 +84,7 @@ class _StoryState extends State<Story>
               top: 40.0,
               left: 10.0,
               right: 10.0,
-              child: Column(
-                children: <Widget>[
+              child:
                   Row(
                     children: widget.images
                         .asMap()
@@ -102,16 +101,20 @@ class _StoryState extends State<Story>
                         .values
                         .toList(),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 1.5,
-                      vertical: 10.0,
-                    ),
-                    child: UserInfo(user: User(fullName: "user")),
-                  ),
-                ],
+
               ),
-            ),
+            Positioned(
+              bottom: 20,
+              left:15,
+              right:15,
+              child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 1.5,
+                vertical: 10.0,
+              ),
+              child: UserInfo(user: User(fullName: "user")),
+            ),)
+
           ],
         ),
       ),
@@ -232,7 +235,19 @@ class UserInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children:[
+      Text(
+        "You can attend our event",
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 18.0,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      const SizedBox(height: 20.0),
+      Row(
       children: <Widget>[
         CircleAvatar(
           radius: 20.0,
@@ -243,25 +258,52 @@ class UserInfo extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 10.0),
-        Expanded(
-          child: Text(
-            user.fullName,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 18.0,
-              fontWeight: FontWeight.w600,
+        Expanded(child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+
+               Text(
+                "Wow Burger",
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            // ),
+            // Expanded(
+              Text(
+                "Friday is the best day",
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 12.0,
+
+                ),
+              // ),
             ),
+          ],
+        ),
+          flex: 2,
+        ),
+
+
+        IconButton(
+          icon: const Icon(
+            Icons.favorite,
+            size: 30.0,
+            color: Color(0xffDF9C20),
           ),
+          onPressed: () => Navigator.of(context).pop(),
         ),
         IconButton(
           icon: const Icon(
-            Icons.more_vert,
+            Icons.share,
             size: 30.0,
             color: Colors.white,
           ),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ],
-    );
+    )]);
   }
 }

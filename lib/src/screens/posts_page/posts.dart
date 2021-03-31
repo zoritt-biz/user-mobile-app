@@ -45,8 +45,8 @@ class PostState extends State<Post>{
     if(currentIndex.toInt()<widget.posts.length-1){
       _pageController.nextPage( duration: const Duration(milliseconds: 700),curve: Curves.easeInOut);
     }else{
-      Navigator.pop(context);
-      print("popped");
+      // Navigator.pop(context);
+
     }
   }
   @override
@@ -56,7 +56,6 @@ class PostState extends State<Post>{
       if(state is StoryFinished){
         goToNext();
         context.read<StoryBloc>().emitUnknown();
-        print("jumpped");
         print(currentIndex);
       }
     },
