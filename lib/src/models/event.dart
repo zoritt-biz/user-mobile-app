@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
 @immutable
-class Event {
+class Events {
   final String id;
   final String title;
   final String description;
   final String location;
   final String link;
-  final String video;
-  final String photos;
+  final List<String> video;
+  final List<String> photos;
 
-  Event({
+  Events({
     this.id,
     this.title,
     this.description,
