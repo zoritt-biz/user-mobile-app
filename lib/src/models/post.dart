@@ -4,8 +4,12 @@ import 'package:flutter/material.dart';
 class Post {
   final String id;
   final String description;
-  final String video;
-  final String photos;
+  final List<String> video;
+  final List<String> photos;
 
   Post({this.id, this.description, this.video, this.photos});
+
+  // factory Post.fromJson(Map<String, dynamic> data) {
+  //   return;
+  // }
 }
