@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/bloc.dart';
 
 import 'input_field_controller.dart';
 
@@ -50,9 +51,34 @@ class _SignUpState extends State<SignUp> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return body(context);
+  void dispose() {
+    nameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    phoneNumberController.dispose();
+    super.dispose();
   }
+  @override
+  Widget build(BuildContext context) {
+    return BlocConsumer<SignUpBloc,SignUpState>(builder: (context,state){
+      if(state is SignUpLoading||state is SignUpSuccessful){
+        return Center(child: CircularProgressIndicator(),);
+      }
+
+        return body(context);
+
+    }, listener: (context,state){
+      if(state is SignUpFailure){
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Something went wrong"),));
+
+      }
+      if(state is SignUpSuccessful){
+        Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
+      }
+    });
+  }
+
 
   Widget body(BuildContext context) {
     return Form(
@@ -134,15 +160,15 @@ class _SignUpState extends State<SignUp> {
                       elevation: 1,
                     ),
                     onPressed: () {
-                      // if (_formKey.currentState.validate()) {
-                      //   _formKey.currentState.save();
-                      //   context.read<SignUpBloc>().signUp(
-                      //         email: emailController.text.trim(),
-                      //         password: passwordController.text,
-                      //         fullName: nameController.text,
-                      //         phoneNumber: phoneNumberController.text,
-                      //       );
-                      // }
+                      if (_formKey.currentState.validate()) {
+                        _formKey.currentState.save();
+                        context.read<SignUpBloc>().signUp(
+                              email: emailController.text.trim(),
+                              password: passwordController.text,
+                              fullName: nameController.text,
+                              phoneNumber: phoneNumberController.text,
+                            );
+                      }
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(13),

@@ -104,7 +104,8 @@ class _HomePageState extends State<HomePage> {
         return true;
       },
       child: Scaffold(
-        body: Stack(
+        body: IndexedStack(
+          index: _currentTab.index,
           children: [
             _buildOffstageNavigator(TabItem.home),
             _buildOffstageNavigator(TabItem.search),
@@ -125,8 +126,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildOffstageNavigator(TabItem item) {
-    return Offstage(
-      offstage: _currentTab != item,
+    return Visibility(
+      visible: _currentTab == item,
+      maintainState: true,
       child: tabNavigators[item.index],
     );
   }

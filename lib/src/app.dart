@@ -1,14 +1,37 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/bloc.dart';
+import 'package:zoritt_mobile_app_user/src/repository/repository.dart';
 import 'package:zoritt_mobile_app_user/src/screens/screens.dart';
 
+import 'client/client.dart';
 import 'screens/posts_page/posts_page.dart';
 
 class ZoritBusinessOwner extends StatelessWidget {
 
+  final AuthenticationRepository authenticationRepository =
+  AuthenticationRepository(
+
+    firebaseAuth: FirebaseAuth.instance,
+    userRepository: UserRepository(client: client()),
+  );
   @override
   Widget build(BuildContext context) {
-    return ZorittApp();
+    return MultiRepositoryProvider(
+        providers: [
+          RepositoryProvider.value(value: authenticationRepository),
+        ],
+        child: MultiBlocProvider(providers: [
+          BlocProvider<AuthenticationBloc>(
+              create: (context) => AuthenticationBloc(
+                  authenticationRepository:
+                  context.read<AuthenticationRepository>()),
+              lazy: false),
+        ],
+            child: ZorittApp()));
   }
+
 }
 
 class ZorittApp extends StatefulWidget {
@@ -29,7 +52,7 @@ class _ZorittAppState extends State<ZorittApp> {
         ),
       ),
       debugShowCheckedModeBanner: false,
-      initialRoute: PostsPage.pathName,
+      initialRoute:'/',
       onGenerateRoute: RouteGenerator.generateRoute,
     );
   }

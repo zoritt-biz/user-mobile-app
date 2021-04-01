@@ -1,5 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/bloc.dart';
+import 'package:zoritt_mobile_app_user/src/repository/repository.dart';
+import 'package:zoritt_mobile_app_user/src/screens/posts_page/StoriesBloc.dart';
 
 import '../screens.dart';
 
@@ -23,7 +27,7 @@ class HomeNavigator extends TabNavigator {
       HomeNavigatorRoutes.root: (ctx) => Home(),
       HomeNavigatorRoutes.categories: (ctx) => CategoriesPage(),
       HomeNavigatorRoutes.events: (ctx) => EventsPage(),
-      HomeNavigatorRoutes.posts: (ctx) => PostsPage(),
+      HomeNavigatorRoutes.posts: (ctx) => BlocProvider<StoryBloc>(create: (context)=>StoryBloc(), child:PostsPage()),
       HomeNavigatorRoutes.sponsored_posts: (ctx) => SponsoredPostsPage(),
     };
   }
@@ -88,7 +92,25 @@ class FavoritesNavigator extends TabNavigator {
 
   Map<String, WidgetBuilder> _routeBuilder(BuildContext context) {
     return {
-      FavoriteNavigatorRoutes.root: (ctx) => FavoritesPage(),
+      FavoriteNavigatorRoutes.root: (ctx) {
+        if(ctx.read<AuthenticationBloc>().state.status==AuthenticationStatus.authenticated){
+          return FavoritesPage();
+        }else{
+
+          return BlocProvider<LoginBloc>(create:(context)=> LoginBloc(authenticationRepository: context.read<AuthenticationRepository>()),child:SignIn());
+
+        }
+
+
+
+      },
+      SignUp.pathName:(ctx){
+        return BlocProvider<SignUpBloc>(create:(context)=> SignUpBloc(authenticationRepository: context.read<AuthenticationRepository>()),child:SignUp());
+
+      },
+      SignIn.pathName:(ctx){
+        return BlocProvider<LoginBloc>(create:(context)=> LoginBloc(authenticationRepository: context.read<AuthenticationRepository>()),child:SignIn());
+      }
     };
   }
 
@@ -152,7 +174,25 @@ class ProfileNavigator extends TabNavigator {
 
   Map<String, WidgetBuilder> _routeBuilder(BuildContext context) {
     return {
-      ProfileNavigatorRoutes.root: (ctx) => ProfilePage(),
+      ProfileNavigatorRoutes.root: (ctx) {
+        if(ctx.read<AuthenticationBloc>().state.status==AuthenticationStatus.authenticated){
+          return ProfilePage();
+        }else{
+
+          return BlocProvider<LoginBloc>(create:(context)=> LoginBloc(authenticationRepository: context.read<AuthenticationRepository>()),child:SignIn());
+
+        }
+
+
+
+      },
+      SignUp.pathName:(ctx){
+        return BlocProvider<SignUpBloc>(create:(context)=> SignUpBloc(authenticationRepository: context.read<AuthenticationRepository>()),child:SignUp());
+
+      },
+      SignIn.pathName:(ctx){
+        return BlocProvider<LoginBloc>(create:(context)=> LoginBloc(authenticationRepository: context.read<AuthenticationRepository>()),child:SignIn());
+      }
     };
   }
 
