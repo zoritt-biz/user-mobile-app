@@ -7,7 +7,6 @@ query($limit:Int,$sort:SortFindManyEventInput){
     location
     link
     photos
-    createdAt
   }
 }
 

@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/bloc.dart';
+import 'package:zoritt_mobile_app_user/src/repository/event/events_repository.dart';
 import 'package:zoritt_mobile_app_user/src/repository/repository.dart';
 import 'package:zoritt_mobile_app_user/src/screens/screens.dart';
 
@@ -16,11 +17,13 @@ class ZoritBusinessOwner extends StatelessWidget {
     firebaseAuth: FirebaseAuth.instance,
     userRepository: UserRepository(client: client()),
   );
+  final EventsRepository eventsRepository=EventsRepository(client: client());
   @override
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
         providers: [
           RepositoryProvider.value(value: authenticationRepository),
+          RepositoryProvider.value(value:eventsRepository),
         ],
         child: MultiBlocProvider(providers: [
           BlocProvider<AuthenticationBloc>(

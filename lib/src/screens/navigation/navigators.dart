@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/bloc.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/events/events_bloc.dart';
+import 'package:zoritt_mobile_app_user/src/repository/event/events_repository.dart';
 import 'package:zoritt_mobile_app_user/src/repository/repository.dart';
 import 'package:zoritt_mobile_app_user/src/screens/posts_page/StoriesBloc.dart';
 
@@ -26,7 +28,7 @@ class HomeNavigator extends TabNavigator {
     return {
       HomeNavigatorRoutes.root: (ctx) => Home(),
       HomeNavigatorRoutes.categories: (ctx) => CategoriesPage(),
-      HomeNavigatorRoutes.events: (ctx) => EventsPage(),
+      HomeNavigatorRoutes.events: (ctx) => BlocProvider<EventsBloc>(create:(context)=>EventsBloc(eventRepository: context.read<EventsRepository>())..getEvents(10, "CREATEDAT_DESC"),child:EventsPage()),
       HomeNavigatorRoutes.posts: (ctx) => BlocProvider<StoryBloc>(create: (context)=>StoryBloc(), child:PostsPage()),
       HomeNavigatorRoutes.sponsored_posts: (ctx) => SponsoredPostsPage(),
     };

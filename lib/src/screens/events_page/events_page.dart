@@ -1,56 +1,98 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/events/events_bloc.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/events/events_state.dart';
+import 'package:zoritt_mobile_app_user/src/models/models.dart';
 
 class EventsPage extends StatelessWidget {
-  final List<String> imgList = [
-    'https://images.unsplash.com/photo-1522205408450-add114ad53fe?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=368f45b0888aeb0b7b08e3a1084d3ede&auto=format&fit=crop&w=1950&q=80',
-    "https://images.unsplash.com/photo-1614823498916-a28a7d67182c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80",
-    'https://images.unsplash.com/photo-1522205408450-add114ad53fe?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=368f45b0888aeb0b7b08e3a1084d3ede&auto=format&fit=crop&w=1950&q=80',
-    'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=94a1e718d89ca60a6337a6008341ca50&auto=format&fit=crop&w=1950&q=80',
-  ];
+  // final List<String> imgList = [
+  //   'https://images.unsplash.com/photo-1522205408450-add114ad53fe?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=368f45b0888aeb0b7b08e3a1084d3ede&auto=format&fit=crop&w=1950&q=80',
+  //   "https://images.unsplash.com/photo-1614823498916-a28a7d67182c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80",
+  //   'https://images.unsplash.com/photo-1522205408450-add114ad53fe?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=368f45b0888aeb0b7b08e3a1084d3ede&auto=format&fit=crop&w=1950&q=80',
+  //   'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=94a1e718d89ca60a6337a6008341ca50&auto=format&fit=crop&w=1950&q=80',
+  // ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Events"),
-      ),
-      body: ListView.builder(
-        itemCount: imgList.length,
-        itemBuilder: (context, index) => index == 0
-            ? Padding(
-                padding: const EdgeInsets.only(bottom: 20),
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 20, left: 20),
-                  child: Text(
-                    'All Events',
-                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+        appBar: AppBar(
+          title: Text("Events"),
+        ),
+        body: BlocConsumer<EventsBloc, EventsState>(
+          builder: (context, state) {
+            if (state is EventsLoadSuccessful) {
+              if (state.events.isNotEmpty) {
+                return body(state.events, context);
+              } else {
+                return Center(
+                  child: Text("No Events"),
+                );
+              }
+            }
+            if (state is EventsLoadFailure) {
+              return Center(
+                  child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("Something went wrong"),
+                  TextButton(
+                    onPressed: () {
+                      context
+                          .read<EventsBloc>()
+                          .getEvents(10, "CREATEDAT_DESC");
+                    },
+                    child: Text("Retry"),
                   ),
-                ),
-              )
-            : EventCard(),
+                ],
+              ));
+            }
+            return Center(child: CircularProgressIndicator());
+          },
+          listener: (context, state) {},
+        ));
+  }
+
+  Widget body(List<Events> events, BuildContext context) {
+    return ListView(children: [
+      Padding(
+        padding: const EdgeInsets.only(top: 20, left: 20, bottom: 20),
+        child: Text(
+          'All Events',
+          style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+        ),
       ),
-    );
+      ListView.builder(
+          itemCount: events.length,
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          itemBuilder: (context, index) => EventCard(events: events[index])),
+    ]);
   }
 }
 
 class EventCard extends StatefulWidget {
+  final Events events;
+
+  EventCard({@required this.events});
+
   @override
   _EventCardState createState() => _EventCardState();
 }
 
 class _EventCardState extends State<EventCard> {
-  final List<String> imgList = [
-    "https://images.unsplash.com/photo-1614823498916-a28a7d67182c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80",
-    'https://images.unsplash.com/photo-1522205408450-add114ad53fe?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=368f45b0888aeb0b7b08e3a1084d3ede&auto=format&fit=crop&w=1950&q=80',
-    'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=94a1e718d89ca60a6337a6008341ca50&auto=format&fit=crop&w=1950&q=80',
-  ];
+  // final List<String> imgList = [
+  //   "https://images.unsplash.com/photo-1614823498916-a28a7d67182c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80",
+  //   'https://images.unsplash.com/photo-1522205408450-add114ad53fe?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=368f45b0888aeb0b7b08e3a1084d3ede&auto=format&fit=crop&w=1950&q=80',
+  //   'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=94a1e718d89ca60a6337a6008341ca50&auto=format&fit=crop&w=1950&q=80',
+  // ];
   int _current = 0;
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> imageSliders = imgList
+    final List<Widget> imageSliders = widget.events.photos
         .map(
           (item) => ClipRRect(
             borderRadius: BorderRadius.only(
@@ -92,8 +134,8 @@ class _EventCardState extends State<EventCard> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.max,
-                children: imgList.map((url) {
-                  int index = imgList.indexOf(url);
+                children: widget.events.photos.map((url) {
+                  int index = widget.events.photos.indexOf(url);
                   return Container(
                     width: 8.0,
                     height: 8.0,
@@ -119,7 +161,7 @@ class _EventCardState extends State<EventCard> {
                       children: [
                         CircleAvatar(
                             radius: 20,
-                            backgroundImage: NetworkImage(
+                            backgroundImage: NetworkImage(widget.events.logoPics??
                                 "https://images.unsplash.com/photo-1614823498916-a28a7d67182c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80")),
                         SizedBox(
                           width: 10,
@@ -128,14 +170,14 @@ class _EventCardState extends State<EventCard> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Wow Burger',
+                              widget.events.title,
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 18),
                             ),
                             SizedBox(
                               height: 2,
                             ),
-                            Text('Arat kilo Addis Ababa')
+                            Text(widget.events.location)
                           ],
                         )
                       ],
@@ -169,8 +211,7 @@ class _EventCardState extends State<EventCard> {
                   Expanded(
                     child: RichText(
                       text: TextSpan(
-                        text:
-                            'Our 14th idea has to be Valentine’s Day. Occurring on February 14th, the day has become synonymous with couples.',
+                        text: widget.events.description,
                         style: TextStyle(color: Colors.grey[600], fontSize: 15),
                         children: <TextSpan>[
                           TextSpan(
