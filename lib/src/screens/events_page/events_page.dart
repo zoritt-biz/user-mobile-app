@@ -2,9 +2,13 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:share/share.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/events/events_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/events/events_state.dart';
 import 'package:zoritt_mobile_app_user/src/models/models.dart';
+import 'package:zoritt_mobile_app_user/src/repository/repository.dart';
+import 'package:zoritt_mobile_app_user/src/screens/screens.dart';
 
 class EventsPage extends StatelessWidget {
   // final List<String> imgList = [
@@ -90,6 +94,11 @@ class _EventCardState extends State<EventCard> {
   // ];
   int _current = 0;
 
+  void share(BuildContext context,Events events){
+    // final RenderBox renderBox=context.findRenderObject();
+    String subject="${events.title} \n ${events.description} \n ${events.link} ";
+    Share.share(subject,subject: events.description);
+  }
   @override
   Widget build(BuildContext context) {
     final List<Widget> imageSliders = widget.events.photos
@@ -188,15 +197,33 @@ class _EventCardState extends State<EventCard> {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       // crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(
+                        Expanded(child:GestureDetector(child:Icon(
                           Icons.favorite,
                           color: Colors.orange,
                           size: 30,
                         ),
+                        onTap: (){
+
+                          if(context.read<AuthenticationBloc>().state.status==AuthenticationStatus.authenticated){
+                            // return FavoritesPage();
+                          }else{
+
+                            return BlocProvider<LoginBloc>(create:(context)=> LoginBloc(authenticationRepository: context.read<AuthenticationRepository>()),child:SignIn());
+
+                          }
+
+                        },
+                        )),
                         SizedBox(
                           width: 10,
                         ),
-                        Icon(Icons.share, size: 25)
+                        Expanded(child:
+                        GestureDetector(child:Icon(Icons.share, size: 25),
+                        onTap: (){
+
+                            share(context, widget.events);
+                        },
+                        ))
                       ],
                     ),
                   )
