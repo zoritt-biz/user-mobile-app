@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/bloc.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/events/events_bloc.dart';
+import 'package:zoritt_mobile_app_user/src/repository/repository.dart';
 import 'package:zoritt_mobile_app_user/src/screens/navigation/bottom_navigation.dart';
 import 'package:zoritt_mobile_app_user/src/screens/navigation/navigators.dart';
 
@@ -13,6 +17,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   TabItem _currentTab = TabItem.home;
+  DateTime dateTime=DateTime.now().subtract(Duration(days: 3));
+
 
   final tabNavigatorKeys = [
     GlobalKey<NavigatorState>(),
@@ -27,10 +33,12 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
+
     tabNavigators = [
       HomeNavigator(navigatorKey: tabNavigatorKeys[TabItem.home.index]),
       SearchNavigator(navigatorKey: tabNavigatorKeys[TabItem.search.index]),
-      FavoritesNavigator(navigatorKey: tabNavigatorKeys[TabItem.favorites.index]),
+      FavoritesNavigator(
+          navigatorKey: tabNavigatorKeys[TabItem.favorites.index]),
       MessagesNavigator(navigatorKey: tabNavigatorKeys[TabItem.messages.index]),
       ProfileNavigator(navigatorKey: tabNavigatorKeys[TabItem.profile.index]),
     ];
@@ -107,7 +115,21 @@ class _HomePageState extends State<HomePage> {
         body: IndexedStack(
           index: _currentTab.index,
           children: [
-            _buildOffstageNavigator(TabItem.home),
+            MultiBlocProvider(providers: [
+              BlocProvider<EventsBloc>(
+                  create: (context) => EventsBloc(
+                        eventRepository: context.read<EventsRepository>()
+                          ,
+                      )..getEvents(10, "CREATEDAT_DESC")),
+              BlocProvider<PostBloc>(
+                  create: (context) => PostBloc(
+                    postRepository: context.read<PostRepository>()
+                    ,
+                  )..getPosts(10, "CREATEDAT_DESC","${dateTime.month}/${dateTime.day}/${dateTime.year}",0)),
+
+            ],
+                child: _buildOffstageNavigator(TabItem.home),
+            ),
             _buildOffstageNavigator(TabItem.search),
             _buildOffstageNavigator(TabItem.favorites),
             _buildOffstageNavigator(TabItem.messages),

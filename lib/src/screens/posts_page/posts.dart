@@ -7,11 +7,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/screens/posts_page/StoriesBloc.dart';
 import 'package:zoritt_mobile_app_user/src/screens/posts_page/pages.dart' as pages;
+import 'package:zoritt_mobile_app_user/src/screens/posts_page/pages.dart';
 
 class Post extends StatefulWidget{
   final List<pages.Story> posts;
+  final int index;
 
-  Post({@required this.posts});
+  Post({@required this.posts,this.index=0});
 
   @override
   PostState createState()=>PostState();
@@ -20,10 +22,19 @@ class Post extends StatefulWidget{
 }
 class PostState extends State<Post>{
   PageController _pageController;
-  double currentIndex=0.0;
+  double currentIndex;
+  List<pages.Story> posts;
   @override
   void initState() {
-    _pageController=PageController();
+    super.initState();
+    currentIndex=widget.index.toDouble();
+    posts=widget.posts;
+
+    _pageController=PageController(initialPage: widget.index);
+    if(widget.index>5){
+      context.read<StoryBloc>().getStories(posts.length, 10, "CREATEDAT_DESC");
+    }
+    // _pageController.
     _pageController.addListener(() {
       setState(() {
         currentIndex = _pageController.page;
@@ -31,35 +42,44 @@ class PostState extends State<Post>{
       });
     });
 
-    super.initState();
+
   }
   @override
   void dispose() {
     _pageController.removeListener((){
-
     });
     _pageController.dispose();
     super.dispose();
   }
   void goToNext(){
-    if(currentIndex.toInt()<widget.posts.length-1){
+    if(currentIndex.toInt()<posts.length-1){
       _pageController.nextPage( duration: const Duration(milliseconds: 700),curve: Curves.easeInOut);
     }else{
-      // Navigator.pop(context);
+      Future.delayed(Duration(seconds: 1),(){
+        Navigator.pop(context);
 
+      });
     }
   }
   @override
   Widget build(BuildContext context) {
-    return BlocListener<StoryBloc,StoryState>(listener: (context,state){
+    return BlocConsumer<StoryBloc,StoryState>(listener: (context,state){
 
       if(state is StoryFinished){
         goToNext();
         context.read<StoryBloc>().emitUnknown();
         print(currentIndex);
       }
+
     },
-        child:PageView.builder(
+        builder: (context,state){
+        if(state is StoryLoadSuccessful){
+          if(state.posts.isNotEmpty){
+            posts+=state.posts.map((e) => Story(post: e,)).toList();
+          }
+
+        }
+        return PageView.builder(
         itemBuilder:(context,index){
           double value;
           if (_pageController.position.haveDimensions == false) {
@@ -70,12 +90,33 @@ class PostState extends State<Post>{
           return _SwipeWidget(
             index: index,
             pageNotifier: value,
-            child: widget.posts[index],
+            child: posts[index],
           );
         },
       controller: _pageController,
-      itemCount: widget.posts.length,
-        ));
+      itemCount: posts.length,
+          onPageChanged: (page){
+
+             if((posts.length-5)==page){
+               if(!(state is StoryLoading)){
+               if(state is StoryLoadSuccessful){
+                 if(state.posts.isNotEmpty){
+
+                   context.read<StoryBloc>().getStories(posts.length, 10, "CREATEDAT_DESC");
+                 }
+                 return;
+               }
+
+
+
+
+               context.read<StoryBloc>().getStories(posts.length, 10, "CREATEDAT_DESC");
+
+             }
+             }
+
+          },
+        );});
   }
 
 }

@@ -18,12 +18,14 @@ class ZoritBusinessOwner extends StatelessWidget {
     userRepository: UserRepository(client: client()),
   );
   final EventsRepository eventsRepository=EventsRepository(client: client());
+  final PostRepository postRepository=PostRepository(client: client());
   @override
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
         providers: [
           RepositoryProvider.value(value: authenticationRepository),
           RepositoryProvider.value(value:eventsRepository),
+          RepositoryProvider.value(value: postRepository)
         ],
         child: MultiBlocProvider(providers: [
           BlocProvider<AuthenticationBloc>(
