@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:zoritt_mobile_app_user/src/screens/detail/business_detail.dart';
+import 'package:zoritt_mobile_app_user/src/screens/search_page/search_page.dart';
 
 import '../screens.dart';
 
@@ -54,11 +56,7 @@ class SearchNavigator extends TabNavigator {
 
   Map<String, WidgetBuilder> _routeBuilder(BuildContext context) {
     return {
-      SearchNavigatorRoutes.root: (ctx) => Container(
-        child: Center(
-          child: Text("Search"),
-        ),
-      ),
+      SearchNavigatorRoutes.root: (ctx) => SearchPage(),
     };
   }
 
@@ -118,11 +116,7 @@ class MessagesNavigator extends TabNavigator {
 
   Map<String, WidgetBuilder> _routeBuilder(BuildContext context) {
     return {
-      MessageNavigatorRoutes.root: (ctx) => Container(
-        child: Center(
-          child: Text("Messages"),
-        ),
-      ),
+      MessageNavigatorRoutes.root: (ctx) => BusinessDetail(),
     };
   }
 
