@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:share/share.dart';
 
 import '../../models/models.dart';
 import 'StoriesBloc.dart';
@@ -262,6 +263,12 @@ class AnimatedBar extends StatelessWidget {
 class UserInfo extends StatelessWidget {
   final Post post;
 
+  void share(BuildContext context,Post post){
+    // final RenderBox renderBox=context.findRenderObject();
+    String subject="${post.businessName} \n ${post.description} \n ${post.photos[0]} ";
+    Share.share(subject,subject: post.description);
+  }
+
   const UserInfo({
     Key key,
     @required this.post,
@@ -338,7 +345,7 @@ class UserInfo extends StatelessWidget {
             color: Colors.white,
           ),
           onPressed: (){
-
+            share(context, post);
           },
         ),
       ],
