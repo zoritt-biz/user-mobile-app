@@ -5,7 +5,7 @@ packages:
     dependency: transitive
     description:
       name: archive
-      url: "https://pub.flutter-io.cn"
+      url: "https://pub.dartlang.org"
     source: hosted
     version: "3.1.2"
   async:
@@ -40,14 +40,14 @@ packages:
     dependency: "direct main"
     description:
       name: cached_network_image
-      url: "https://pub.flutter-io.cn"
+      url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.0"
   carousel_slider:
     dependency: "direct main"
     description:
       name: carousel_slider
-      url: "https://pub.flutter-io.cn"
+      url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.0"
   characters:
@@ -106,13 +106,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.1"
-  convert:
-    dependency: transitive
-    description:
-      name: convert
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.1.1"
   crypto:
     dependency: transitive
     description:
@@ -241,14 +234,14 @@ packages:
     dependency: transitive
     description:
       name: flutter_blurhash
-      url: "https://pub.flutter-io.cn"
+      url: "https://pub.dartlang.org"
     source: hosted
     version: "0.6.0"
   flutter_cache_manager:
     dependency: transitive
     description:
       name: flutter_cache_manager
-      url: "https://pub.flutter-io.cn"
+      url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.1"
   flutter_plugin_android_lifecycle:
@@ -391,7 +384,7 @@ packages:
     dependency: transitive
     description:
       name: image
-      url: "https://pub.flutter-io.cn"
+      url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.2"
   image_picker:
@@ -447,7 +440,7 @@ packages:
     dependency: transitive
     description:
       name: mime
-      url: "https://pub.flutter-io.cn"
+      url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.0"
   nested:
@@ -468,7 +461,7 @@ packages:
     dependency: transitive
     description:
       name: octo_image
-      url: "https://pub.flutter-io.cn"
+      url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.0+1"
   path:
@@ -587,14 +580,14 @@ packages:
     dependency: "direct main"
     description:
       name: share
-      url: "https://pub.flutter-io.cn"
+      url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.1"
   shimmer:
     dependency: "direct main"
     description:
       name: shimmer
-      url: "https://pub.flutter-io.cn"
+      url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.2"
   sky_engine:
@@ -613,14 +606,14 @@ packages:
     dependency: transitive
     description:
       name: sqflite
-      url: "https://pub.flutter-io.cn"
+      url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.0+3"
   sqflite_common:
     dependency: transitive
     description:
       name: sqflite_common
-      url: "https://pub.flutter-io.cn"
+      url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.0+2"
   stack_trace:
@@ -648,7 +641,7 @@ packages:
     dependency: transitive
     description:
       name: synchronized
-      url: "https://pub.flutter-io.cn"
+      url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.0"
   term_glyph:

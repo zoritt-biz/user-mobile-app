@@ -32,15 +32,15 @@ class LoginBloc extends Cubit<LoginState> {
     }
   }
 
-  // Future<void> logInWithGoogle() async {
-  //   emit(LoginLoading());
-  //   try {
-  //     await _authenticationRepository.logInWithGoogle();
-  //     emit(LoginSuccessful());
-  //   } catch (e) {
-  //     emit(LoginFailure(e.toString()));
-  //   }
-  // }
+// Future<void> logInWithGoogle() async {
+//   emit(LoginLoading());
+//   try {
+//     await _authenticationRepository.logInWithGoogle();
+//     emit(LoginSuccessful());
+//   } catch (e) {
+//     emit(LoginFailure(e.toString()));
+//   }
+// }
 
 // Future<void> logInWithFaceBook()async{
 //   emit(LoginLoading());

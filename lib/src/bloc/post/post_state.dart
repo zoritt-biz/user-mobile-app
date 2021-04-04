@@ -1,4 +1,3 @@
-
 import 'package:equatable/equatable.dart';
 import 'package:zoritt_mobile_app_user/src/models/models.dart';
 
@@ -22,6 +21,7 @@ class PostLoadSuccessful extends PostState {
 
 class PostLoadFailure extends PostState {
   final String message;
+
   PostLoadFailure(this.message);
 
   @override

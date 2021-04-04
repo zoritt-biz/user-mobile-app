@@ -12,6 +12,9 @@ import 'sponsored_posts_overview.dart';
 
 class Home extends StatefulWidget {
   static const String pathName = "/home";
+  final BuildContext globalNavigator;
+
+  const Home({Key key, this.globalNavigator}) : super(key: key);
 
   @override
   _HomeState createState() => _HomeState();
@@ -62,7 +65,7 @@ class _HomeState extends State<Home> {
         ),
         CategorySection(),
         EventsSection(),
-        PostsSection(),
+        PostsSection(globalNavigator: widget.globalNavigator),
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.only(top: 10, bottom: 10),

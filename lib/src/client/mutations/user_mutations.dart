@@ -21,22 +21,3 @@ mutation(
   }
 }
 """;
-
-const UPDATE_USER_BUSINESSES = r"""
-mutation(
-  $firebaseId: String
-  $businesses: [MongoID]
-){
-  userUpdateOne(
-    filter: {
-      firebaseId : $firebaseId
-    }, 
-    record: {
-      businesses: $businesses
-    }){
-    record{
-      _id
-    }
-  }
-}
-""";

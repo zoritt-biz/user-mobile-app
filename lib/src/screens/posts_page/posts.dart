@@ -1,86 +1,84 @@
-
-
 import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/screens/posts_page/StoriesBloc.dart';
-import 'package:zoritt_mobile_app_user/src/screens/posts_page/pages.dart' as pages;
+import 'package:zoritt_mobile_app_user/src/screens/posts_page/pages.dart'
+    as pages;
 import 'package:zoritt_mobile_app_user/src/screens/posts_page/pages.dart';
 
-class Post extends StatefulWidget{
+class Post extends StatefulWidget {
   final List<pages.Story> posts;
   final int index;
 
-  Post({@required this.posts,this.index=0});
+  Post({@required this.posts, this.index = 0});
 
   @override
-  PostState createState()=>PostState();
-
-
+  PostState createState() => PostState();
 }
-class PostState extends State<Post>{
+
+class PostState extends State<Post> {
   PageController _pageController;
   double currentIndex;
   List<pages.Story> posts;
+
   @override
   void initState() {
     super.initState();
-    currentIndex=widget.index.toDouble();
-    posts=widget.posts;
+    currentIndex = widget.index.toDouble();
+    posts = widget.posts;
 
-    _pageController=PageController(initialPage: widget.index);
-    if(widget.index>5){
+    _pageController = PageController(initialPage: widget.index);
+    if (widget.index > 5) {
       context.read<StoryBloc>().getStories(posts.length, 10, "CREATEDAT_DESC");
     }
     // _pageController.
     _pageController.addListener(() {
       setState(() {
         currentIndex = _pageController.page;
-
       });
     });
-
-
   }
+
   @override
   void dispose() {
-    _pageController.removeListener((){
-    });
+    _pageController.removeListener(() {});
     _pageController.dispose();
     super.dispose();
   }
-  void goToNext(){
-    if(currentIndex.toInt()<posts.length-1){
-      _pageController.nextPage( duration: const Duration(milliseconds: 700),curve: Curves.easeInOut);
-    }else{
-      Future.delayed(Duration(seconds: 1),(){
-        Navigator.pop(context);
 
+  void goToNext() {
+    if (currentIndex.toInt() < posts.length - 1) {
+      _pageController.nextPage(
+          duration: const Duration(milliseconds: 700), curve: Curves.easeInOut);
+    } else {
+      Future.delayed(Duration(seconds: 1), () {
+        Navigator.pop(context);
       });
     }
   }
+
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<StoryBloc,StoryState>(listener: (context,state){
-
-      if(state is StoryFinished){
+    return BlocConsumer<StoryBloc, StoryState>(listener: (context, state) {
+      if (state is StoryFinished) {
         goToNext();
         context.read<StoryBloc>().emitUnknown();
         print(currentIndex);
       }
-
-    },
-        builder: (context,state){
-        if(state is StoryLoadSuccessful){
-          if(state.posts.isNotEmpty){
-            posts+=state.posts.map((e) => Story(post: e,)).toList();
-          }
-
+    }, builder: (context, state) {
+      if (state is StoryLoadSuccessful) {
+        if (state.posts.isNotEmpty) {
+          posts += state.posts
+              .map((e) => Story(
+                    post: e,
+                  ))
+              .toList();
         }
-        return PageView.builder(
-        itemBuilder:(context,index){
+      }
+      return PageView.builder(
+        itemBuilder: (context, index) {
           double value;
           if (_pageController.position.haveDimensions == false) {
             value = index.toDouble();
@@ -93,33 +91,31 @@ class PostState extends State<Post>{
             child: posts[index],
           );
         },
-      controller: _pageController,
-      itemCount: posts.length,
-          onPageChanged: (page){
+        controller: _pageController,
+        itemCount: posts.length,
+        onPageChanged: (page) {
+          if ((posts.length - 5) == page) {
+            if (!(state is StoryLoading)) {
+              if (state is StoryLoadSuccessful) {
+                if (state.posts.isNotEmpty) {
+                  context
+                      .read<StoryBloc>()
+                      .getStories(posts.length, 10, "CREATEDAT_DESC");
+                }
+                return;
+              }
 
-             if((posts.length-5)==page){
-               if(!(state is StoryLoading)){
-               if(state is StoryLoadSuccessful){
-                 if(state.posts.isNotEmpty){
-
-                   context.read<StoryBloc>().getStories(posts.length, 10, "CREATEDAT_DESC");
-                 }
-                 return;
-               }
-
-
-
-
-               context.read<StoryBloc>().getStories(posts.length, 10, "CREATEDAT_DESC");
-
-             }
-             }
-
-          },
-        );});
+              context
+                  .read<StoryBloc>()
+                  .getStories(posts.length, 10, "CREATEDAT_DESC");
+            }
+          }
+        },
+      );
+    });
   }
-
 }
+
 num degToRad(num deg) => deg * (pi / 180.0);
 
 class _SwipeWidget extends StatelessWidget {
@@ -128,7 +124,6 @@ class _SwipeWidget extends StatelessWidget {
   final double pageNotifier;
 
   final Widget child;
-
 
   const _SwipeWidget({
     Key key,

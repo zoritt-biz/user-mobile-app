@@ -17,8 +17,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   TabItem _currentTab = TabItem.home;
-  DateTime dateTime=DateTime.now().subtract(Duration(days: 3));
-
+  DateTime dateTime = DateTime.now().subtract(Duration(days: 3));
 
   final tabNavigatorKeys = [
     GlobalKey<NavigatorState>(),
@@ -35,7 +34,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     _globalNavigatorContext = context;
     tabNavigators = [
-      HomeNavigator(navigatorKey: tabNavigatorKeys[TabItem.home.index]),
+      HomeNavigator(navigatorKey: tabNavigatorKeys[TabItem.home.index], globalNavigator: _globalNavigatorContext),
       SearchNavigator(
           navigatorKey: tabNavigatorKeys[TabItem.search.index],
           globalNavigator: _globalNavigatorContext),
@@ -120,20 +119,22 @@ class _HomePageState extends State<HomePage> {
         body: IndexedStack(
           index: _currentTab.index,
           children: [
-            MultiBlocProvider(providers: [
-              BlocProvider<EventsBloc>(
-                  create: (context) => EventsBloc(
-                        eventRepository: context.read<EventsRepository>()
-                          ,
-                      )..getEvents(10, "CREATEDAT_DESC")),
-              BlocProvider<PostBloc>(
-                  create: (context) => PostBloc(
-                    postRepository: context.read<PostRepository>()
-                    ,
-                  )..getPosts(10, "CREATEDAT_DESC","${dateTime.month}/${dateTime.day}/${dateTime.year}",0)),
-
-            ],
-                child: _buildOffstageNavigator(TabItem.home),
+            MultiBlocProvider(
+              providers: [
+                BlocProvider<EventsBloc>(
+                    create: (context) => EventsBloc(
+                          eventRepository: context.read<EventsRepository>(),
+                        )..getEvents(10, "CREATEDAT_DESC")),
+                BlocProvider<PostBloc>(
+                    create: (context) => PostBloc(
+                          postRepository: context.read<PostRepository>(),
+                        )..getPosts(
+                            10,
+                            "CREATEDAT_DESC",
+                            "${dateTime.month}/${dateTime.day}/${dateTime.year}",
+                            0)),
+              ],
+              child: _buildOffstageNavigator(TabItem.home),
             ),
             _buildOffstageNavigator(TabItem.search),
             _buildOffstageNavigator(TabItem.favorites),

@@ -1,4 +1,4 @@
-const GET_ALL_EVENTS=r"""
+const GET_ALL_EVENTS = r"""
 query($limit:Int,$sort:SortFindManyEventInput){
   eventMany(limit:$limit,sort:$sort){
     _id

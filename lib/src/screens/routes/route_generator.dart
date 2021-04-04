@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:zoritt_mobile_app_user/src/models/models.dart';
+import 'package:zoritt_mobile_app_user/src/repository/repository.dart';
 import 'package:zoritt_mobile_app_user/src/screens/business_detail/business_detail.dart';
 import 'package:zoritt_mobile_app_user/src/screens/posts_page/StoriesBloc.dart';
 
@@ -8,7 +10,7 @@ import '../screens.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
-    // final args = settings.arguments;
+    List<dynamic> arguments = settings.arguments;
     switch (settings.name) {
       case HomePage.pathName:
         return MaterialPageRoute(builder: (_) => HomePage());
@@ -23,9 +25,13 @@ class RouteGenerator {
       case PostsPage.pathName:
         return MaterialPageRoute(
           builder: (_) => BlocProvider<StoryBloc>(
-            create: (context) => StoryBloc(),
-            child: PostsPage(),
-          ),
+            create: (context) =>
+                StoryBloc(postRepository: context.read<PostRepository>()),
+            child: PostsPage(
+              posts: arguments[0] as List<Post>,
+              selectedPost: arguments[1] as int,
+            ),
+          )
         );
       default:
         return _errorRoute();

@@ -1,10 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share/share.dart';
 
 import '../../models/models.dart';
 import 'StoriesBloc.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class Story extends StatefulWidget {
   final Post post;
@@ -15,8 +15,7 @@ class Story extends StatefulWidget {
   _StoryState createState() => _StoryState();
 }
 
-class _StoryState extends State<Story>
-    with SingleTickerProviderStateMixin {
+class _StoryState extends State<Story> with SingleTickerProviderStateMixin {
   PageController _pageController;
   AnimationController _animController;
   int _currentIndex = 0;
@@ -39,7 +38,6 @@ class _StoryState extends State<Story>
             _currentIndex += 1;
             _loadStory(image: widget.post.photos[_currentIndex]);
           } else {
-
             context.read<StoryBloc>().emitStoryFinished();
 
             // _currentIndex = 0;
@@ -67,63 +65,50 @@ class _StoryState extends State<Story>
         child: Stack(
           children: <Widget>[
             PageView.builder(
-              controller: _pageController,
-              physics: NeverScrollableScrollPhysics(),
-              itemCount: widget.post.photos.length,
-              itemBuilder: (context, i) {
-                    // return Image.asset(
-                    //   widget.images[i],
-                    //   fit: BoxFit.cover,
-                    //   width: double.infinity,
-                    //   height: double.infinity,
-                    // );
-                return CachedNetworkImage(
-                  imageUrl:widget.post.photos[i],
-                  placeholder: (context,url){
-                    return Container(
-                      color: Colors.black,
-                      child:Center(child: CircularProgressIndicator()),
-                    );
-                  },
-
-                  imageBuilder: (context,imageProvider){
-
-                    Future.delayed(Duration(milliseconds: 500)).then((value){
-
+                controller: _pageController,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: widget.post.photos.length,
+                itemBuilder: (context, i) {
+                  // return Image.asset(
+                  //   widget.images[i],
+                  //   fit: BoxFit.cover,
+                  //   width: double.infinity,
+                  //   height: double.infinity,
+                  // );
+                  return CachedNetworkImage(
+                    imageUrl: widget.post.photos[i],
+                    placeholder: (context, url) {
+                      return Container(
+                        color: Colors.black,
+                        child: Center(child: CircularProgressIndicator()),
+                      );
+                    },
+                    imageBuilder: (context, imageProvider) {
+                      Future.delayed(Duration(milliseconds: 500)).then((value) {
                         _animController?.forward();
+                      });
 
-                    });
-
-
-                    return Container(
-                        decoration: BoxDecoration(
+                      return Container(
+                          decoration: BoxDecoration(
                         image: DecorationImage(
-                        image: imageProvider,
-                        fit: BoxFit.cover,
-                       ),
-                    ));
-                  },
-
-
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                  height: double.infinity,
-                );
-
-
-                }
-
-
-            ),
+                          image: imageProvider,
+                          fit: BoxFit.cover,
+                        ),
+                      ));
+                    },
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    height: double.infinity,
+                  );
+                }),
             Positioned(
               top: 40.0,
               left: 10.0,
               right: 10.0,
-              child:
-                  Row(
-                    children: widget.post.photos
-                        .asMap()
-                        .map((i, e) {
+              child: Row(
+                children: widget.post.photos
+                    .asMap()
+                    .map((i, e) {
                       return MapEntry(
                         i,
                         AnimatedBar(
@@ -133,23 +118,24 @@ class _StoryState extends State<Story>
                         ),
                       );
                     })
-                        .values
-                        .toList(),
-                  ),
-
+                    .values
+                    .toList(),
               ),
+            ),
             Positioned(
               bottom: 20,
-              left:15,
-              right:15,
+              left: 15,
+              right: 15,
               child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 1.5,
-                vertical: 10.0,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 1.5,
+                  vertical: 10.0,
+                ),
+                child: UserInfo(
+                  post: widget.post,
+                ),
               ),
-              child: UserInfo(post: widget.post,),
-            ),)
-
+            )
           ],
         ),
       ),
@@ -172,7 +158,6 @@ class _StoryState extends State<Story>
           _currentIndex += 1;
           _loadStory(image: widget.post.photos[_currentIndex]);
         } else {
-
           context.read<StoryBloc>().emitStoryFinished();
 
           // _currentIndex = 0;
@@ -182,7 +167,7 @@ class _StoryState extends State<Story>
     }
   }
 
-  void _loadStory({String image,bool animateToPage=true}) {
+  void _loadStory({String image, bool animateToPage = true}) {
     _animController.stop();
     _animController.reset();
     _animController.duration = Duration(seconds: 3);
@@ -227,14 +212,14 @@ class AnimatedBar extends StatelessWidget {
                 ),
                 position == currentIndex
                     ? AnimatedBuilder(
-                  animation: animController,
-                  builder: (context, child) {
-                    return _buildContainer(
-                      constraints.maxWidth * animController.value,
-                      Colors.white,
-                    );
-                  },
-                )
+                        animation: animController,
+                        builder: (context, child) {
+                          return _buildContainer(
+                            constraints.maxWidth * animController.value,
+                            Colors.white,
+                          );
+                        },
+                      )
                     : const SizedBox.shrink(),
               ],
             );
@@ -263,10 +248,11 @@ class AnimatedBar extends StatelessWidget {
 class UserInfo extends StatelessWidget {
   final Post post;
 
-  void share(BuildContext context,Post post){
+  void share(BuildContext context, Post post) {
     // final RenderBox renderBox=context.findRenderObject();
-    String subject="${post.businessName} \n ${post.description} \n ${post.photos[0]} ";
-    Share.share(subject,subject: post.description);
+    String subject =
+        "${post.businessName} \n ${post.description} \n ${post.photos[0]} ";
+    Share.share(subject, subject: post.description);
   }
 
   const UserInfo({
@@ -276,9 +262,7 @@ class UserInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children:[
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Text(
         "You can attend our event",
         style: const TextStyle(
@@ -289,66 +273,61 @@ class UserInfo extends StatelessWidget {
       ),
       const SizedBox(height: 20.0),
       Row(
-      children: <Widget>[
-        CircleAvatar(
-          radius: 20.0,
-          backgroundColor: Colors.grey[300],
-
-          backgroundImage: AssetImage(
-          "assets/images/image.jpg",
-          ),
-        ),
-        const SizedBox(width: 10.0),
-        Expanded(child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-
-               Text(
-                post.businessName??"",
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            // ),
-            // Expanded(
-              Text(
-                post.description??"",
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 12.0,
-
-                ),
-              // ),
+        children: <Widget>[
+          CircleAvatar(
+            radius: 20.0,
+            backgroundColor: Colors.grey[300],
+            backgroundImage: AssetImage(
+              "assets/images/image.jpg",
             ),
-          ],
-        ),
-          flex: 2,
-        ),
-
-
-        IconButton(
-          icon: const Icon(
-            Icons.favorite,
-            size: 30.0,
-            color: Color(0xffDF9C20),
           ),
-          onPressed: () =>{
-
-          },
-        ),
-        IconButton(
-          icon: const Icon(
-            Icons.share,
-            size: 30.0,
-            color: Colors.white,
+          const SizedBox(width: 10.0),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  post.businessName ?? "",
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                // ),
+                // Expanded(
+                Text(
+                  post.description ?? "",
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 12.0,
+                  ),
+                  // ),
+                ),
+              ],
+            ),
+            flex: 2,
           ),
-          onPressed: (){
-            share(context, post);
-          },
-        ),
-      ],
-    )]);
+          IconButton(
+            icon: const Icon(
+              Icons.favorite,
+              size: 30.0,
+              color: Color(0xffDF9C20),
+            ),
+            onPressed: () => {},
+          ),
+          IconButton(
+            icon: const Icon(
+              Icons.share,
+              size: 30.0,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              share(context, post);
+            },
+          ),
+        ],
+      )
+    ]);
   }
 }

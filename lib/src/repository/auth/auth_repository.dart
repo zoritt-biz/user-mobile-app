@@ -7,10 +7,7 @@ class AuthenticationRepository {
   final FirebaseAuth firebaseAuth;
   final UserRepository userRepository;
 
-  AuthenticationRepository({
-    this.firebaseAuth,
-    this.userRepository
-  });
+  AuthenticationRepository({this.firebaseAuth, this.userRepository});
 
   Stream<user_model.User> get user {
     return firebaseAuth.authStateChanges().map(
@@ -28,21 +25,22 @@ class AuthenticationRepository {
     @required String fullName,
     @required String phoneNumber,
   }) async {
-    assert(email != null && password != null && fullName != null && phoneNumber != null);
+    assert(email != null &&
+        password != null &&
+        fullName != null &&
+        phoneNumber != null);
     try {
       final userCredentials = await firebaseAuth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
 
-      final newUser = await userRepository.userCreate(
-        user_model.User(
-          fullName: fullName,
-          email: email,
-          firebaseId: userCredentials.user.uid,
-          phoneNumber: phoneNumber,
-        )
-      );
+      final newUser = await userRepository.userCreate(user_model.User(
+        fullName: fullName,
+        email: email,
+        firebaseId: userCredentials.user.uid,
+        phoneNumber: phoneNumber,
+      ));
 
       return newUser;
     } catch (e) {

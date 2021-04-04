@@ -1,7 +1,6 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'package:equatable/equatable.dart';
 import 'package:zoritt_mobile_app_user/src/models/models.dart';
 import 'package:zoritt_mobile_app_user/src/repository/repository.dart';
 
@@ -34,17 +33,6 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         final user = await userRepository.userCreate(event.user);
         yield UserLoadSuccess(user);
       } catch (e) {
-        yield UserOperationFailure(e.toString());
-      }
-    }
-
-    if (event is UserUpdate) {
-      yield UserUpdating();
-      try {
-        final user = await userRepository.userUpdate(event.user);
-        yield UserLoadSuccess(user);
-      } catch (e) {
-        print(e);
         yield UserOperationFailure(e.toString());
       }
     }

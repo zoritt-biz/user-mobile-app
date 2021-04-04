@@ -7,7 +7,6 @@ class SimpleBlocObserver extends BlocObserver {
     super.onEvent(bloc, event);
   }
 
-
   @override
   void onCreate(Cubit cubit) {
     print('onCreate $cubit');
@@ -19,12 +18,12 @@ class SimpleBlocObserver extends BlocObserver {
     print('onTransition $transition');
     super.onTransition(bloc, transition);
   }
+
   @override
   void onChange(Cubit cubit, Change change) {
     print('onChange $change');
     super.onChange(cubit, change);
   }
-
 
   @override
   void onError(Cubit cubit, Object error, StackTrace stackTrace) {

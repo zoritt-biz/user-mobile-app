@@ -7,8 +7,7 @@ import 'package:zoritt_mobile_app_user/src/models/models.dart';
 class UserRepository {
   final GraphQLClient client;
 
-  UserRepository({@required this.client,})
-      : assert(client != null);
+  UserRepository({@required this.client}) : assert(client != null);
 
   Future<User> userCreate(User user) async {
     final result = await client.mutate(
@@ -16,7 +15,7 @@ class UserRepository {
         document: gql(CREATE_USER),
         variables: {
           "fullName": user.fullName,
-          "userType": "Owner",
+          "userType": "Normal",
           "email": user.email,
           "phoneNumber": user.phoneNumber,
           "firebaseId": user.firebaseId
@@ -52,26 +51,7 @@ class UserRepository {
       firebaseId: data['firebaseId'],
       userType: data['userType'],
       businesses:
-      (data['businesses'] as List).map((e) => e['_id'].toString()).toList(),
-    );
-  }
-
-  Future<User> userUpdate(User user) async {
-    final result = await client.mutate(
-      MutationOptions(
-        document: gql(UPDATE_USER_BUSINESSES),
-        variables: {
-          "firebaseId": user.firebaseId,
-          "businesses": user.businesses
-        },
-      ),
-    );
-    if (result.hasException) {
-      throw result.exception;
-    }
-    final data = result.data['userUpdateOne']['record'];
-    return User(
-      id: data['_id'],
+          (data['businesses'] as List).map((e) => e['_id'].toString()).toList(),
     );
   }
 }

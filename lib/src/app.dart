@@ -7,36 +7,40 @@ import 'package:zoritt_mobile_app_user/src/repository/repository.dart';
 import 'package:zoritt_mobile_app_user/src/screens/screens.dart';
 
 import 'client/client.dart';
-import 'screens/posts_page/posts_page.dart';
 
-class ZoritBusinessOwner extends StatelessWidget {
-
+class ZoritBusinessUser extends StatelessWidget {
   final AuthenticationRepository authenticationRepository =
-  AuthenticationRepository(
-
+      AuthenticationRepository(
     firebaseAuth: FirebaseAuth.instance,
     userRepository: UserRepository(client: client()),
   );
-  final EventsRepository eventsRepository=EventsRepository(client: client());
-  final PostRepository postRepository=PostRepository(client: client());
+
+  final EventsRepository eventsRepository = EventsRepository(client: client());
+
+  final PostRepository postRepository = PostRepository(client: client());
+
   @override
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider.value(value: authenticationRepository),
+        RepositoryProvider.value(value: eventsRepository),
+        RepositoryProvider.value(value: postRepository)
+      ],
+      child: MultiBlocProvider(
         providers: [
-          RepositoryProvider.value(value: authenticationRepository),
-          RepositoryProvider.value(value:eventsRepository),
-          RepositoryProvider.value(value: postRepository)
-        ],
-        child: MultiBlocProvider(providers: [
           BlocProvider<AuthenticationBloc>(
-              create: (context) => AuthenticationBloc(
-                  authenticationRepository:
-                  context.read<AuthenticationRepository>()),
-              lazy: false),
+            create: (context) => AuthenticationBloc(
+              authenticationRepository:
+                  context.read<AuthenticationRepository>(),
+            ),
+            lazy: false,
+          ),
         ],
-            child: ZorittApp()));
+        child: ZorittApp(),
+      ),
+    );
   }
-
 }
 
 class ZorittApp extends StatefulWidget {
