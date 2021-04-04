@@ -2,6 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class SearchPage extends StatelessWidget {
+  final BuildContext globalNavigator;
+
+  const SearchPage({Key key, this.globalNavigator}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,14 +34,20 @@ class SearchPage extends StatelessWidget {
               ),
             ),
           ),
-          SearchResult(
-            title: 'Wow Burger',
-            address: 'Arat kilo, Addis Ababa',
-            phoneNumber: '+251912365478',
-            name: 'Burger, Shawarma',
-            price: 3,
-            imageLink: "https://images.unsplash.com/photo-1614823498916-a28a7d67182c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80",
-
+          GestureDetector(
+            onTap: () {
+              print("here");
+              Navigator.pushNamed(globalNavigator, "/business_detail");
+            },
+            child: SearchResult(
+              title: 'Wow Burger',
+              address: 'Arat kilo, Addis Ababa',
+              phoneNumber: '+251912365478',
+              name: 'Burger, Shawarma',
+              price: 3,
+              imageLink:
+                  "https://images.unsplash.com/photo-1614823498916-a28a7d67182c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80",
+            ),
           ),
           SearchResult(
             title: 'Wow Burger',
@@ -45,8 +55,8 @@ class SearchPage extends StatelessWidget {
             phoneNumber: '+251912365478',
             name: 'Burger, Shawarma',
             price: 2,
-            imageLink: "https://images.unsplash.com/photo-1614823498916-a28a7d67182c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80",
-
+            imageLink:
+                "https://images.unsplash.com/photo-1614823498916-a28a7d67182c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80",
           )
         ],
       ),
@@ -63,13 +73,15 @@ class SearchResult extends StatefulWidget {
   final String imageLink;
   final bool relatedBusiness;
 
-  SearchResult({this.title,
+  SearchResult({
+    this.title,
     this.address,
     this.phoneNumber,
     this.price,
     this.name,
     this.relatedBusiness,
-    this.imageLink});
+    this.imageLink,
+  });
 
   @override
   _SearchResultState createState() => _SearchResultState();
@@ -82,7 +94,7 @@ class _SearchResultState extends State<SearchResult> {
       padding: const EdgeInsets.only(left: 10, right: 10, bottom: 5),
       child: Card(
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10),
+          padding: const EdgeInsets.all(10),
           child: Row(
             children: [
               Expanded(

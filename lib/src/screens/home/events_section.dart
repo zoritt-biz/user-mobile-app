@@ -9,7 +9,7 @@ class EventsSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.only(top: 10, bottom: 10),
             child: TextButton(
                 onPressed: () {
                   Navigator.pushNamed(context, "/events");
@@ -23,7 +23,7 @@ class EventsSection extends StatelessWidget {
             height: 160,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              padding: EdgeInsets.only(left: 20, right: 20),
+              padding: EdgeInsets.only(left: 8, right: 8),
               itemCount: 4,
               itemBuilder: (context, index) {
                 return Container(

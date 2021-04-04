@@ -5,7 +5,7 @@ class SponsoredPostsOverview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverFixedExtentList(
-      itemExtent: 450.0,
+      itemExtent: 480.0,
       delegate: SliverChildBuilderDelegate(
         (BuildContext context, int index) {
           return SponsorItem(
@@ -64,14 +64,14 @@ class _SponsorItemState extends State<SponsorItem> {
                 // mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(top: 5, bottom: 10),
+                    padding: const EdgeInsets.only(top: 13, bottom: 10),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
                           widget.name,
                           style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 18),
+                              fontWeight: FontWeight.bold, fontSize: 20),
                         ),
                         Icon(Icons.favorite_border_outlined)
                       ],
