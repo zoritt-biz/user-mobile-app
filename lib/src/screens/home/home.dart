@@ -65,7 +65,7 @@ class _HomeState extends State<Home> {
         PostsSection(),
         SliverToBoxAdapter(
           child: Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.only(top: 10, bottom: 10),
             child: TextButton(
               onPressed: () {
                 Navigator.pushNamed(context, "/sponsored_posts");

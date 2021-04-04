@@ -29,7 +29,8 @@ class _ZorittAppState extends State<ZorittApp> {
         ),
       ),
       debugShowCheckedModeBanner: false,
-      initialRoute: PostsPage.pathName,
+      // initialRoute: PostsPage.pathName,
+      initialRoute: '/',
       onGenerateRoute: RouteGenerator.generateRoute,
     );
   }
