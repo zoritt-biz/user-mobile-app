@@ -13,3 +13,4 @@ export 'posts_page/posts_page.dart';
 export 'sponsored_posts_page/sponsored_posts_page.dart';
 export 'favorites_page/favorites_page.dart';
 export 'profile_page/profile_page.dart';
+export 'business_detail/business_detail.dart';

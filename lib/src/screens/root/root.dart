@@ -24,7 +24,7 @@ class _HomePageState extends State<HomePage> {
     GlobalKey<NavigatorState>(),
     GlobalKey<NavigatorState>(),
     GlobalKey<NavigatorState>(),
-    GlobalKey<NavigatorState>(),
+    // GlobalKey<NavigatorState>(),
     GlobalKey<NavigatorState>(),
   ];
 
@@ -33,16 +33,17 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-
+    _globalNavigatorContext = context;
     tabNavigators = [
       HomeNavigator(navigatorKey: tabNavigatorKeys[TabItem.home.index]),
-      SearchNavigator(navigatorKey: tabNavigatorKeys[TabItem.search.index]),
+      SearchNavigator(
+          navigatorKey: tabNavigatorKeys[TabItem.search.index],
+          globalNavigator: _globalNavigatorContext),
       FavoritesNavigator(
           navigatorKey: tabNavigatorKeys[TabItem.favorites.index]),
-      MessagesNavigator(navigatorKey: tabNavigatorKeys[TabItem.messages.index]),
+      // MessagesNavigator(navigatorKey: tabNavigatorKeys[TabItem.messages.index]),
       ProfileNavigator(navigatorKey: tabNavigatorKeys[TabItem.profile.index]),
     ];
-    _globalNavigatorContext = context;
     super.initState();
   }
 
@@ -58,45 +59,49 @@ class _HomePageState extends State<HomePage> {
 
     final List<BottomNavigationData> bottomNavigationData = [
       BottomNavigationData(
-          onPressed: () {
-            setCurrentIndex(TabItem.home);
-          },
-          icon: Icons.home,
-          color: _currentTab == TabItem.home
-              ? Theme.of(context).primaryColor
-              : Colors.grey[600]),
+        onPressed: () {
+          setCurrentIndex(TabItem.home);
+        },
+        icon: Icons.home,
+        color: _currentTab == TabItem.home
+            ? Theme.of(context).primaryColor
+            : Colors.grey[600],
+      ),
       BottomNavigationData(
-          onPressed: () {
-            setCurrentIndex(TabItem.search);
-          },
-          icon: Icons.search,
-          color: _currentTab == TabItem.search
-              ? Theme.of(context).primaryColor
-              : Colors.grey[600]),
+        onPressed: () {
+          setCurrentIndex(TabItem.search);
+        },
+        icon: Icons.search,
+        color: _currentTab == TabItem.search
+            ? Theme.of(context).primaryColor
+            : Colors.grey[600],
+      ),
       BottomNavigationData(
-          onPressed: () {
-            setCurrentIndex(TabItem.favorites);
-          },
-          icon: Icons.favorite,
-          color: _currentTab == TabItem.favorites
-              ? Theme.of(context).primaryColor
-              : Colors.grey[600]),
+        onPressed: () {
+          setCurrentIndex(TabItem.favorites);
+        },
+        icon: Icons.favorite,
+        color: _currentTab == TabItem.favorites
+            ? Theme.of(context).primaryColor
+            : Colors.grey[600],
+      ),
+      // BottomNavigationData(
+      //     onPressed: () {
+      //       setCurrentIndex(TabItem.messages);
+      //     },
+      //     icon: Icons.message,
+      //     color: _currentTab == TabItem.messages
+      //         ? Theme.of(context).primaryColor
+      //         : Colors.grey[600],),
       BottomNavigationData(
-          onPressed: () {
-            setCurrentIndex(TabItem.messages);
-          },
-          icon: Icons.message,
-          color: _currentTab == TabItem.messages
-              ? Theme.of(context).primaryColor
-              : Colors.grey[600]),
-      BottomNavigationData(
-          onPressed: () {
-            setCurrentIndex(TabItem.profile);
-          },
-          icon: Icons.account_circle,
-          color: _currentTab == TabItem.profile
-              ? Theme.of(context).primaryColor
-              : Colors.grey[600]),
+        onPressed: () {
+          setCurrentIndex(TabItem.profile);
+        },
+        icon: Icons.account_circle,
+        color: _currentTab == TabItem.profile
+            ? Theme.of(context).primaryColor
+            : Colors.grey[600],
+      ),
     ];
 
     return WillPopScope(
@@ -132,7 +137,7 @@ class _HomePageState extends State<HomePage> {
             ),
             _buildOffstageNavigator(TabItem.search),
             _buildOffstageNavigator(TabItem.favorites),
-            _buildOffstageNavigator(TabItem.messages),
+            // _buildOffstageNavigator(TabItem.messages),
             _buildOffstageNavigator(TabItem.profile),
           ],
         ),
@@ -156,4 +161,4 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-enum TabItem { home, search, favorites, messages, profile }
+enum TabItem { home, search, favorites, profile }

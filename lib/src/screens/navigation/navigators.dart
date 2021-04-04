@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/events/events_bloc.dart';
@@ -7,6 +8,9 @@ import 'package:zoritt_mobile_app_user/src/models/models.dart';
 import 'package:zoritt_mobile_app_user/src/repository/event/events_repository.dart';
 import 'package:zoritt_mobile_app_user/src/repository/repository.dart';
 import 'package:zoritt_mobile_app_user/src/screens/posts_page/StoriesBloc.dart';
+
+import 'package:zoritt_mobile_app_user/src/screens/business_detail/business_detail.dart';
+import 'package:zoritt_mobile_app_user/src/screens/search_page/search_page.dart';
 
 import '../screens.dart';
 
@@ -63,16 +67,13 @@ class SearchNavigatorRoutes {
 
 class SearchNavigator extends TabNavigator {
   final GlobalKey<NavigatorState> navigatorKey;
+  final BuildContext globalNavigator;
 
-  SearchNavigator({this.navigatorKey});
+  SearchNavigator({this.navigatorKey, this.globalNavigator});
 
   Map<String, WidgetBuilder> _routeBuilder(BuildContext context) {
     return {
-      SearchNavigatorRoutes.root: (ctx) => Container(
-        child: Center(
-          child: Text("Search"),
-        ),
-      ),
+      SearchNavigatorRoutes.root: (ctx) => SearchPage(globalNavigator: globalNavigator),
     };
   }
 
@@ -139,39 +140,35 @@ class FavoritesNavigator extends TabNavigator {
   }
 }
 
-class MessageNavigatorRoutes {
-  static const String root = "/";
-}
-
-class MessagesNavigator extends TabNavigator {
-  final GlobalKey<NavigatorState> navigatorKey;
-
-  MessagesNavigator({this.navigatorKey});
-
-  Map<String, WidgetBuilder> _routeBuilder(BuildContext context) {
-    return {
-      MessageNavigatorRoutes.root: (ctx) => Container(
-        child: Center(
-          child: Text("Messages"),
-        ),
-      ),
-    };
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final routeBuilders = _routeBuilder(context);
-    return Navigator(
-      key: navigatorKey,
-      initialRoute: MessageNavigatorRoutes.root,
-      onGenerateRoute: (routeSettings) {
-        return MaterialPageRoute(
-          builder: (ctx) => routeBuilders[routeSettings.name](ctx),
-        );
-      },
-    );
-  }
-}
+// class MessageNavigatorRoutes {
+//   static const String root = "/";
+// }
+//
+// class MessagesNavigator extends TabNavigator {
+//   final GlobalKey<NavigatorState> navigatorKey;
+//
+//   MessagesNavigator({this.navigatorKey});
+//
+//   Map<String, WidgetBuilder> _routeBuilder(BuildContext context) {
+//     return {
+//       MessageNavigatorRoutes.root: (ctx) => BusinessDetail(),
+//     };
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final routeBuilders = _routeBuilder(context);
+//     return Navigator(
+//       key: navigatorKey,
+//       initialRoute: MessageNavigatorRoutes.root,
+//       onGenerateRoute: (routeSettings) {
+//         return MaterialPageRoute(
+//           builder: (ctx) => routeBuilders[routeSettings.name](ctx),
+//         );
+//       },
+//     );
+//   }
+// }
 
 class ProfileNavigatorRoutes {
   static const String root = "/";

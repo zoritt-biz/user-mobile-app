@@ -14,7 +14,7 @@ class PostsSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.only(top: 10, bottom: 10),
             child: TextButton(
               onPressed: () {
                 // Navigator.pushNamed(context, "/posts");
@@ -27,6 +27,7 @@ class PostsSection extends StatelessWidget {
           ),
           Container(
             height: 150,
+// <<<<<<< posts
             child: BlocBuilder<PostBloc, PostState>(
                 builder: (context, state) {
                   if (state is PostLoadSuccessful) {

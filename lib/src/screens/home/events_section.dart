@@ -14,7 +14,7 @@ class EventsSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.only(top: 10, bottom: 10),
             child: TextButton(
                 onPressed: () {
                   Navigator.pushNamed(context, "/events");
@@ -26,6 +26,7 @@ class EventsSection extends StatelessWidget {
           ),
           Container(
             height: 160,
+// <<<<<<< posts
             child: BlocBuilder<EventsBloc, EventsState>(
                 builder: (context, state) {
                   if (state is EventsLoadSuccessful) {
@@ -54,7 +55,6 @@ class EventsSection extends StatelessWidget {
                 }
                   return Padding(padding:EdgeInsets.only(left: 20,right:20),
                       child:Row(
-
                         children: [
                           Expanded(child:shimmerItem()),
                           SizedBox(width: 5,),

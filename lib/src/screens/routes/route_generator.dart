@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:zoritt_mobile_app_user/src/screens/business_detail/business_detail.dart';
 import 'package:zoritt_mobile_app_user/src/screens/posts_page/StoriesBloc.dart';
 
 import '../posts_page/posts_page.dart';
@@ -17,8 +18,15 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => SignUp());
       case ResetPassword.pathName:
         return MaterialPageRoute(builder: (_) => ResetPassword());
+      case BusinessDetail.pathName:
+        return MaterialPageRoute(builder: (_) => BusinessDetail());
       case PostsPage.pathName:
-        return MaterialPageRoute(builder: (_) => BlocProvider<StoryBloc>(create: (context)=>StoryBloc(), child:PostsPage()));
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider<StoryBloc>(
+            create: (context) => StoryBloc(),
+            child: PostsPage(),
+          ),
+        );
       default:
         return _errorRoute();
     }
