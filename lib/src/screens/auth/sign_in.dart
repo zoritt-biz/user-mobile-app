@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/bloc.dart';
 
 import 'input_field_controller.dart';
 
@@ -38,10 +39,31 @@ class _SignInState extends State<SignIn> {
     }
     return null;
   }
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return body(context);
+    return BlocConsumer<LoginBloc,LoginState>(builder: (context,state){
+      if(state is LoginLoading||state is LoginSuccessful){
+        return Center(child: CircularProgressIndicator(),);
+      }
+
+      return body(context);
+
+    }, listener: (context,state){
+      if(state is LoginFailure){
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Something went wrong"),));
+
+      }
+      if(state is LoginSuccessful){
+        Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
+      }
+    });
   }
 
   Widget body(BuildContext context) {
@@ -114,13 +136,13 @@ class _SignInState extends State<SignIn> {
                       primary: Theme.of(context).accentColor,
                     ),
                     onPressed: () {
-                      // if (_formKey.currentState.validate()) {
-                      //   _formKey.currentState.save();
-                      //   context.read<LoginBloc>().logInWithCredentials(
-                      //         email: emailController.text.trim(),
-                      //         password: passwordController.text,
-                      //       );
-                      // }
+                      if (_formKey.currentState.validate()) {
+                        _formKey.currentState.save();
+                        context.read<LoginBloc>().logInWithCredentials(
+                              email: emailController.text.trim(),
+                              password: passwordController.text,
+                            );
+                      }
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(13),

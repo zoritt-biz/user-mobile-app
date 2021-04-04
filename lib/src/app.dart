@@ -1,14 +1,42 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/bloc.dart';
+import 'package:zoritt_mobile_app_user/src/repository/event/events_repository.dart';
+import 'package:zoritt_mobile_app_user/src/repository/repository.dart';
 import 'package:zoritt_mobile_app_user/src/screens/screens.dart';
 
+import 'client/client.dart';
 import 'screens/posts_page/posts_page.dart';
 
 class ZoritBusinessOwner extends StatelessWidget {
 
+  final AuthenticationRepository authenticationRepository =
+  AuthenticationRepository(
+
+    firebaseAuth: FirebaseAuth.instance,
+    userRepository: UserRepository(client: client()),
+  );
+  final EventsRepository eventsRepository=EventsRepository(client: client());
+  final PostRepository postRepository=PostRepository(client: client());
   @override
   Widget build(BuildContext context) {
-    return ZorittApp();
+    return MultiRepositoryProvider(
+        providers: [
+          RepositoryProvider.value(value: authenticationRepository),
+          RepositoryProvider.value(value:eventsRepository),
+          RepositoryProvider.value(value: postRepository)
+        ],
+        child: MultiBlocProvider(providers: [
+          BlocProvider<AuthenticationBloc>(
+              create: (context) => AuthenticationBloc(
+                  authenticationRepository:
+                  context.read<AuthenticationRepository>()),
+              lazy: false),
+        ],
+            child: ZorittApp()));
   }
+
 }
 
 class ZorittApp extends StatefulWidget {

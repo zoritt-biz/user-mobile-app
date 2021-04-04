@@ -1,13 +1,15 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:share/share.dart';
 
 import '../../models/models.dart';
 import 'StoriesBloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class Story extends StatefulWidget {
-  final List<String> images;
+  final Post post;
 
-  const Story({@required this.images});
+  const Story({@required this.post});
 
   @override
   _StoryState createState() => _StoryState();
@@ -25,17 +27,17 @@ class _StoryState extends State<Story>
     _pageController = PageController();
     _animController = AnimationController(vsync: this);
 
-    final String firstImage = widget.images.first;
-    _loadStory(image: firstImage, animateToPage: false);
+    // final String firstImage = widget.images.first;
+    _loadStory(animateToPage: false);
 
     _animController.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         _animController.stop();
         _animController.reset();
         setState(() {
-          if (_currentIndex + 1 < widget.images.length) {
+          if (_currentIndex + 1 < widget.post.photos.length) {
             _currentIndex += 1;
-            _loadStory(image: widget.images[_currentIndex]);
+            _loadStory(image: widget.post.photos[_currentIndex]);
           } else {
 
             context.read<StoryBloc>().emitStoryFinished();
@@ -57,7 +59,7 @@ class _StoryState extends State<Story>
 
   @override
   Widget build(BuildContext context) {
-    final String image = widget.images[_currentIndex];
+    final String image = widget.post.photos[_currentIndex];
     return Scaffold(
       backgroundColor: Colors.black,
       body: GestureDetector(
@@ -67,14 +69,47 @@ class _StoryState extends State<Story>
             PageView.builder(
               controller: _pageController,
               physics: NeverScrollableScrollPhysics(),
-              itemCount: widget.images.length,
+              itemCount: widget.post.photos.length,
               itemBuilder: (context, i) {
-                    return Image.asset(
-                      widget.images[i],
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      height: double.infinity,
+                    // return Image.asset(
+                    //   widget.images[i],
+                    //   fit: BoxFit.cover,
+                    //   width: double.infinity,
+                    //   height: double.infinity,
+                    // );
+                return CachedNetworkImage(
+                  imageUrl:widget.post.photos[i],
+                  placeholder: (context,url){
+                    return Container(
+                      color: Colors.black,
+                      child:Center(child: CircularProgressIndicator()),
                     );
+                  },
+
+                  imageBuilder: (context,imageProvider){
+
+                    Future.delayed(Duration(milliseconds: 500)).then((value){
+
+                        _animController?.forward();
+
+                    });
+
+
+                    return Container(
+                        decoration: BoxDecoration(
+                        image: DecorationImage(
+                        image: imageProvider,
+                        fit: BoxFit.cover,
+                       ),
+                    ));
+                  },
+
+
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  height: double.infinity,
+                );
+
 
                 }
 
@@ -86,7 +121,7 @@ class _StoryState extends State<Story>
               right: 10.0,
               child:
                   Row(
-                    children: widget.images
+                    children: widget.post.photos
                         .asMap()
                         .map((i, e) {
                       return MapEntry(
@@ -112,7 +147,7 @@ class _StoryState extends State<Story>
                 horizontal: 1.5,
                 vertical: 10.0,
               ),
-              child: UserInfo(user: User(fullName: "user")),
+              child: UserInfo(post: widget.post,),
             ),)
 
           ],
@@ -128,14 +163,14 @@ class _StoryState extends State<Story>
       setState(() {
         if (_currentIndex - 1 >= 0) {
           _currentIndex -= 1;
-          _loadStory(image: widget.images[_currentIndex]);
+          _loadStory();
         }
       });
     } else if (dx > 2 * screenWidth / 3) {
       setState(() {
-        if (_currentIndex + 1 < widget.images.length) {
+        if (_currentIndex + 1 < widget.post.photos.length) {
           _currentIndex += 1;
-          _loadStory(image: widget.images[_currentIndex]);
+          _loadStory(image: widget.post.photos[_currentIndex]);
         } else {
 
           context.read<StoryBloc>().emitStoryFinished();
@@ -150,8 +185,8 @@ class _StoryState extends State<Story>
   void _loadStory({String image,bool animateToPage=true}) {
     _animController.stop();
     _animController.reset();
-    _animController.duration = Duration(seconds: 2);
-    _animController.forward();
+    _animController.duration = Duration(seconds: 3);
+    // _animController.forward();
 
     if (animateToPage) {
       _pageController.animateToPage(
@@ -226,11 +261,17 @@ class AnimatedBar extends StatelessWidget {
 }
 
 class UserInfo extends StatelessWidget {
-  final User user;
+  final Post post;
+
+  void share(BuildContext context,Post post){
+    // final RenderBox renderBox=context.findRenderObject();
+    String subject="${post.businessName} \n ${post.description} \n ${post.photos[0]} ";
+    Share.share(subject,subject: post.description);
+  }
 
   const UserInfo({
     Key key,
-    @required this.user,
+    @required this.post,
   }) : super(key: key);
 
   @override
@@ -263,7 +304,7 @@ class UserInfo extends StatelessWidget {
           children: [
 
                Text(
-                "Wow Burger",
+                post.businessName??"",
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 18.0,
@@ -273,7 +314,7 @@ class UserInfo extends StatelessWidget {
             // ),
             // Expanded(
               Text(
-                "Friday is the best day",
+                post.description??"",
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 12.0,
@@ -293,7 +334,9 @@ class UserInfo extends StatelessWidget {
             size: 30.0,
             color: Color(0xffDF9C20),
           ),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () =>{
+
+          },
         ),
         IconButton(
           icon: const Icon(
@@ -301,7 +344,9 @@ class UserInfo extends StatelessWidget {
             size: 30.0,
             color: Colors.white,
           ),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: (){
+            share(context, post);
+          },
         ),
       ],
     )]);
