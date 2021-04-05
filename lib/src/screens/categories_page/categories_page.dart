@@ -10,7 +10,8 @@ class CategoriesPage extends StatelessWidget {
       ),
       body: GridView.count(
         padding: EdgeInsets.symmetric(horizontal: 25, vertical: 15),
-        crossAxisCount: 2,
+        crossAxisCount:
+            MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 3,
         crossAxisSpacing: 30.0,
         mainAxisSpacing: 25.0,
         // shrinkWrap: true,

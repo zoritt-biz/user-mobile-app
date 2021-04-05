@@ -12,7 +12,7 @@ class SearchPage extends StatelessWidget {
       appBar: AppBar(
         title: Text("Search"),
       ),
-      body: Column(
+      body: ListView(
         children: [
           SearchFilter(),
           Padding(

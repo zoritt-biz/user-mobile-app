@@ -4,8 +4,7 @@ import 'package:flutter/material.dart';
 class SponsoredPostsOverview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return SliverFixedExtentList(
-      itemExtent: 480.0,
+    return SliverList(
       delegate: SliverChildBuilderDelegate(
         (BuildContext context, int index) {
           return SponsorItem(
@@ -17,7 +16,7 @@ class SponsoredPostsOverview extends StatelessWidget {
                 'https://images.unsplash.com/photo-1617103901487-3f2714ec9692?ixid=MXwxMjA3fDB8MHx0b3BpYy1mZWVkfDEwfDZzTVZqVExTa2VRfHxlbnwwfHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=60',
           );
         },
-        childCount: 10,
+        childCount: 3,
       ),
     );
   }
@@ -59,9 +58,11 @@ class _SponsorItemState extends State<SponsorItem> {
               child: Image.network(widget.imageLink),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
+              padding:
+                  MediaQuery.of(context).orientation == Orientation.portrait
+                      ? EdgeInsets.only(left: 15, right: 15, bottom: 15)
+                      : EdgeInsets.only(left: 40, right: 40, bottom: 15),
               child: Column(
-                // mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(top: 13, bottom: 10),
@@ -93,7 +94,7 @@ class _SponsorItemState extends State<SponsorItem> {
                     ],
                   ),
                   SizedBox(
-                    height: 3,
+                    height: 5,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,

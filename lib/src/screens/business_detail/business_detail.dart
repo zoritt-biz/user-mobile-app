@@ -383,11 +383,18 @@ class BusinessInfo extends StatelessWidget {
                 child: Row(
                   children: [
                     Expanded(
+                        flex: MediaQuery.of(context).orientation ==
+                                Orientation.portrait
+                            ? 1
+                            : 4,
                         child: Container(
-                      child: null,
-                    )),
+                          child: null,
+                        )),
                     Expanded(
-                        flex: 2,
+                        flex: MediaQuery.of(context).orientation ==
+                                Orientation.portrait
+                            ? 2
+                            : 3,
                         child: OutlinedButton(
                             style: OutlinedButton.styleFrom(
                               primary: Colors.black,
@@ -396,9 +403,13 @@ class BusinessInfo extends StatelessWidget {
                             onPressed: () {},
                             child: Text('More Info'))),
                     Expanded(
+                        flex: MediaQuery.of(context).orientation ==
+                                Orientation.portrait
+                            ? 1
+                            : 4,
                         child: Container(
-                      child: null,
-                    )),
+                          child: null,
+                        )),
                   ],
                 ),
               )
