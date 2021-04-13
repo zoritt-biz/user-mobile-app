@@ -246,7 +246,12 @@ class BusinessSearch extends SearchDelegate<Business>{
   @override
   List<Widget> buildActions(BuildContext context) {
     return [
-      Icon(Icons.clear),
+      IconButton(
+        icon:Icon(Icons.clear),
+        onPressed: (){
+          query="";
+        },
+      )
     ];
   }
 
