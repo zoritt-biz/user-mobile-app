@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:zoritt_mobile_app_user/src/models/models.dart';
 
 class SearchPage extends StatelessWidget {
   final BuildContext globalNavigator;
@@ -11,6 +12,15 @@ class SearchPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text("Search"),
+        actions: [
+          IconButton(
+            onPressed: (){
+              showSearch(context: context, delegate: BusinessSearch());
+            },
+            iconSize: 30,
+            icon: Icon(Icons.search,color: Colors.black,),
+          )
+        ],
       ),
       body: ListView(
         children: [
@@ -231,4 +241,33 @@ class _SearchFilterState extends State<SearchFilter> {
       ),
     );
   }
+}
+class BusinessSearch extends SearchDelegate<Business>{
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return [
+      Icon(Icons.clear),
+    ];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+      icon:Icon(Icons.arrow_back),
+      onPressed:(){
+        close(context, Business());
+      }
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+     return Container();
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    return Container();
+  }
+
 }
