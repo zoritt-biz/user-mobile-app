@@ -97,11 +97,33 @@ class _BusinessDetailState extends State<BusinessDetail> {
             // toolbarHeight: 70.0,
             expandedHeight: 250,
             flexibleSpace: FlexibleSpaceBar(
-              background: Opacity(
-                opacity: 0.9,
-                child: Image.network(
-                  "https://images.unsplash.com/photo-1614823498916-a28a7d67182c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80",
-                  fit: BoxFit.cover,
+              background: Container(
+                // BoxDecoration(
+                //   gradient: LinearGradient(
+                //     colors: [Colors.black, Colors.transparent, Colors.transparent, Colors.black],
+                //     begin: Alignment.topCenter,
+                //     end: Alignment.bottomCenter,
+                //     stops: [0, 0.2, 0.8, 1],
+                //   ),
+                // ),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.grey[100],
+                      // Colors.white,
+                      Colors.black87,
+                    ],
+                  ),
+                ),
+                child: ColorFiltered(
+                  colorFilter: ColorFilter.mode(
+                      Colors.black.withOpacity(0.4), BlendMode.srcOver),
+                  child: Image.network(
+                    "https://images.unsplash.com/photo-1614823498916-a28a7d67182c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80",
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
               // titlePadding: EdgeInsets.all(15),
@@ -400,7 +422,10 @@ class BusinessInfo extends StatelessWidget {
                               primary: Colors.black,
                               side: BorderSide(color: Colors.amber),
                             ),
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.pushNamed(
+                                  context, '/business_more_info');
+                            },
                             child: Text('More Info'))),
                     Expanded(
                         flex: MediaQuery.of(context).orientation ==
