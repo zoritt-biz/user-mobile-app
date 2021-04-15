@@ -5,26 +5,29 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/models/models.dart';
 import 'package:zoritt_mobile_app_user/src/repository/repository.dart';
 
-part 'business_event.dart';
+// part 'business_event.dart';
 part 'business_state.dart';
 
-class BusinessBloc extends Bloc<BusinessEvent, BusinessState> {
+class BusinessBloc extends Cubit<BusinessState> {
   final BusinessRepository businessRepository;
 
   BusinessBloc({@required this.businessRepository})
       : assert(businessRepository != null),
-        super(BusinessLoading());
+        super(BusinessUnknown());
 
-  @override
-  Stream<BusinessState> mapEventToState(BusinessEvent event) async* {
-    if (event is BusinessLoad) {
-      yield BusinessLoading();
-      try {
-        final item = await businessRepository.getBusiness(event.id);
-        yield BusinessLoadSuccess(item);
-      } catch (e) {
-        yield BusinessOperationFailure(e.toString());
-      }
+
+  void searchForBusinesses(String query,int skip,int limit)async{
+    print("businessloading");
+    emit(BusinessLoading());
+    try{
+      print("gettingBusinesses");
+      final item=await businessRepository.getBusinesses(query, skip, limit);
+      emit(BusinessLoadSuccess(item));
+    }catch (e){
+      print("failed"+e.toString());
+      emit(BusinessOperationFailure(e.toString()));
     }
   }
+
+
 }
