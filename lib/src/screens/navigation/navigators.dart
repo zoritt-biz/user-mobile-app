@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/events/events_bloc.dart';
+import 'package:zoritt_mobile_app_user/src/models/models.dart';
 import 'package:zoritt_mobile_app_user/src/repository/event/events_repository.dart';
 import 'package:zoritt_mobile_app_user/src/repository/repository.dart';
 import 'package:zoritt_mobile_app_user/src/screens/search_page/search_page.dart';
@@ -73,6 +74,7 @@ class HomeNavigator extends TabNavigator {
 
 class SearchNavigatorRoutes {
   static const String root = "/";
+  static const String businessDetail="businessdetail";
 }
 
 class SearchNavigator extends TabNavigator {
@@ -81,10 +83,22 @@ class SearchNavigator extends TabNavigator {
 
   SearchNavigator({this.navigatorKey, this.globalNavigator});
 
-  Map<String, WidgetBuilder> _routeBuilder(BuildContext context) {
+  Map<String, CustomWidgetBuilder> _routeBuilder(BuildContext context) {
     return {
-      SearchNavigatorRoutes.root: (ctx) =>
-          SearchPage(globalNavigator: globalNavigator),
+      SearchNavigatorRoutes.root: (context,_) {
+          return
+            BlocProvider<BusinessBloc>(create: (context)=>
+               BusinessBloc(businessRepository:context.read<BusinessRepository>()),
+
+          child:
+              SearchPage(globalNavigator: globalNavigator));
+
+
+
+    },
+      SearchNavigatorRoutes.businessDetail: (context,setting){
+         return BusinessDetail(business: setting.arguments as Business);
+      }
     };
   }
 
@@ -96,7 +110,7 @@ class SearchNavigator extends TabNavigator {
       initialRoute: SearchNavigatorRoutes.root,
       onGenerateRoute: (routeSettings) {
         return MaterialPageRoute(
-          builder: (ctx) => routeBuilders[routeSettings.name](ctx),
+          builder: (ctx) => routeBuilders[routeSettings.name](ctx,routeSettings),
         );
       },
     );

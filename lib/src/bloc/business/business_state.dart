@@ -8,9 +8,10 @@ class BusinessState extends Equatable {
 }
 
 class BusinessLoading extends BusinessState {}
+class BusinessUnknown extends BusinessState{}
 
 class BusinessLoadSuccess extends BusinessState {
-  final Business business;
+  final List<Business> business;
 
   BusinessLoadSuccess(this.business);
 
