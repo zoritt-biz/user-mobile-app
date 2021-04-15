@@ -43,4 +43,46 @@ class BusinessRepository {
     final data = results.data['businessListMany'] as List;
     return data.map((e) => BusinessList.fromJson(e)).toList();
   }
+
+  Future<List<Business>> getBusinesses(String query,int skip,int limit)async{
+    final results= await client.query(
+        QueryOptions(
+          document: gql(GET_BUSINESS_MANY),
+          variables: {
+            "filter":{
+              // "searchIndex":query.split(" "),
+              "businessName":query
+            },
+            "limit":limit,
+            "skip":skip,
+          }
+        )
+    );
+    if(results.hasException){
+      throw results.exception;
+    }
+    final data = results.data['businessMany'] as List;
+    print("businessMany");
+    print(data);
+    return data.map((e) => Business.fromJson(e)).toList();
+  }
+  Future<List<Business>> getRelatedBusinesses(String query,int skip,int limit)async{
+    final results= await client.query(
+        QueryOptions(
+            document: gql(GET_BUSINESS_LIST_MANY),
+            variables: {
+              "filter":{
+                "categoriesName":query.split(" "),
+              },
+              "limit":limit,
+              "skip":0,
+            }
+        )
+    );
+    if(results.hasException){
+      throw results.exception;
+    }
+    final data = results.data['businessMany'] as List;
+    return data.map((e) => Business.fromJson(e)).toList();
+  }
 }

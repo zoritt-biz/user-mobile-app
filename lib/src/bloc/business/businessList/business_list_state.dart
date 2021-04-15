@@ -29,4 +29,4 @@ class BusinessListFailure extends BusinessListState {
   List<Object> get props => [message];
 }
 
-class BusinessUnknown extends BusinessListState {}
+class BusinessListUnknown extends BusinessListState {}

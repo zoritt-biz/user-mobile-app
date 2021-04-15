@@ -58,9 +58,9 @@ query ($id: MongoID!){
   }
 }
 """;
-const GET_BUSINESS_MANY=r"""
-  query($limit:Int,$filter:FilterFindManyBusinessInput){
-     businessMany(limit:$limit,filter:$filter){
+const GET_BUSINESS_MANY = r"""
+  query($limit:Int,$filter:FilterFindManyBusinessInput,$skip:Int){
+     businessMany(limit:$limit,filter:$filter,skip:$skip){
     _id
     businessName
     phoneNumber
@@ -71,10 +71,8 @@ const GET_BUSINESS_MANY=r"""
     slogan
     description
     specialization
-    categoriesName
     history
     establishedIn
-    subscription
     updatedAt
     createdAt
     pictures
@@ -123,11 +121,13 @@ const GET_BUSINESS_MANY=r"""
 
 """;
 
-const  GET_BUSINESS_LIST_MANY=r"""
+const GET_BUSINESS_LIST_MANY = r"""
   query{
    businessListMany{
     _id,
-    autoCompleteTerm
+    autocompleteTerm
    }
   }
   """;
+
+
