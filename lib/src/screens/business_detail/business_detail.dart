@@ -112,14 +112,13 @@ class _BusinessDetailState extends State<BusinessDetail> {
                     end: Alignment.bottomCenter,
                     colors: [
                       Colors.grey[100],
-                      // Colors.white,
-                      Colors.black87,
+                      Colors.black,
                     ],
                   ),
                 ),
                 child: ColorFiltered(
                   colorFilter: ColorFilter.mode(
-                      Colors.black.withOpacity(0.4), BlendMode.srcOver),
+                      Colors.black.withOpacity(0.5), BlendMode.dstATop),
                   child: Image.network(
                     "https://images.unsplash.com/photo-1614823498916-a28a7d67182c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80",
                     fit: BoxFit.cover,
