@@ -65,8 +65,8 @@ class Business extends Equatable {
       slogan: data['slogan'],
       description: data['description'],
       specialization: data['specialization'],
-      categoriesName:
-          (data['categoriesName'] as List).map((e) => e.toString()).toList(),
+      // categoriesName:
+          // (data['categoriesName'] as List).map((e) => e.toString()).toList(),
       history: data['history'],
       establishedIn: data['establishedIn'],
       subscription: data['subscription'],

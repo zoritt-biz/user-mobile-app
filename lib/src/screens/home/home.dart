@@ -4,10 +4,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/navigation/NavigationBloc.dart';
 
 import 'category_section.dart';
 import 'events_section.dart';
 import 'posts_section.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'sponsored_posts_overview.dart';
 
 class Home extends StatefulWidget {
@@ -48,6 +50,11 @@ class _HomeState extends State<Home> {
               child: TextField(
                 cursorRadius: Radius.circular(20),
                 autofocus: false,
+                readOnly: true,
+                onTap: (){
+                  print("tapped");
+                  context.read<NavigationBloc>().navigateToSearch();
+                },
                 decoration: InputDecoration(
                   contentPadding: EdgeInsets.zero,
                   prefixIcon: Icon(
@@ -61,8 +68,8 @@ class _HomeState extends State<Home> {
                 ),
               ),
             ),
-          ),
-        ),
+          )),
+
         CategorySection(),
         EventsSection(),
         PostsSection(globalNavigator: widget.globalNavigator),
