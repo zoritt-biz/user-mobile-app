@@ -89,8 +89,9 @@ class _HomeState extends State<Home> {
                     fit: BoxFit.cover,
                   ),
                   Container(
-                    decoration:
-                        BoxDecoration(color: Colors.black.withOpacity(0.3)),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.3),
+                    ),
                   ),
                   Align(
                     alignment: Alignment.bottomLeft,

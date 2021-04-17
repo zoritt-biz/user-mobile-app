@@ -46,7 +46,7 @@ class BusinessSearch extends SearchDelegate<String> {
 
   @override
   void showResults(BuildContext context) {
-    buildContext.read<BusinessBloc>().searchForBusinesses(query, 0, 15);
+    buildContext.read<BusinessBloc>().searchForBusinesses(query, 0, 50);
     close(context, query);
     super.showResults(context);
   }
