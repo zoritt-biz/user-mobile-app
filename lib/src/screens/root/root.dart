@@ -106,7 +106,7 @@ class _HomePageState extends State<HomePage> {
 
     return BlocListener<NavigationBloc, NavigationState>(
         listener: (context, state) {
-          if (state is NavigatedToSearchDelegate) {
+          if (state is NavigatedToSearchDelegate || state is NavigatedToSearch) {
             setCurrentIndex(TabItem.search);
           }
         },
