@@ -32,11 +32,13 @@ class _HomePageState extends State<HomePage> {
     _globalNavigatorContext = context;
     tabNavigators = [
       HomeNavigator(
-          navigatorKey: tabNavigatorKeys[TabItem.home.index],
-          globalNavigator: _globalNavigatorContext),
+        navigatorKey: tabNavigatorKeys[TabItem.home.index],
+        globalNavigator: _globalNavigatorContext,
+      ),
       SearchNavigator(
-          navigatorKey: tabNavigatorKeys[TabItem.search.index],
-          globalNavigator: _globalNavigatorContext),
+        navigatorKey: tabNavigatorKeys[TabItem.search.index],
+        globalNavigator: _globalNavigatorContext,
+      ),
       FavoritesNavigator(
           navigatorKey: tabNavigatorKeys[TabItem.favorites.index]),
       // MessagesNavigator(navigatorKey: tabNavigatorKeys[TabItem.messages.index]),

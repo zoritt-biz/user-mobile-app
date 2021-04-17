@@ -79,12 +79,8 @@ class BusinessRepository {
       QueryOptions(
         document: gql(GET_BUSINESS_MANY),
         variables: {
-          "filter": {
-            // "searchIndex":query.split(" "),
-            "businessName": query
-          },
+          "searchArray": [...query.split(" ").map((e) => e.toLowerCase())],
           "limit": limit,
-          "skip": skip,
         },
       ),
     );
