@@ -8,15 +8,14 @@ abstract class FilteredBusinessListState extends Equatable {
   List<Object> get props => [];
 }
 
-class FilteredBusinessListLoading extends FilteredBusinessListState{}
+class FilteredBusinessListLoading extends FilteredBusinessListState {}
 
 class FilteredBusinessListSuccessful extends FilteredBusinessListState {
   final List<BusinessList> businessList;
   final String query;
 
-  FilteredBusinessListSuccessful({this.businessList,this.query});
+  FilteredBusinessListSuccessful({this.businessList, this.query});
 
   @override
   List<Object> get props => [businessList];
 }
-

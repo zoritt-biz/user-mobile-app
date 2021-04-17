@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:zoritt_mobile_app_user/src/bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/bloc.dart';
 import 'package:zoritt_mobile_app_user/src/screens/categories_page/category_list.dart';
 
 class CategorySection extends StatelessWidget {

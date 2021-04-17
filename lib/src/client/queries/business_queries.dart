@@ -29,6 +29,11 @@ query ($id: MongoID!){
       videos
       photos
       createdAt
+      owner {
+        businessName
+        location
+        logoPics
+      }
     }
     events {
       _id
@@ -39,6 +44,11 @@ query ($id: MongoID!){
       videos
       photos
       createdAt
+      owner {
+        businessName
+        location
+        logoPics
+      }
     }
     categories {
       _id

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/bloc.dart';
-import 'package:zoritt_mobile_app_user/src/bloc/navigation/NavigationBloc.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/navigation/navigation_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/models/models.dart';
 
 import 'business_search.dart';
@@ -18,7 +18,7 @@ class SearchPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<NavigationBloc, NavigationState>(
       listener: (context, state) {
-        if (state is NavigatedToSearch) {
+        if (state is NavigatedToSearchDelegate) {
           showSearch(
             delegate: BusinessSearch(buildContext: context),
             context: context,
@@ -45,19 +45,20 @@ class SearchPage extends StatelessWidget {
           ],
         ),
         body: BlocConsumer<BusinessBloc, BusinessState>(
-          builder: (context, state) {
-            if (state is BusinessLoadSuccess) {
-              if (state.business.isNotEmpty) {
-                return body(context, state.business);
+          builder: (bizCtx, bizState) {
+            if (bizState is BusinessLoadSuccess) {
+              if (bizState.business.isNotEmpty) {
+                return body(context, bizState.business);
               }
               return Center(
                 child: Text("No business found "),
               );
+            } else {
+              return shimmer(context);
             }
-            return shimmer(context);
           },
-          listener: (context, state) {
-            if (state is BusinessUnknown) {
+          listener: (bizCtx, bizState) {
+            if (bizState is BusinessUnknown) {
               // showSearch(
               //     delegate: BusinessSearch(buildContext: context),
               //     context: context);
@@ -91,26 +92,22 @@ class SearchPage extends StatelessWidget {
             ),
           ),
         ),
-        Expanded(
-          child: ListView.builder(
-            itemBuilder: (context, index) {
-              return GestureDetector(
-                onTap: () {
-                  Navigator.pushNamed(
-                    globalNavigator,
-                    "/business_detail",
-                    arguments: businesses[index].id,
-                  );
-                },
-                child: SearchResult(
-                  business: businesses[index],
-                ),
-              );
-            },
-            itemCount: businesses.length,
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-          ),
+        ListView.builder(
+          itemBuilder: (context, index) {
+            return GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(
+                  globalNavigator,
+                  "/business_detail",
+                  arguments: [businesses[index].id],
+                );
+              },
+              child: SearchResult(business: businesses[index]),
+            );
+          },
+          itemCount: businesses.length,
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
         ),
       ],
     );
@@ -279,7 +276,7 @@ class _SearchResultState extends State<SearchResult> {
             children: [
               Expanded(
                 child: Image.network(
-                  widget.business.logoPic,
+                  widget.business.pictures[0],
                   fit: BoxFit.fill,
                   height: 100,
                 ),
@@ -323,22 +320,6 @@ class _SearchResultState extends State<SearchResult> {
                       SizedBox(
                         height: 5,
                       ),
-                      // if (widget.business.relatedBusiness != true)
-                      //   Row(
-                      //     children: [
-                      //       Text(
-                      //         '\$${widget.price.toString()}',
-                      //         style: TextStyle(fontSize: 15),
-                      //       ),
-                      //       SizedBox(
-                      //         width: 15,
-                      //       ),
-                      //       Text(
-                      //         widget.name,
-                      //         style: TextStyle(fontSize: 15),
-                      //       )
-                      //     ],
-                      //   ),
                     ],
                   ),
                 ),

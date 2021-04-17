@@ -1,7 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:zoritt_mobile_app_user/src/models/models.dart';
 
-
 abstract class BusinessListState extends Equatable {
   const BusinessListState();
 
@@ -9,7 +8,7 @@ abstract class BusinessListState extends Equatable {
   List<Object> get props => [];
 }
 
-class BusinessListLoading extends BusinessListState{}
+class BusinessListLoading extends BusinessListState {}
 
 class BusinessListLoadSuccessful extends BusinessListState {
   final List<BusinessList> businessList;

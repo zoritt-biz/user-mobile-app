@@ -1,15 +1,13 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:zoritt_mobile_app_user/src/models/business.dart';
 
 class BusinessMoreInfo extends StatelessWidget {
   static const String pathName = "/more_business_info";
 
-  final String title;
-  final String description;
+  final Business business;
 
-  BusinessMoreInfo({
-    this.title,
-    this.description,
-  });
+  BusinessMoreInfo({this.business});
 
   @override
   Widget build(BuildContext context) {
@@ -19,9 +17,15 @@ class BusinessMoreInfo extends StatelessWidget {
       ),
       body: ListView(
         children: [
-          SingleInfo(title: "asgs", description: "askdjfhkad"),
-          SingleInfo(title: "asgs", description: "askdjfhkad"),
-          SingleInfo(title: "asgs", description: "askdjfhkad"),
+          SingleInfo(title: "Description", description: business.description),
+          if (business.specialization != null && business.specialization != "")
+            SingleInfo(
+                title: "Specialization", description: business.specialization),
+          if (business.establishedIn != null && business.establishedIn != "")
+            SingleInfo(
+                title: "Established In", description: business.establishedIn),
+          if (business.history != null && business.history != "")
+            SingleInfo(title: "History", description: business.history),
         ],
       ),
     );
@@ -49,17 +53,17 @@ class SingleInfo extends StatelessWidget {
             child: Text(
               title.toUpperCase(),
               style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey[800],),
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey[800],
+              ),
             ),
           ),
           SizedBox(
             height: 5,
           ),
           Padding(
-            padding:
-                const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
             child: Text(
               description,
               style: TextStyle(

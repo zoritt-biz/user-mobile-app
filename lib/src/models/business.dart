@@ -56,52 +56,85 @@ class Business extends Equatable {
     return Business(
       id: data['_id'],
       businessName: data['businessName'],
-      phoneNumber: (data['phoneNumber'] as List).map((e) => e.toString()).toList(),
+      phoneNumber:
+          (data['phoneNumber'] as List).map((e) => e.toString()).toList(),
       location: data['location'],
-      emails: (data['emails'] as List) != null ? (data['emails'] as List).length > 0 ? (data['emails'] as List).map((e) => e.toString()).toList() : [] : [],
+      emails: (data['emails'] as List) != null
+          ? (data['emails'] as List).length > 0
+              ? (data['emails'] as List).map((e) => e.toString()).toList()
+              : []
+          : [],
       website: data['website'],
       logoPic: data['logoPics'],
       slogan: data['slogan'],
       description: data['description'],
       specialization: data['specialization'],
-      searchIndex: (data['searchIndex']as List) != null ? (data['searchIndex'] as List).length > 0
-          ? (data['searchIndex'] as List).map((e) => e.toString()).toList()
-          : [] : [],
+      searchIndex: (data['searchIndex'] as List) != null
+          ? (data['searchIndex'] as List).length > 0
+              ? (data['searchIndex'] as List).map((e) => e.toString()).toList()
+              : []
+          : [],
       history: data['history'],
       establishedIn: data['establishedIn'],
       subscription: data['subscription'],
       pictures: (data['pictures'] as List).map((e) => e.toString()).toList(),
-      openHours: (data['openHours']as List) != null ? (data['openHours'] as List).length > 0 ? (data['openHours'] as List)
-          .map((e) =>
-              OpenHours(closes: e['closes'], day: e['day'], opens: e['opens']))
-          .toList() : [] : [],
-      posts: (data['posts']as List) != null ? (data['posts'] as List).length > 0 ? (data['posts'] as List)
-          .map((e) => Post(
-                id: e['_id'],
-                description: e['description'],
-                video: (e['videos'] as List).map((e) => e.toString()).toList(),
-                photos: (e['photos'] as List).map((e) => e.toString()).toList(),
-              ))
-          .toList() : [] : [],
-      events: (data['events']as List) != null ? (data['events'] as List).length > 0 ? (data['events'] as List)
-          .map((e) => Events(
-                id: e['_id'],
-                description: e['description'],
-                title: e['title'],
-                link: e['link'],
-                location: e['location'],
-                video: (e['videos'] as List).map((e) => e.toString()).toList(),
-                photos: (e['photos'] as List).map((e) => e.toString()).toList(),
-              ))
-          .toList() : [] : [],
-      categories: (data['categories']as List) != null ? (data['categories'] as List).length > 0 ? (data['categories'] as List)
-          .map((e) => Category(
-                id: e['_id'],
-                autocompleteTerm: e['autocompleteTerm'],
-                name: e['name'],
-                parent: e['parent'],
-              ))
-          .toList() : [] : [],
+      openHours: (data['openHours'] as List) != null
+          ? (data['openHours'] as List).length > 0
+              ? (data['openHours'] as List)
+                  .map((e) => OpenHours(
+                      closes: e['closes'], day: e['day'], opens: e['opens']))
+                  .toList()
+              : []
+          : [],
+      posts: (data['posts'] as List) != null
+          ? (data['posts'] as List).length > 0
+              ? (data['posts'] as List)
+                  .map((e) => Post(
+                        id: e['_id'],
+                        description: e['description'],
+                        video: (e['videos'] as List)
+                            .map((e) => e.toString())
+                            .toList(),
+                        photos: (e['photos'] as List)
+                            .map((e) => e.toString())
+                            .toList(),
+                        businessLogo: data['logoPics'],
+                        businessName: data['businessName'],
+                      ))
+                  .toList()
+              : []
+          : [],
+      events: (data['events'] as List) != null
+          ? (data['events'] as List).length > 0
+              ? (data['events'] as List)
+                  .map((e) => Events(
+                        id: e['_id'],
+                        description: e['description'],
+                        title: e['title'],
+                        link: e['link'],
+                        location: e['location'],
+                        video: (e['videos'] as List)
+                            .map((e) => e.toString())
+                            .toList(),
+                        photos: (e['photos'] as List)
+                            .map((e) => e.toString())
+                            .toList(),
+                      ))
+                  .toList()
+              : []
+          : [],
+      categories: (data['categories'] as List) != null
+          ? (data['categories'] as List).length > 0
+              ? (data['categories'] as List)
+                  .map((e) => Category(
+                        id: e['_id'],
+                        autocompleteTerm: e['autocompleteTerm'],
+                        name: e['name'],
+                        parent: e['parent'],
+                      ))
+                  .toList()
+              : []
+          : [],
     );
   }
 

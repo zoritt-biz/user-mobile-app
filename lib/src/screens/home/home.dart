@@ -4,13 +4,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/bloc.dart';
-import 'package:zoritt_mobile_app_user/src/bloc/navigation/NavigationBloc.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/navigation/navigation_bloc.dart';
 
 import 'category_section.dart';
 import 'events_section.dart';
 import 'posts_section.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'sponsored_posts_overview.dart';
 
 class Home extends StatefulWidget {
@@ -123,7 +123,7 @@ class _HomeState extends State<Home> {
                   autofocus: false,
                   readOnly: true,
                   onTap: () {
-                    context.read<NavigationBloc>().navigateToSearch();
+                    context.read<NavigationBloc>().navigateToSearchDelegate();
                   },
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.zero,

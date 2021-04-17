@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 const CATEGORY_LIST = [
   {
     "name": "Arts, Media & Entertainment",
+    "icon": Icons.movie,
     "sub_categories": [
       {"name": "TV / Radio"},
       {"name": "Promotion & Advertising"},
@@ -13,6 +15,7 @@ const CATEGORY_LIST = [
   },
   {
     "name": "Food & Catering",
+    "icon": Icons.restaurant_menu_rounded,
     "sub_categories": [
       {"name": "Restaurant"},
       {"name": "Cafe"},
@@ -27,6 +30,7 @@ const CATEGORY_LIST = [
   },
   {
     "name": "Beauty & Spa",
+    "icon": Icons.spa_rounded,
     "sub_categories": [
       {"name": "Beauty Salon"},
       {"name": "Barber Shop"},
@@ -35,6 +39,7 @@ const CATEGORY_LIST = [
   },
   {
     "name": "Hotel , Hospitality  & Cleaning",
+    "icon": Icons.hotel,
     "sub_categories": [
       {"name": "Hotel"},
       {"name": "Gust House"},
@@ -45,6 +50,7 @@ const CATEGORY_LIST = [
   },
   {
     "name": "Shopping / Household & Furniture",
+    "icon": Icons.shopping_basket_rounded,
     "sub_categories": [
       {"name": "Mall"},
       {"name": "Household"},
@@ -59,6 +65,7 @@ const CATEGORY_LIST = [
   },
   {
     "name": "Financial service",
+    "icon": Icons.money,
     "sub_categories": [
       {"name": "Bank"},
       {"name": "Insurance"},
@@ -67,6 +74,7 @@ const CATEGORY_LIST = [
   },
   {
     "name": "Tour , Travel & Transport",
+    "icon": Icons.car_rental,
     "sub_categories": [
       {"name": "Tour & Travel Agent"},
       {"name": "Ticket Office"},
@@ -79,6 +87,7 @@ const CATEGORY_LIST = [
   },
   {
     "name": "Night Life & liquor Store",
+    "icon": Icons.local_bar,
     "sub_categories": [
       {"name": "Club"},
       {"name": "Bars & Lounges"},
@@ -88,6 +97,7 @@ const CATEGORY_LIST = [
   },
   {
     "name": "Construction",
+    "icon": Icons.business,
     "sub_categories": [
       {"name": "Real Estate"},
       {"name": "Contractor"},
@@ -98,6 +108,7 @@ const CATEGORY_LIST = [
   },
   {
     "name": "Education & Training",
+    "icon": FontAwesomeIcons.graduationCap,
     "sub_categories": [
       {"name": "University"},
       {"name": "School"},
@@ -107,6 +118,7 @@ const CATEGORY_LIST = [
   },
   {
     "name": "Event Organizers",
+    "icon": Icons.event,
     "sub_categories": [
       {"name": "Celebration Organizer"},
       {"name": "Weeding Planer"},
@@ -117,6 +129,7 @@ const CATEGORY_LIST = [
   },
   {
     "name": "Import / Export & Manufacturing",
+    "icon": Icons.compare_arrows_rounded,
     "sub_categories": [
       {"name": "Import"},
       {"name": "Export"},
@@ -125,6 +138,7 @@ const CATEGORY_LIST = [
   },
   {
     "name": "Religious Organizations",
+    "icon": FontAwesomeIcons.placeOfWorship,
     "sub_categories": [
       {"name": "Orthodox"},
       {"name": "Catholic"},
@@ -134,6 +148,7 @@ const CATEGORY_LIST = [
   },
   {
     "name": "Automotive & Gas Stations",
+    "icon": Icons.local_gas_station_rounded,
     "sub_categories": [
       {"name": "Gas Station"},
       {"name": "Car Wash"},
@@ -144,6 +159,7 @@ const CATEGORY_LIST = [
   },
   {
     "name": "Sport & leather",
+    "icon": Icons.sports_baseball_rounded,
     "sub_categories": [
       {"name": "Gym"},
       {"name": "Sport Equipment"},
@@ -155,12 +171,14 @@ const CATEGORY_LIST = [
   },
   {
     "name": "Government Offices",
+    "icon": Icons.account_balance_rounded,
     "sub_categories": [
       {"name": "Government Office"},
     ]
   },
   {
     "name": "Farm & Agriculture",
+    "icon": Icons.agriculture_rounded,
     "sub_categories": [
       {"name": "Farm & diary"},
       {"name": "Agro Industry"},
@@ -169,6 +187,7 @@ const CATEGORY_LIST = [
   },
   {
     "name": "Health",
+    "icon": Icons.local_hospital_rounded,
     "sub_categories": [
       {"name": "Hospital"},
       {"name": "Clinic"},
@@ -181,6 +200,7 @@ const CATEGORY_LIST = [
   },
   {
     "name": "Humanitarian & Emergency Numbers",
+    "icon": FontAwesomeIcons.universalAccess,
     "sub_categories": [
       {"name": "Emergency Numbers"},
       {"name": "NGO"},
@@ -190,6 +210,7 @@ const CATEGORY_LIST = [
   },
   {
     "name": "Local Services",
+    "icon": Icons.construction_rounded,
     "sub_categories": [
       {"name": "Local Service"},
     ]

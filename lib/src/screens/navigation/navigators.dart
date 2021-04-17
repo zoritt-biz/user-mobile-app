@@ -34,7 +34,10 @@ class HomeNavigator extends TabNavigator {
             globalNavigator: globalNavigator,
           ),
       HomeNavigatorRoutes.categories: (ctx, _) => CategoriesPage(),
-      HomeNavigatorRoutes.subcategories: (ctx, _) => Subcategory(),
+      HomeNavigatorRoutes.subcategories: (ctx, setting) {
+        List<dynamic> arguments = setting.arguments as List;
+        return Subcategory(arguments[0]);
+      },
       HomeNavigatorRoutes.events: (ctx, _) => BlocProvider<EventsBloc>(
             create: (context) => EventsBloc(
               eventRepository: context.read<EventsRepository>(),
@@ -93,12 +96,7 @@ class SearchNavigator extends TabNavigator {
   Map<String, CustomWidgetBuilder> _routeBuilder(BuildContext context) {
     return {
       SearchNavigatorRoutes.root: (context, _) {
-        return BlocProvider<BusinessBloc>(
-          create: (context) => BusinessBloc(
-            businessRepository: context.read<BusinessRepository>(),
-          ),
-          child: SearchPage(globalNavigator: globalNavigator),
-        );
+        return SearchPage(globalNavigator: globalNavigator);
       }
     };
   }

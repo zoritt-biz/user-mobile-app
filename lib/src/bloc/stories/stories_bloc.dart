@@ -29,4 +29,3 @@ class StoryBloc extends Cubit<StoryState> {
     }
   }
 }
-

@@ -75,34 +75,13 @@ class BusinessRepository {
     int skip,
     int limit,
   ) async {
+    print(query);
     final results = await client.query(
       QueryOptions(
         document: gql(GET_BUSINESS_MANY),
         variables: {
           "searchArray": [...query.split(" ").map((e) => e.toLowerCase())],
           "limit": limit,
-        },
-      ),
-    );
-    if (results.hasException) {
-      throw results.exception;
-    }
-    final data = results.data['businessMany'] as List;
-    return data.map((e) => Business.fromJson(e)).toList();
-  }
-
-  Future<List<Business>> getRelatedBusinesses(
-    String query,
-    int skip,
-    int limit,
-  ) async {
-    final results = await client.query(
-      QueryOptions(
-        document: gql(GET_BUSINESS_LIST_MANY),
-        variables: {
-          "filter": {"categoriesName": query.split(" ")},
-          "limit": limit,
-          "skip": 0,
         },
       ),
     );
