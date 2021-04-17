@@ -6,7 +6,6 @@ import 'package:zoritt_mobile_app_user/src/bloc/bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/navigation/NavigationBloc.dart';
 import 'package:zoritt_mobile_app_user/src/models/models.dart';
 import 'package:zoritt_mobile_app_user/src/repository/business/business_repository.dart';
-import 'package:zoritt_mobile_app_user/src/screens/navigation/navigators.dart';
 
 class SearchPage extends StatelessWidget {
   final BuildContext globalNavigator;
@@ -16,51 +15,55 @@ class SearchPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocListener<NavigationBloc, NavigationState>(
-        listener: (context, state) {
-          if (state is NavigatedToSearch) {
-            showSearch(
-                delegate: BusinessSearch(buildContext: context),
-                context: context);
-          }
-        },
-        child: Scaffold(
-            appBar: AppBar(
-              title: Text("Search"),
-              actions: [
-                IconButton(
-                  onPressed: () {
-                    showSearch(
-                        delegate: BusinessSearch(buildContext: context),
-                        context: context);
-                  },
-                  iconSize: 30,
-                  icon: Icon(
-                    Icons.search,
-                    color: Colors.black,
-                  ),
-                )
-              ],
-            ),
-            body: BlocConsumer<BusinessBloc, BusinessState>(
-              builder: (context, state) {
-                if (state is BusinessLoadSuccess) {
-                  if (state.business.isNotEmpty) {
-                    return body(context, state.business);
-                  }
-                  return Center(
-                    child: Text("No business found "),
-                  );
-                }
-                return shimmer(context);
+      listener: (context, state) {
+        if (state is NavigatedToSearch) {
+          showSearch(
+            delegate: BusinessSearch(buildContext: context),
+            context: context,
+          );
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text("Search"),
+          actions: [
+            IconButton(
+              onPressed: () {
+                showSearch(
+                  delegate: BusinessSearch(buildContext: context),
+                  context: context,
+                );
               },
-              listener: (context, state) {
-                if (state is BusinessUnknown) {
-                  // showSearch(
-                  //     delegate: BusinessSearch(buildContext: context),
-                  //     context: context);
-                }
-              },
-            )));
+              iconSize: 30,
+              icon: Icon(
+                Icons.search,
+                color: Colors.black,
+              ),
+            )
+          ],
+        ),
+        body: BlocConsumer<BusinessBloc, BusinessState>(
+          builder: (context, state) {
+            if (state is BusinessLoadSuccess) {
+              if (state.business.isNotEmpty) {
+                return body(context, state.business);
+              }
+              return Center(
+                child: Text("No business found "),
+              );
+            }
+            return shimmer(context);
+          },
+          listener: (context, state) {
+            if (state is BusinessUnknown) {
+              // showSearch(
+              //     delegate: BusinessSearch(buildContext: context),
+              //     context: context);
+            }
+          },
+        ),
+      ),
+    );
   }
 
   Widget body(BuildContext context, List<Business> businesses) {
@@ -87,46 +90,26 @@ class SearchPage extends StatelessWidget {
           ),
         ),
         Expanded(
-            child: ListView.builder(
-          itemBuilder: (context, index) {
-            return GestureDetector(
+          child: ListView.builder(
+            itemBuilder: (context, index) {
+              return GestureDetector(
                 onTap: () {
                   Navigator.pushNamed(
-                      context, SearchNavigatorRoutes.businessDetail,
-                      arguments: businesses[index]);
+                    globalNavigator,
+                    "/business_detail",
+                    arguments: businesses[index].id,
+                  );
                 },
                 child: SearchResult(
                   business: businesses[index],
-                ));
-          },
-          itemCount: businesses.length,
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-        )),
-        // GestureDetector(
-        //   onTap: () {
-        //     print("here");
-        //     Navigator.pushNamed(globalNavigator, "/business_detail");
-        //   },
-        //   child: SearchResult(
-        //     title: 'Wow Burger',
-        //     address: 'Arat kilo, Addis Ababa',
-        //     phoneNumber: '+251912365478',
-        //     name: 'Burger, Shawarma',
-        //     price: 3,
-        //     imageLink:
-        //     "https://images.unsplash.com/photo-1614823498916-a28a7d67182c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80",
-        //   ),
-        // ),
-        // SearchResult(
-        //   title: 'Wow Burger',
-        //   address: 'Arat kilo, Addis Ababa',
-        //   phoneNumber: '+251912365478',
-        //   name: 'Burger, Shawarma',
-        //   price: 2,
-        //   imageLink:
-        //   "https://images.unsplash.com/photo-1614823498916-a28a7d67182c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80",
-        // )
+                ),
+              );
+            },
+            itemCount: businesses.length,
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+          ),
+        ),
       ],
     );
   }
@@ -152,49 +135,54 @@ class SearchPage extends StatelessWidget {
 
   Widget searchFilterShimmer() {
     return Padding(
-        padding: const EdgeInsets.all(10),
-        child: Shimmer.fromColors(
-          baseColor: Colors.grey[300],
-          highlightColor: Colors.white,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Container(
-                padding: EdgeInsets.all(8),
-                child: Icon(
-                  Icons.sort_outlined,
-                ),
-                decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.grey)),
+      padding: const EdgeInsets.all(10),
+      child: Shimmer.fromColors(
+        baseColor: Colors.grey[300],
+        highlightColor: Colors.white,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Container(
+              padding: EdgeInsets.all(8),
+              child: Icon(
+                Icons.sort_outlined,
               ),
-              Container(
-                padding: EdgeInsets.all(8),
-                height: 40,
-                width: 40,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(50),
-                    border: Border.all(color: Colors.grey)),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.grey),
               ),
-              Container(
-                padding: EdgeInsets.all(5),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(50),
-                    border: Border.all(color: Colors.grey)),
-                width: 40,
-                height: 40,
+            ),
+            Container(
+              padding: EdgeInsets.all(8),
+              height: 40,
+              width: 40,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(50),
+                border: Border.all(color: Colors.grey),
               ),
-              Container(
-                padding: EdgeInsets.all(8),
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(50),
-                    border: Border.all(color: Colors.grey)),
+            ),
+            Container(
+              padding: EdgeInsets.all(5),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(50),
+                border: Border.all(color: Colors.grey),
               ),
-            ],
-          ),
-        ));
+              width: 40,
+              height: 40,
+            ),
+            Container(
+              padding: EdgeInsets.all(8),
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(50),
+                border: Border.all(color: Colors.grey),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget searchResultShimmer() {
@@ -224,11 +212,12 @@ class SearchPage extends StatelessWidget {
                       Row(
                         children: [
                           Expanded(
-                              child: Container(
-                            color: Colors.grey,
-                            width: 70,
-                            height: 25,
-                          )),
+                            child: Container(
+                              color: Colors.grey,
+                              width: 70,
+                              height: 25,
+                            ),
+                          ),
                         ],
                       ),
                       SizedBox(
@@ -245,11 +234,12 @@ class SearchPage extends StatelessWidget {
                       ),
                       // Expanded(child:
                       Padding(
-                          padding: EdgeInsets.only(right: 50),
-                          child: Container(
-                            color: Colors.grey,
-                            height: 20,
-                          ))
+                        padding: EdgeInsets.only(right: 50),
+                        child: Container(
+                          color: Colors.grey,
+                          height: 20,
+                        ),
+                      )
                       // ),
                       // SizedBox(
                       //   height: 5,
@@ -268,14 +258,6 @@ class SearchPage extends StatelessWidget {
 
 class SearchResult extends StatefulWidget {
   final Business business;
-
-  // final String title;
-  // final String address;
-  // final String phoneNumber;
-  // final double price;
-  // final String name;
-  // final String imageLink;
-  // final bool relatedBusiness;
 
   SearchResult({this.business});
 
@@ -457,10 +439,11 @@ class BusinessSearch extends SearchDelegate<String> {
   @override
   Widget buildLeading(BuildContext context) {
     return IconButton(
-        icon: Icon(Icons.arrow_back),
-        onPressed: () {
-          close(context, query);
-        });
+      icon: Icon(Icons.arrow_back),
+      onPressed: () {
+        close(context, query);
+      },
+    );
   }
 
   @override

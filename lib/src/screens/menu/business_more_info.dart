@@ -1,19 +1,15 @@
 import 'package:flutter/material.dart';
 
 class BusinessMoreInfo extends StatelessWidget {
-  final String title1;
-  final String title2;
-  final String title3;
-  final String description1;
-  final String description2;
-  final String description3;
+  static const String pathName = "/more_business_info";
 
-  BusinessMoreInfo({this.title1,
-    this.title2,
-    this.title3,
-    this.description1,
-    this.description2,
-    this.description3});
+  final String title;
+  final String description;
+
+  BusinessMoreInfo({
+    this.title,
+    this.description,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,102 +19,57 @@ class BusinessMoreInfo extends StatelessWidget {
       ),
       body: ListView(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: Text(
-                    title1,
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey[800]),
-                  ),
-                ),
-                SizedBox(
-                  height: 5,
-                ),
-                Card(
-                  color: Colors.grey[300],
-                  elevation: 2,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 15, horizontal: 10),
-                    child: Text(
-                      description1,
-                      style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.grey[700],
-                          fontStyle: FontStyle.italic),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: Text(
-                    title2,
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey[800]),
-                  ),
-                ),
-                SizedBox(
-                  height: 5,
-                ),
-                Card(
-                  color: Colors.grey[300],
-                  elevation: 2,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 15, horizontal: 10),
-                    child: Text(
-                      description2,
-                      style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.grey[700],
-                          fontStyle: FontStyle.italic),
-                    ),
-                  ),
-                ),
+          SingleInfo(title: "asgs", description: "askdjfhkad"),
+          SingleInfo(title: "asgs", description: "askdjfhkad"),
+          SingleInfo(title: "asgs", description: "askdjfhkad"),
+        ],
+      ),
+    );
+  }
+}
 
-                SizedBox(height: 10,),
-                Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: Text(
-                    title3,
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey[800]),
-                  ),
-                ),
-                SizedBox(
-                  height: 5,
-                ),
-                Card(
-                  color: Colors.grey[300],
-                  elevation: 2,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 15, horizontal: 10),
-                    child: Text(
-                      description3,
-                      style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.grey[700],
-                          fontStyle: FontStyle.italic),
-                    ),
-                  ),
-                ),
-              ],
+class SingleInfo extends StatelessWidget {
+  final String title;
+  final String description;
+
+  SingleInfo({
+    this.title,
+    this.description,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 10),
+            child: Text(
+              title.toUpperCase(),
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey[800],),
             ),
+          ),
+          SizedBox(
+            height: 5,
+          ),
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+            child: Text(
+              description,
+              style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey[700],
+                  fontStyle: FontStyle.italic),
+            ),
+          ),
+          SizedBox(
+            height: 10,
           ),
         ],
       ),

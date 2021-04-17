@@ -11,17 +11,21 @@ class PostBloc extends Cubit<PostState> {
   PostBloc({@required this.postRepository}) : super(PostUnknown());
 
   Future<void> getPosts(
-      int limit, String sort, String filterDate, int skip) async {
-    print("loading");
+    int limit,
+    String sort,
+    String filterDate,
+    int skip,
+  ) async {
     emit(PostLoading());
     try {
-      List<Post> posts =
-          await postRepository.getPosts(limit, sort, filterDate, skip);
-      print("posts");
+      List<Post> posts = await postRepository.getPosts(
+        limit,
+        sort,
+        filterDate,
+        skip,
+      );
       emit(PostLoadSuccessful(posts: posts));
     } catch (e) {
-      print("failed");
-      print(e);
       emit(PostLoadFailure(e.toString()));
     }
   }

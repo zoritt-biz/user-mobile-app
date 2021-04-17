@@ -2,9 +2,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share/share.dart';
-
-import '../../models/models.dart';
-import 'StoriesBloc.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/stories/stories_bloc.dart';
+import 'package:zoritt_mobile_app_user/src/models/post.dart';
 
 class Story extends StatefulWidget {
   final Post post;
@@ -84,9 +83,11 @@ class _StoryState extends State<Story> with SingleTickerProviderStateMixin {
                       );
                     },
                     imageBuilder: (context, imageProvider) {
-                      Future.delayed(Duration(milliseconds: 500)).then((value) {
-                        _animController?.forward();
-                      });
+                      Future.delayed(Duration(milliseconds: 500)).then(
+                        (value) {
+                          _animController?.forward();
+                        },
+                      );
 
                       return Container(
                           decoration: BoxDecoration(
@@ -262,72 +263,75 @@ class UserInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(
-        "You can attend our event",
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 18.0,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      const SizedBox(height: 20.0),
-      Row(
-        children: <Widget>[
-          CircleAvatar(
-            radius: 20.0,
-            backgroundColor: Colors.grey[300],
-            backgroundImage: AssetImage(
-              "assets/images/image.jpg",
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "You can attend our event",
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 18.0,
+            fontWeight: FontWeight.bold,
           ),
-          const SizedBox(width: 10.0),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  post.businessName ?? "",
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                // ),
-                // Expanded(
-                Text(
-                  post.description ?? "",
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 12.0,
+        ),
+        const SizedBox(height: 20.0),
+        Row(
+          children: <Widget>[
+            CircleAvatar(
+              radius: 20.0,
+              backgroundColor: Colors.grey[300],
+              backgroundImage: AssetImage(
+                "assets/images/image.jpg",
+              ),
+            ),
+            const SizedBox(width: 10.0),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    post.businessName ?? "",
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   // ),
-                ),
-              ],
+                  // Expanded(
+                  Text(
+                    post.description ?? "",
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 12.0,
+                    ),
+                    // ),
+                  ),
+                ],
+              ),
+              flex: 2,
             ),
-            flex: 2,
-          ),
-          IconButton(
-            icon: const Icon(
-              Icons.favorite,
-              size: 30.0,
-              color: Color(0xffDF9C20),
+            IconButton(
+              icon: const Icon(
+                Icons.favorite,
+                size: 30.0,
+                color: Color(0xffDF9C20),
+              ),
+              onPressed: () => {},
             ),
-            onPressed: () => {},
-          ),
-          IconButton(
-            icon: const Icon(
-              Icons.share,
-              size: 30.0,
-              color: Colors.white,
+            IconButton(
+              icon: const Icon(
+                Icons.share,
+                size: 30.0,
+                color: Colors.white,
+              ),
+              onPressed: () {
+                share(context, post);
+              },
             ),
-            onPressed: () {
-              share(context, post);
-            },
-          ),
-        ],
-      )
-    ]);
+          ],
+        )
+      ],
+    );
   }
 }

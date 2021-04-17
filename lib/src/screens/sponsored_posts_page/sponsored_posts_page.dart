@@ -1,23 +1,47 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/sponsored_business/sponsored_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/screens/home/sponsored_posts_overview.dart';
 
 class SponsoredPostsPage extends StatelessWidget {
+  final BuildContext globalNavigator;
+
+  const SponsoredPostsPage({Key key, this.globalNavigator}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Sponsored Posts"),
       ),
-      body: ListView(children: [
-        SponsorItem(
-          name: 'Business name',
-          address: 'Address',
-          phoneNumber: 'phone number',
-          website: 'some website',
-          imageLink:
-              'https://images.unsplash.com/photo-1617103901487-3f2714ec9692?ixid=MXwxMjA3fDB8MHx0b3BpYy1mZWVkfDEwfDZzTVZqVExTa2VRfHxlbnwwfHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=60',
+      body: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        child: BlocBuilder<SponsoredBloc, SponsoredState>(
+          builder: (sponsoredCtx, sponsoredState) {
+            if (sponsoredState is SponsoredLoadSuccess) {
+              return ListView(
+                children: [
+                  ...sponsoredState.sponsored.map(
+                        (biz) => SponsorItem(
+                      business: biz,
+                      globalNavigator: globalNavigator,
+                    ),
+                  ),
+                ],
+              );
+            } else {
+              return ListView(
+                children: [
+                  ShimmerItem(),
+                  ShimmerItem(),
+                  ShimmerItem(),
+                  ShimmerItem(),
+                ],
+              );
+            }
+          },
         ),
-      ]),
+      ),
     );
   }
 }

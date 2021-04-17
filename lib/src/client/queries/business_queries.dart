@@ -1,4 +1,4 @@
-const GET_BUSINESS = r"""
+const GET_BUSINESS_DETAIL = r"""
 query ($id: MongoID!){
   businessById(_id: $id){
     _id
@@ -11,23 +11,13 @@ query ($id: MongoID!){
     slogan
     description
     specialization
-    categoriesName
+    searchIndex
     history
     establishedIn
     subscription
     updatedAt
     createdAt
     pictures
-    owner {
-      fullName
-      email
-      phoneNumber
-      firebaseId
-      businesses {
-        _id
-        businessName
-      }
-    }
     openHours {
       day
       opens
@@ -58,9 +48,14 @@ query ($id: MongoID!){
   }
 }
 """;
+
 const GET_BUSINESS_MANY = r"""
-  query($limit:Int,$filter:FilterFindManyBusinessInput,$skip:Int){
-     businessMany(limit:$limit,filter:$filter,skip:$skip){
+query(
+  $limit: Int,
+  $filter: FilterFindManyBusinessInput,
+  $skip:Int
+){
+  businessMany(limit: $limit, filter: $filter, skip: $skip){
     _id
     businessName
     phoneNumber
@@ -76,58 +71,39 @@ const GET_BUSINESS_MANY = r"""
     updatedAt
     createdAt
     pictures
-    owner {
-      fullName
-      email
-      phoneNumber
-      firebaseId
-      businesses {
-        _id
-        businessName
-      }
-    }
     openHours {
       day
       opens
       closes
     }
-    posts {
-      _id
-      description
-      videos
-      photos
-      createdAt
-    }
-    events {
-      _id
-      title
-      description
-      location
-      link
-      videos
-      photos
-      createdAt
-    }
-    categories {
-      _id
-      name
-      parent
-    }
-     
-     }
-  
-  
   }
-
+}
 """;
 
 const GET_BUSINESS_LIST_MANY = r"""
-  query{
-   businessListMany{
+query{
+  businessListMany{
     _id,
     autocompleteTerm
-   }
   }
-  """;
+}
+""";
 
-
+const GET_SPONSORED_BUSINESSES = r"""
+query ($subscriptions: EnumBusinessSubscription, $limit: Int){
+  businessMany(filter: {
+    subscription: $subscriptions
+  },
+    limit: $limit
+  ){
+    _id
+    businessName
+    phoneNumber
+    location
+    emails
+    website
+    logoPics
+    pictures
+  }
+}
+""";

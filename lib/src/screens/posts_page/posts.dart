@@ -3,7 +3,8 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:zoritt_mobile_app_user/src/screens/posts_page/StoriesBloc.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/stories/stories_bloc.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/stories/stories_state.dart';
 import 'package:zoritt_mobile_app_user/src/screens/posts_page/pages.dart'
     as pages;
 import 'package:zoritt_mobile_app_user/src/screens/posts_page/pages.dart';
@@ -65,15 +66,14 @@ class PostState extends State<Post> {
       if (state is StoryFinished) {
         goToNext();
         context.read<StoryBloc>().emitUnknown();
-        print(currentIndex);
       }
     }, builder: (context, state) {
       if (state is StoryLoadSuccessful) {
         if (state.posts.isNotEmpty) {
           posts += state.posts
-              .map((e) => Story(
-                    post: e,
-                  ))
+              .map(
+                (e) => Story(post: e),
+              )
               .toList();
         }
       }
@@ -138,9 +138,11 @@ class _SwipeWidget extends StatelessWidget {
     final t = (index - pageNotifier);
     final rotationY = lerpDouble(0, 90, t);
     final opacity = lerpDouble(0, 1, t.abs()).clamp(0.0, 1.0);
+
     final transform = Matrix4.identity();
     transform.setEntry(3, 2, 0.001);
     transform.rotateY(-degToRad(rotationY));
+
     return Transform(
       alignment: isLeaving ? Alignment.centerRight : Alignment.centerLeft,
       transform: transform,

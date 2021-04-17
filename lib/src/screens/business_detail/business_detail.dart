@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:zoritt_mobile_app_user/src/models/models.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/business_detail/business_detail_bloc.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/business_detail/business_detail_state.dart';
+import 'package:zoritt_mobile_app_user/src/models/business.dart';
+import 'package:zoritt_mobile_app_user/src/models/event.dart';
+import 'package:zoritt_mobile_app_user/src/models/post.dart';
 
 class BusinessDetail extends StatefulWidget {
   static const String pathName = "/business_detail";
-  final Business business;
-  BusinessDetail({this.business});
 
   @override
   _BusinessDetailState createState() => _BusinessDetailState();
@@ -50,6 +54,22 @@ class _BusinessDetailState extends State<BusinessDetail> {
 
   @override
   Widget build(BuildContext context) {
+    return BlocBuilder<BusinessDetailBloc, BusinessDetailState>(
+      builder: (bizCtx, bizState) {
+        if (bizState is BusinessDetailLoadSuccess) {
+          return body(bizState.business);
+        } else {
+          return Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
+      },
+    );
+  }
+
+  Widget body(Business business) {
     return Scaffold(
       backgroundColor: Colors.grey[200],
       body: CustomScrollView(
@@ -72,7 +92,6 @@ class _BusinessDetailState extends State<BusinessDetail> {
               Padding(
                 padding: const EdgeInsets.only(right: 10),
                 child: Row(
-                  // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Icon(
                       Icons.favorite_border_outlined,
@@ -85,56 +104,48 @@ class _BusinessDetailState extends State<BusinessDetail> {
                       Icons.share_outlined,
                       color: isShrink ? Colors.black : Colors.white,
                     ),
-                    SizedBox(
-                      width: 20,
-                    ),
-                    Icon(
-                      Icons.more_vert,
-                      color: isShrink ? Colors.black : Colors.white,
-                    ),
                   ],
                 ),
               ),
             ],
             pinned: true,
-            // toolbarHeight: 70.0,
             expandedHeight: 250,
             flexibleSpace: FlexibleSpaceBar(
-              background: Container(
-                // BoxDecoration(
-                //   gradient: LinearGradient(
-                //     colors: [Colors.black, Colors.transparent, Colors.transparent, Colors.black],
-                //     begin: Alignment.topCenter,
-                //     end: Alignment.bottomCenter,
-                //     stops: [0, 0.2, 0.8, 1],
-                //   ),
-                // ),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.grey[100],
-                      Colors.black,
-                    ],
+              background: Stack(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: NetworkImage(business.pictures[0]),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                   ),
-                ),
-                child: ColorFiltered(
-                  colorFilter: ColorFilter.mode(
-                      Colors.black.withOpacity(0.5), BlendMode.dstATop),
-                  child: Image.network(
-                    "https://images.unsplash.com/photo-1614823498916-a28a7d67182c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80",
-                    fit: BoxFit.cover,
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.black.withOpacity(0.6),
+                          Colors.black.withOpacity(0.3),
+                          Colors.black.withOpacity(0.1),
+                          Colors.transparent,
+                          Colors.transparent,
+                          Colors.black.withOpacity(0.3),
+                          Colors.black.withOpacity(0.6),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
-              // titlePadding: EdgeInsets.all(15),
               title: Padding(
                 padding: isShrink
                     ? EdgeInsets.only(bottom: 0)
                     : EdgeInsets.only(bottom: 10),
                 child: Text(
-                  widget.business.businessName,
+                  business.businessName,
                   style: TextStyle(
                     color: isShrink ? Colors.black : Colors.white,
                   ),
@@ -142,11 +153,18 @@ class _BusinessDetailState extends State<BusinessDetail> {
               ),
             ),
           ),
-          BusinessAddress(
-            name: widget.business.location,
-            time: widget.business.openHours.isNotEmpty?widget.business.openHours[0]:null,
-            localTime: true,
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height: 5,
+            ),
           ),
+          BusinessAddress(
+              name: business.slogan != null ? business.slogan : "",
+              time: '9:00 AM - 6:00 PM',
+              localTime: true,
+              phoneNumber: business.phoneNumber[0],
+              website: business.website,
+              location: business.location),
           SliverToBoxAdapter(
             child: SizedBox(
               height: 5,
@@ -154,11 +172,10 @@ class _BusinessDetailState extends State<BusinessDetail> {
           ),
           BusinessLocation(
             imageLink:
-                "https://images.unsplash.com/photo-1614823498916-a28a7d67182c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80",
-            address1: 'Lex Plaza, Haile Gebre Silase St',
-            address2: 'Edna Mall',
+            "https://images.unsplash.com/photo-1614823498916-a28a7d67182c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80",
+            address1: business.location,
+            address2: 'Ethiopia',
             address3: 'አዲስ አበባ',
-
           ),
           SliverToBoxAdapter(
             child: SizedBox(
@@ -166,23 +183,22 @@ class _BusinessDetailState extends State<BusinessDetail> {
             ),
           ),
           BusinessInfo(
-            phoneNumber: widget.business.phoneNumber[0],
-            webAddress: widget.business.website,
+            phoneNumber: business.phoneNumber[0],
+            webAddress: business.website,
           ),
           SliverToBoxAdapter(
             child: SizedBox(
               height: 5,
             ),
           ),
-          BusinessEvent(),
+          BusinessEvent(events: business.events),
+          BusinessPost(posts: business.posts),
           SliverToBoxAdapter(
             child: SizedBox(
               height: 5,
             ),
           ),
-
-          BusinessMedia(images: widget.business.pictures,),
-
+          BusinessMedia(),
           SliverToBoxAdapter(
             child: SizedBox(
               height: 5,
@@ -199,10 +215,19 @@ class _BusinessDetailState extends State<BusinessDetail> {
 
 class BusinessAddress extends StatelessWidget {
   final String name;
-  final OpenHours time;
+  final String time;
   final bool localTime;
+  final String phoneNumber;
+  final String website;
+  final String location;
 
-  BusinessAddress({this.name, this.time, this.localTime});
+  BusinessAddress(
+      {this.name,
+        this.time,
+        this.localTime,
+        this.phoneNumber,
+        this.website,
+        this.location});
 
   @override
   Widget build(BuildContext context) {
@@ -232,7 +257,7 @@ class BusinessAddress extends StatelessWidget {
                     width: 15,
                   ),
                   Text(
-                    "${time?.opens} - ${time?.closes}",
+                    time,
                     style: TextStyle(fontSize: 15),
                   ),
                   SizedBox(
@@ -251,16 +276,28 @@ class BusinessAddress extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Container(
-                    padding: EdgeInsets.all(10),
                     decoration: BoxDecoration(
                         shape: BoxShape.circle, color: Colors.grey[200]),
-                    child: Icon(Icons.phone_outlined),
+                    child: IconButton(
+                      icon: Icon(Icons.phone_outlined),
+                      onPressed: () async {
+                        await canLaunch("tel:$phoneNumber")
+                            ? await launch("tel:$phoneNumber")
+                            : throw 'Could not launch $phoneNumber';
+                      },
+                    ),
                   ),
                   Container(
-                    padding: EdgeInsets.all(10),
                     decoration: BoxDecoration(
                         shape: BoxShape.circle, color: Colors.grey[200]),
-                    child: Icon(Icons.language_outlined),
+                    child: IconButton(
+                      icon: Icon(Icons.language_outlined),
+                      onPressed: () async {
+                        await canLaunch(website)
+                            ? await launch(website)
+                            : throw 'Could not launch $website';
+                      },
+                    ),
                   ),
                   Container(
                     padding: EdgeInsets.all(10),
@@ -381,15 +418,20 @@ class BusinessInfo extends StatelessWidget {
                 color: Colors.grey,
                 height: 30,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Explore The Menu',
-                    style: TextStyle(fontSize: 15),
-                  ),
-                  Icon(Icons.search_outlined)
-                ],
+              GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, "/menu_display");
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Explore The Menu',
+                      style: TextStyle(fontSize: 15),
+                    ),
+                    Icon(Icons.search_outlined)
+                  ],
+                ),
               ),
               Divider(
                 color: Colors.grey,
@@ -411,7 +453,7 @@ class BusinessInfo extends StatelessWidget {
                   children: [
                     Expanded(
                         flex: MediaQuery.of(context).orientation ==
-                                Orientation.portrait
+                            Orientation.portrait
                             ? 1
                             : 4,
                         child: Container(
@@ -419,7 +461,7 @@ class BusinessInfo extends StatelessWidget {
                         )),
                     Expanded(
                         flex: MediaQuery.of(context).orientation ==
-                                Orientation.portrait
+                            Orientation.portrait
                             ? 2
                             : 3,
                         child: OutlinedButton(
@@ -429,12 +471,12 @@ class BusinessInfo extends StatelessWidget {
                             ),
                             onPressed: () {
                               Navigator.pushNamed(
-                                  context, '/business_more_info');
+                                  context, '/more_business_info');
                             },
                             child: Text('More Info'))),
                     Expanded(
                         flex: MediaQuery.of(context).orientation ==
-                                Orientation.portrait
+                            Orientation.portrait
                             ? 1
                             : 4,
                         child: Container(
@@ -452,6 +494,53 @@ class BusinessInfo extends StatelessWidget {
 }
 
 class BusinessEvent extends StatelessWidget {
+  final List<Events> events;
+
+  const BusinessEvent({Key key, this.events}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: Card(
+        elevation: 0,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                'Events',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle, color: Colors.grey[300]),
+                child: Padding(
+                  padding: const EdgeInsets.all(25.0),
+                  child: Icon(FontAwesomeIcons.tasks),
+                ),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Text(
+                'Sorry, There is no events or discount in the restaurant',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 15, color: Colors.grey[700]),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class BusinessPost extends StatelessWidget {
+  final List<Post> posts;
+
+  const BusinessPost({Key key, this.posts}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return SliverToBoxAdapter(
@@ -491,16 +580,10 @@ class BusinessEvent extends StatelessWidget {
 }
 
 class BusinessMedia extends StatelessWidget {
-  final List<String> images;
-  BusinessMedia({this.images});
   @override
   Widget build(BuildContext context) {
-    return
-      SliverToBoxAdapter(
-      child:
-    Container(
-        height: 100,
-        child:Card(
+    return SliverToBoxAdapter(
+      child: Card(
         elevation: 0,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
@@ -522,117 +605,80 @@ class BusinessMedia extends StatelessWidget {
               SizedBox(
                 height: 20,
               ),
-              // if(images.isNotEmpty)
-
-                   Expanded(child:
-                   listBuilder(images),
-    ),
-
-              // if(images.isEmpty)
-              //   Text(
-              //     'Sorry, There is no photo',
-              //     textAlign: TextAlign.center,
-              //     style: TextStyle(fontSize: 15, color: Colors.grey[700]),
-              //   ),
-
-                
-
-              // Row(
-              //   children: [
-              //
-              //     SizedBox(
-              //       width: 10,
-              //     ),
-              //     Expanded(
-              //       child: Stack(
-              //         alignment: AlignmentDirectional.bottomStart,
-              //         children: [
-              //           ClipRRect(
-              //             borderRadius: BorderRadius.all(
-              //               Radius.circular(5),
-              //             ),
-              //             child: Image.network(
-              //                 "https://images.unsplash.com/photo-1614823498916-a28a7d67182c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80"),
-              //           ),
-              //           Row(
-              //             children: [
-              //               Expanded(child: Container()),
-              //               Expanded(
-              //                 flex: 9,
-              //                 child: Padding(
-              //                   padding: const EdgeInsets.only(bottom: 10),
-              //                   child: Text(
-              //                     'Food & Drink',
-              //                     style: TextStyle(
-              //                         fontSize: 18,
-              //                         color: Colors.white,
-              //                         fontWeight: FontWeight.bold),
-              //                   ),
-              //                 ),
-              //               ),
-              //             ],
-              //           )
-              //         ],
-              //       ),
-              //     ),
-              //   ],
-              // )
+              Row(
+                children: [
+                  Expanded(
+                    child: Stack(
+                      alignment: AlignmentDirectional.bottomStart,
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(5),
+                          ),
+                          child: Image.network(
+                              "https://images.unsplash.com/photo-1614823498916-a28a7d67182c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80"),
+                        ),
+                        Row(
+                          children: [
+                            Expanded(child: Container()),
+                            Expanded(
+                              flex: 9,
+                              child: Padding(
+                                padding: const EdgeInsets.only(bottom: 10),
+                                child: Text(
+                                  'All',
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Expanded(
+                    child: Stack(
+                      alignment: AlignmentDirectional.bottomStart,
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(5),
+                          ),
+                          child: Image.network(
+                              "https://images.unsplash.com/photo-1614823498916-a28a7d67182c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80"),
+                        ),
+                        Row(
+                          children: [
+                            Expanded(child: Container()),
+                            Expanded(
+                              flex: 9,
+                              child: Padding(
+                                padding: const EdgeInsets.only(bottom: 10),
+                                child: Text(
+                                  'Food & Drink',
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              )
             ],
           ),
         ),
-      )
-    ),
-    );
-  }
-  Widget listBuilder(List<String>images){
-
-    return ListView.builder(itemBuilder: (context, index) {
-      return photoItem(images[index]);
-    },
-      scrollDirection: Axis.horizontal,
-
-      itemCount: images.length > 2 ? 2 : images.length,
-      physics: NeverScrollableScrollPhysics(),
-      shrinkWrap: true,
-      // separatorBuilder: (context, index) {
-      //   return SizedBox(
-      //     width: 10,
-      //   );
-      // },
-    );
-  }
-  Widget photoItem(String photoPath){
-    return Expanded(
-      child: Stack(
-        alignment: AlignmentDirectional.bottomStart,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.all(
-              Radius.circular(5),
-            ),
-            child: Image.network(
-              photoPath
-            ),
-          ),
-          Row(
-            children: [
-              Expanded(child: Container()),
-              Expanded(
-                flex: 9,
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: Text(
-                    'All',
-                    style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-            ],
-          )
-        ],
       ),
     );
   }

@@ -17,11 +17,18 @@ class ZoritBusinessUser extends StatelessWidget {
     userRepository: UserRepository(client: client()),
   );
 
-
   final EventsRepository eventsRepository = EventsRepository(client: client());
 
   final PostRepository postRepository = PostRepository(client: client());
-  final BusinessRepository businessRepository= BusinessRepository(client: client(), firebaseStorage: FirebaseStorage.instance);
+
+  final CategoryRepository categoryRepository = CategoryRepository(
+    client: client(),
+  );
+
+  final BusinessRepository businessRepository = BusinessRepository(
+    client: client(),
+    firebaseStorage: FirebaseStorage.instance,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -42,9 +49,14 @@ class ZoritBusinessUser extends StatelessWidget {
             lazy: false,
           ),
           BlocProvider<NavigationBloc>(
-            create: (context)=>NavigationBloc(),
-
-          lazy:false)
+            create: (context) => NavigationBloc(),
+            lazy: false,
+          ),
+          BlocProvider<CategoryBloc>(
+            create: (context) => CategoryBloc(
+              categoryRepository: categoryRepository,
+            ),
+          ),
         ],
         child: ZorittApp(),
       ),
@@ -70,7 +82,6 @@ class _ZorittAppState extends State<ZorittApp> {
         ),
       ),
       debugShowCheckedModeBanner: false,
-      // initialRoute: PostsPage.pathName,
       initialRoute: '/',
       onGenerateRoute: RouteGenerator.generateRoute,
     );

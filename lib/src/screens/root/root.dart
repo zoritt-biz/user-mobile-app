@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/bloc.dart';
-import 'package:zoritt_mobile_app_user/src/bloc/events/events_bloc.dart';
-import 'package:zoritt_mobile_app_user/src/bloc/navigation/NavigationBloc.dart';
 import 'package:zoritt_mobile_app_user/src/repository/repository.dart';
-import 'package:zoritt_mobile_app_user/src/screens/navigation/bottom_navigation.dart';
-import 'package:zoritt_mobile_app_user/src/screens/navigation/navigators.dart';
 
 import '../screens.dart';
 
@@ -18,7 +14,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   TabItem _currentTab = TabItem.home;
-  DateTime dateTime = DateTime.now().subtract(Duration(days: 3));
+  DateTime dateTime = DateTime.now().subtract(Duration(days: 8));
 
   final tabNavigatorKeys = [
     GlobalKey<NavigatorState>(),
@@ -35,7 +31,8 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     _globalNavigatorContext = context;
     tabNavigators = [
-      HomeNavigator(navigatorKey: tabNavigatorKeys[TabItem.home.index],
+      HomeNavigator(
+          navigatorKey: tabNavigatorKeys[TabItem.home.index],
           globalNavigator: _globalNavigatorContext),
       SearchNavigator(
           navigatorKey: tabNavigatorKeys[TabItem.search.index],
@@ -49,12 +46,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget build(BuildContext context) {
-    final colorScheme = Theme
-        .of(context)
-        .colorScheme;
-    final textTheme = Theme
-        .of(context)
-        .textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
 
     setCurrentIndex(TabItem item) {
       setState(() {
@@ -69,9 +62,7 @@ class _HomePageState extends State<HomePage> {
         },
         icon: Icons.home,
         color: _currentTab == TabItem.home
-            ? Theme
-            .of(context)
-            .primaryColor
+            ? Theme.of(context).primaryColor
             : Colors.grey[600],
       ),
       BottomNavigationData(
@@ -80,9 +71,7 @@ class _HomePageState extends State<HomePage> {
         },
         icon: Icons.search,
         color: _currentTab == TabItem.search
-            ? Theme
-            .of(context)
-            .primaryColor
+            ? Theme.of(context).primaryColor
             : Colors.grey[600],
       ),
       BottomNavigationData(
@@ -91,9 +80,7 @@ class _HomePageState extends State<HomePage> {
         },
         icon: Icons.favorite,
         color: _currentTab == TabItem.favorites
-            ? Theme
-            .of(context)
-            .primaryColor
+            ? Theme.of(context).primaryColor
             : Colors.grey[600],
       ),
       // BottomNavigationData(
@@ -110,14 +97,12 @@ class _HomePageState extends State<HomePage> {
         },
         icon: Icons.account_circle,
         color: _currentTab == TabItem.profile
-            ? Theme
-            .of(context)
-            .primaryColor
+            ? Theme.of(context).primaryColor
             : Colors.grey[600],
       ),
     ];
 
-    return BlocListener <NavigationBloc, NavigationState>(
+    return BlocListener<NavigationBloc, NavigationState>(
         listener: (context, state) {
           if (state is NavigatedToSearch) {
             setCurrentIndex(TabItem.search);
@@ -125,8 +110,9 @@ class _HomePageState extends State<HomePage> {
         },
         child: WillPopScope(
           onWillPop: () async {
-            final mayPop =
-            await tabNavigatorKeys[_currentTab.index].currentState.maybePop();
+            final mayPop = await tabNavigatorKeys[_currentTab.index]
+                .currentState
+                .maybePop();
             if (mayPop) {
               return false;
             } else if (!mayPop && _currentTab != TabItem.home) {
@@ -142,22 +128,25 @@ class _HomePageState extends State<HomePage> {
                 MultiBlocProvider(
                   providers: [
                     BlocProvider<EventsBloc>(
-                        create: (context) =>
-                        EventsBloc(
-                          eventRepository: context.read<EventsRepository>(),
-                        )
-                          ..getEvents(10, "CREATEDAT_DESC")),
+                      create: (context) => EventsBloc(
+                        eventRepository: context.read<EventsRepository>(),
+                      )..getEvents(10, "CREATEDAT_DESC"),
+                    ),
                     BlocProvider<PostBloc>(
-                        create: (context) =>
-                        PostBloc(
-                          postRepository: context.read<PostRepository>(),
-                        )
-                          ..getPosts(
-                              10,
-                              "CREATEDAT_DESC",
-                              "${dateTime.month}/${dateTime.day}/${dateTime
-                                  .year}",
-                              0)),
+                      create: (context) => PostBloc(
+                        postRepository: context.read<PostRepository>(),
+                      )..getPosts(
+                          10,
+                          "CREATEDAT_DESC",
+                          "${dateTime.year}/${dateTime.month}/${dateTime.day}",
+                          0,
+                        ),
+                    ),
+                    BlocProvider<SponsoredBloc>(
+                      create: (context) => SponsoredBloc(
+                        businessRepository: context.read<BusinessRepository>(),
+                      )..getSponsored(5),
+                    ),
                   ],
                   child: _buildOffstageNavigator(TabItem.home),
                 ),
@@ -174,18 +163,17 @@ class _HomePageState extends State<HomePage> {
               textTheme: textTheme,
             ),
             resizeToAvoidBottomInset: false,
-          )
-          ,
+          ),
         ));
   }
 
-
-Widget _buildOffstageNavigator(TabItem item) {
-  return Visibility(
-    visible: _currentTab == item,
-    maintainState: true,
-    child: tabNavigators[item.index],
-  );
-}}
+  Widget _buildOffstageNavigator(TabItem item) {
+    return Visibility(
+      visible: _currentTab == item,
+      maintainState: true,
+      child: tabNavigators[item.index],
+    );
+  }
+}
 
 enum TabItem { home, search, favorites, profile }

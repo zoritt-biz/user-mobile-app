@@ -9,7 +9,11 @@ class PostRepository {
   PostRepository({@required this.client});
 
   Future<List<Post>> getPosts(
-      int limit, String sort, String filterDate, int skip) async {
+      int limit,
+      String sort,
+      String filterDate,
+      int skip,
+      ) async {
     final result = await client.query(
       QueryOptions(
         document: gql(GET_ALL_POSTS),
@@ -17,22 +21,14 @@ class PostRepository {
           "skip": skip,
           "limit": limit,
           "sort": sort,
-          "filterDate": filterDate,
+          "filterDate": filterDate
         },
       ),
     );
-
     if (result.hasException) {
-      print(result.hasException);
       throw result.exception;
     }
-
     final data = result.data['postMany'] as List;
-    // if(data.isNotEmpty){
     return data.map((e) => Post.fromJson(e)).toList();
-
-    // }else{
-    //   return [];
-    // }
   }
 }

@@ -1,40 +1,98 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/sponsored_business/sponsored_bloc.dart';
+import 'package:zoritt_mobile_app_user/src/models/business.dart';
 
 class SponsoredPostsOverview extends StatelessWidget {
+  final BuildContext globalNavigator;
+
+  const SponsoredPostsOverview({Key key, this.globalNavigator})
+      : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    return SliverList(
-      delegate: SliverChildBuilderDelegate(
-        (BuildContext context, int index) {
-          return SponsorItem(
-            name: 'Business name ${index + 1}',
-            address: 'Address ${index + 1}',
-            phoneNumber: 'phone number',
-            website: 'some website',
-            imageLink:
-                'https://images.unsplash.com/photo-1617103901487-3f2714ec9692?ixid=MXwxMjA3fDB8MHx0b3BpYy1mZWVkfDEwfDZzTVZqVExTa2VRfHxlbnwwfHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=60',
+    return BlocBuilder<SponsoredBloc, SponsoredState>(
+      builder: (sponsoredCtx, sponsoredState) {
+        if (sponsoredState is SponsoredLoadSuccess) {
+          return SliverList(
+            delegate: SliverChildBuilderDelegate(
+                  (BuildContext context, int index) {
+                return SponsorItem(
+                  business: sponsoredState.sponsored[index],
+                  globalNavigator: globalNavigator,
+                );
+              },
+              childCount: sponsoredState.sponsored.length,
+            ),
           );
-        },
-        childCount: 3,
+        } else {
+          return SliverList(
+            delegate: SliverChildBuilderDelegate(
+                  (BuildContext context, int index) {
+                return Padding(
+                  padding: EdgeInsets.only(left: 12, right: 12),
+                  child: ShimmerItem(),
+                );
+              },
+              childCount: 2,
+            ),
+          );
+        }
+      },
+    );
+  }
+}
+
+class ShimmerItem extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Shimmer.fromColors(
+        baseColor: Colors.grey[200],
+        highlightColor: Colors.grey[100],
+        child: Container(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: Colors.grey[200],
+                ),
+                height: 250,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 6),
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: Colors.grey,
+                  ),
+                  height: 40,
+                  width: 150,
+                ),
+              ),
+              SizedBox(
+                height: 15,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 }
 
 class SponsorItem extends StatefulWidget {
-  final String name;
-  final String address;
-  final String phoneNumber;
-  final String website;
-  final String imageLink;
+  final Business business;
+  final BuildContext globalNavigator;
 
-  SponsorItem(
-      {this.name,
-      this.address,
-      this.phoneNumber,
-      this.website,
-      this.imageLink});
+  SponsorItem({
+    this.business,
+    this.globalNavigator,
+  });
 
   @override
   _SponsorItemState createState() => _SponsorItemState();
@@ -43,98 +101,104 @@ class SponsorItem extends StatefulWidget {
 class _SponsorItemState extends State<SponsorItem> {
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 5, right: 5, bottom: 5),
-      child: Card(
-        elevation: 3,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(5),
-                topRight: Radius.circular(5),
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(widget.globalNavigator, "/business_detail", arguments: [widget.business.id]);
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+        child: Card(
+          elevation: 3,
+          shadowColor: Colors.white24,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(5),
+                  topRight: Radius.circular(5),
+                ),
+                child: Image.network(widget.business.pictures[0]),
               ),
-              child: Image.network(widget.imageLink),
-            ),
-            Padding(
-              padding:
-                  MediaQuery.of(context).orientation == Orientation.portrait
-                      ? EdgeInsets.only(left: 15, right: 15, bottom: 15)
-                      : EdgeInsets.only(left: 40, right: 40, bottom: 15),
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 13, bottom: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              Padding(
+                padding:
+                MediaQuery.of(context).orientation == Orientation.portrait
+                    ? EdgeInsets.only(left: 15, right: 15, bottom: 15)
+                    : EdgeInsets.only(left: 40, right: 40, bottom: 15),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 13, bottom: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            widget.business.businessName,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 20),
+                          ),
+                          Icon(Icons.favorite_border_outlined)
+                        ],
+                      ),
+                    ),
+                    Row(
                       children: [
-                        Text(
-                          widget.name,
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 20),
+                        Icon(
+                          Icons.location_on_rounded,
+                          color: Colors.grey[600],
                         ),
-                        Icon(Icons.favorite_border_outlined)
+                        SizedBox(
+                          width: 15,
+                        ),
+                        Text(
+                          widget.business.location,
+                          style: TextStyle(color: Colors.grey[600]),
+                        )
                       ],
                     ),
-                  ),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.keyboard_arrow_down,
-                        color: Colors.grey[600],
-                      ),
-                      SizedBox(
-                        width: 15,
-                      ),
-                      Text(
-                        widget.address,
-                        style: TextStyle(color: Colors.grey[600]),
-                      )
-                    ],
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.phone_outlined,
-                            color: Colors.grey[600],
-                          ),
-                          SizedBox(
-                            width: 15,
-                          ),
-                          Text(
-                            widget.phoneNumber,
-                            style: TextStyle(color: Colors.grey[600]),
-                          )
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.language_outlined,
-                            color: Colors.grey[600],
-                          ),
-                          SizedBox(
-                            width: 15,
-                          ),
-                          Text(
-                            widget.website,
-                            style: TextStyle(color: Colors.grey[600]),
-                          )
-                        ],
-                      )
-                    ],
-                  ),
-                ],
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.phone_outlined,
+                              color: Colors.grey[600],
+                            ),
+                            SizedBox(
+                              width: 15,
+                            ),
+                            Text(
+                              widget.business.phoneNumber[0],
+                              style: TextStyle(color: Colors.grey[600]),
+                            )
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.language_outlined,
+                              color: Colors.grey[600],
+                            ),
+                            SizedBox(
+                              width: 15,
+                            ),
+                            Text(
+                              widget.business.website,
+                              style: TextStyle(color: Colors.grey[600]),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

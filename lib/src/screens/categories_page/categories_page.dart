@@ -11,43 +11,46 @@ class CategoriesPage extends StatelessWidget {
       body: GridView.count(
         padding: EdgeInsets.symmetric(horizontal: 25, vertical: 15),
         crossAxisCount:
-            MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 3,
+        MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 3,
         crossAxisSpacing: 30.0,
         mainAxisSpacing: 25.0,
         // shrinkWrap: true,
         children: [
           GridItem(
-            'Arts, Media & Entertainment',
-            Icons.ondemand_video_sharp,
+              'Arts, Media & Entertainment',
+              Icons.ondemand_video_sharp,
+              context
           ),
           GridItem(
-            'Food & Catering',
-            Icons.local_cafe_outlined,
+              'Food & Catering',
+              Icons.local_cafe_outlined,context
           ),
-          GridItem('Hotel & Hospitality', Icons.hotel_outlined),
-          GridItem('Shopping', Icons.add_shopping_cart_outlined),
-          GridItem('Financial Services', Icons.loop_outlined),
-          GridItem('Tour, Travel & Transport', Icons.flight_outlined),
-          GridItem('Health', Icons.local_hospital_outlined),
-          GridItem('Sports and Leisure', Icons.lens_outlined),
+          GridItem('Hotel & Hospitality', Icons.hotel_outlined,context),
+          GridItem('Shopping', Icons.add_shopping_cart_outlined,context),
+          GridItem('Financial Services', Icons.loop_outlined,context),
+          GridItem('Tour, Travel & Transport', Icons.flight_outlined,context),
+          GridItem('Health', Icons.local_hospital_outlined,context),
+          GridItem('Sports and Leisure', Icons.lens_outlined,context),
           GridItem(
-            'Beauty & Spa',
-            Icons.spa_outlined,
+              'Beauty & Spa',
+              Icons.spa_outlined,
+              context
           ),
-          GridItem('Event Organisers', FontAwesomeIcons.birthdayCake),
-          GridItem('Education & Training', FontAwesomeIcons.bookOpen),
-          GridItem('Automotive & Gas stations', FontAwesomeIcons.carSide),
-          GridItem('Night Life', FontAwesomeIcons.wineGlassAlt),
-          GridItem('Import/Export', FontAwesomeIcons.exchangeAlt),
+          GridItem('Event Organisers', FontAwesomeIcons.birthdayCake,context),
+          GridItem('Education & Training', FontAwesomeIcons.bookOpen,context),
+          GridItem('Automotive & Gas stations', FontAwesomeIcons.carSide,context),
+          GridItem('Night Life', FontAwesomeIcons.wineGlassAlt,context),
+          GridItem('Import/Export', FontAwesomeIcons.exchangeAlt,context),
           GridItem('Construction and Engineering',
-              FontAwesomeIcons.exclamationTriangle),
+              FontAwesomeIcons.exclamationTriangle,context),
           GridItem(
-            'Local Services',
-            FontAwesomeIcons.wrench,
+              'Local Services',
+              FontAwesomeIcons.wrench,
+              context
           ),
-          GridItem('Religious Organizations', FontAwesomeIcons.cross),
-          GridItem('Governmental Institutions', Icons.account_balance_outlined),
-          GridItem('NGOs & Humanitarian', Icons.location_city_outlined),
+          GridItem('Religious Organizations', FontAwesomeIcons.cross,context),
+          GridItem('Governmental Institutions', Icons.account_balance_outlined,context),
+          GridItem('NGOs & Humanitarian', Icons.location_city_outlined,context),
         ],
       ),
     );
@@ -57,44 +60,54 @@ class CategoriesPage extends StatelessWidget {
 class GridItem extends StatelessWidget {
   final String title;
   final IconData icon;
+  final BuildContext ctx;
 
-  GridItem(this.title, this.icon);
+  GridItem(this.title, this.icon, this.ctx);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      // padding: EdgeInsets.symmetric(horizontal: 20),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey[100],
             spreadRadius: 5,
             blurRadius: 5,
             offset: Offset(0, 1), // changes position of shadow
           ),
         ],
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        // crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 50),
-          SizedBox(
-            height: 20,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          splashColor: Colors.grey[300],
+          onTap: () {
+            Navigator.pushNamed(ctx, "/subcategories");
+          },
+          borderRadius: BorderRadius.circular(20),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            // crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, size: 50),
+              SizedBox(
+                height: 20,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5),
+                child: Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 18),
+                ),
+              )
+            ],
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 5),
-            child: Text(
-              title,
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 18),
-            ),
-          )
-        ],
+        ),
       ),
     );
   }

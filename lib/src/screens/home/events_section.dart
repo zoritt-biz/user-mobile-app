@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
@@ -37,38 +36,24 @@ class EventsSection extends StatelessWidget {
                       child: Center(child: Text("No recent Events")),
                     );
                   }
+                } else {
+                  return Padding(
+                    padding: EdgeInsets.only(left: 10, right: 10),
+                    child: Row(
+                      children: [
+                        Expanded(child: shimmerItem()),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Expanded(child: shimmerItem()),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Expanded(child: shimmerItem()),
+                      ],
+                    ),
+                  );
                 }
-                if (state is EventsLoadFailure) {
-                  print("loadfail");
-                  //   return Padding(padding:EdgeInsets.only(left: 20,right:20),
-                  // child: Shimmer.fromColors(child: Row(
-                  //   children: [
-                  //     eventItem(context, new Events()),
-                  //     eventItem(context, new Events()),
-                  //     eventItem(context, new Events()),
-                  //     eventItem(context, new Events()),
-                  //   ],
-                  // ), baseColor:Colors.grey[300],
-                  //     highlightColor: Colors.grey[100],
-                  // )
-                  // );
-                }
-                return Padding(
-                  padding: EdgeInsets.only(left: 10, right: 10),
-                  child: Row(
-                    children: [
-                      Expanded(child: shimmerItem()),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      Expanded(child: shimmerItem()),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      Expanded(child: shimmerItem()),
-                    ],
-                  ),
-                );
               },
             ),
           ),
@@ -96,6 +81,8 @@ class EventsSection extends StatelessWidget {
           Navigator.pushNamed(context, "/events");
         },
         child: Card(
+          elevation: 3,
+          shadowColor: Colors.white24,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -107,8 +94,8 @@ class EventsSection extends StatelessWidget {
                 decoration: BoxDecoration(
                   image: DecorationImage(
                     image: NetworkImage(event?.photos?.elementAt(0) ?? ""
-                        // "https://images.unsplash.com/photo-1614823498916-a28a7d67182c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80",
-                        ),
+                      // "https://images.unsplash.com/photo-1614823498916-a28a7d67182c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80",
+                    ),
                     fit: BoxFit.cover,
                   ),
                   borderRadius: BorderRadius.only(
@@ -119,7 +106,10 @@ class EventsSection extends StatelessWidget {
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 8.0, top: 6),
-                child: Text(event.title),
+                child: Text(
+                  event.title,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 8.0),
@@ -130,9 +120,14 @@ class EventsSection extends StatelessWidget {
                       size: 10,
                       color: Colors.grey[400],
                     ),
-                    Text(
-                      event.location,
-                      style: TextStyle(color: Colors.grey[400], fontSize: 13),
+                    Expanded(
+                      child: Text(
+                        event.location,
+                        style: TextStyle(color: Colors.grey[400], fontSize: 13),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        softWrap: false,
+                      ),
                     ),
                   ],
                 ),
@@ -148,22 +143,28 @@ class EventsSection extends StatelessWidget {
     return Container(
       width: 140.0,
       child: Shimmer.fromColors(
-        baseColor: Colors.grey[300],
-        highlightColor: Colors.white,
+        baseColor: Colors.grey[200],
+        highlightColor: Colors.grey[100],
         child: Container(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: Colors.grey[300],
+                ),
                 height: 100,
-                color: Colors.grey,
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 6),
                 child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: Colors.grey,
+                  ),
                   height: 15,
                   width: 80,
-                  color: Colors.grey,
                 ),
               ),
               SizedBox(

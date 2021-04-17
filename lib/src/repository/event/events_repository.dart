@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:zoritt_mobile_app_user/src/client/queries/event_queries.dart';
@@ -19,12 +18,9 @@ class EventsRepository {
         },
       ),
     );
-
     if (result.hasException) {
-      print(result.hasException);
       throw result.exception;
     }
-
     final data = result.data['eventMany'] as List;
     return data.map((e) => Events.fromJson(e)).toList();
   }

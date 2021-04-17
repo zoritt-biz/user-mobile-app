@@ -11,15 +11,16 @@ class Events {
   final List<String> photos;
   final String logoPics;
 
-  Events(
-      {this.id,
-      this.title,
-      this.description,
-      this.location,
-      this.link,
-      this.video,
-      this.photos,
-      this.logoPics});
+  Events({
+    this.id,
+    this.title,
+    this.description,
+    this.location,
+    this.link,
+    this.video,
+    this.photos,
+    this.logoPics,
+  });
 
   factory Events.fromJson(Map<String, dynamic> data) {
     return Events(

@@ -17,69 +17,100 @@ class BusinessRepository {
   Future<Business> getBusiness(String id) async {
     final result = await client.query(
       QueryOptions(
-        document: gql(GET_BUSINESS),
+        document: gql(GET_BUSINESS_DETAIL),
         variables: {"id": id},
       ),
     );
-
     if (result.hasException) {
-      print(result.hasException);
       throw result.exception;
     }
-
     final data = result.data['businessById'];
-
     return new Business.fromJson(data);
   }
-  Future<List<BusinessList>> getBusinessList()async{
-    final results= await client.query(
-        QueryOptions(
-            document: gql(GET_BUSINESS_LIST_MANY),
-        )
+
+  Future<Business> getBusinessDetail(String id) async {
+    final result = await client.query(
+      QueryOptions(
+        document: gql(GET_BUSINESS_DETAIL),
+        variables: {"id": id},
+      ),
     );
-    if(results.hasException){
+    if (result.hasException) {
+      throw result.exception;
+    }
+    final data = result.data['businessById'];
+    return new Business.fromJson(data);
+  }
+
+  Future<List<Business>> getSponsoredBusinesses(int limit) async {
+    final result = await client.query(
+      QueryOptions(
+        document: gql(GET_SPONSORED_BUSINESSES),
+        variables: {
+          "subscriptions": "FEATHER_4",
+          "limit": limit,
+        },
+      ),
+    );
+    if (result.hasException) {
+      throw result.exception;
+    }
+    final data = result.data['businessMany'] as List;
+    return [...data.map((e) => new Business.fromJson(e))];
+  }
+
+  Future<List<BusinessList>> getBusinessList() async {
+    final results = await client.query(
+      QueryOptions(document: gql(GET_BUSINESS_LIST_MANY)),
+    );
+    if (results.hasException) {
       throw results.exception;
     }
     final data = results.data['businessListMany'] as List;
     return data.map((e) => BusinessList.fromJson(e)).toList();
   }
 
-  Future<List<Business>> getBusinesses(String query,int skip,int limit)async{
-    final results= await client.query(
-        QueryOptions(
-          document: gql(GET_BUSINESS_MANY),
-          variables: {
-            "filter":{
-              // "searchIndex":query.split(" "),
-              "businessName":query
-            },
-            "limit":limit,
-            "skip":skip,
-          }
-        )
+  Future<List<Business>> getBusinesses(
+    String query,
+    int skip,
+    int limit,
+  ) async {
+    final results = await client.query(
+      QueryOptions(
+        document: gql(GET_BUSINESS_MANY),
+        variables: {
+          "filter": {
+            // "searchIndex":query.split(" "),
+            "businessName": query
+          },
+          "limit": limit,
+          "skip": skip,
+        },
+      ),
     );
-    if(results.hasException){
+    if (results.hasException) {
       throw results.exception;
     }
     final data = results.data['businessMany'] as List;
-    print("businessMany");
-    print(data);
     return data.map((e) => Business.fromJson(e)).toList();
   }
-  Future<List<Business>> getRelatedBusinesses(String query,int skip,int limit)async{
-    final results= await client.query(
-        QueryOptions(
-            document: gql(GET_BUSINESS_LIST_MANY),
-            variables: {
-              "filter":{
-                "categoriesName":query.split(" "),
-              },
-              "limit":limit,
-              "skip":0,
-            }
-        )
+
+  Future<List<Business>> getRelatedBusinesses(
+    String query,
+    int skip,
+    int limit,
+  ) async {
+    final results = await client.query(
+      QueryOptions(
+        document: gql(GET_BUSINESS_LIST_MANY),
+        variables: {
+          "filter": {"categoriesName": query.split(" ")},
+          "limit": limit,
+          "skip": 0,
+        },
+      ),
     );
-    if(results.hasException){
+    if (results.hasException) {
       throw results.exception;
     }
     final data = results.data['businessMany'] as List;
