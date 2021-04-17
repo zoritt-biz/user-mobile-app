@@ -1,13 +1,21 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/bloc.dart';
+import 'package:zoritt_mobile_app_user/src/models/models.dart';
+import 'package:zoritt_mobile_app_user/src/repository/repository.dart';
 
 import '../screens.dart';
 
 abstract class TabNavigator extends StatelessWidget {}
 
+typedef CustomWidgetBuilder = Widget Function(
+    BuildContext context, RouteSettings routeSettings);
+
 class HomeNavigatorRoutes {
   static const String root = "/";
   static const String categories = "/categories";
+  static const String subcategories = "/subcategories";
   static const String events = "/events";
   static const String posts = "/posts";
   static const String sponsored_posts = "/sponsored_posts";
@@ -15,16 +23,44 @@ class HomeNavigatorRoutes {
 
 class HomeNavigator extends TabNavigator {
   final GlobalKey<NavigatorState> navigatorKey;
+  final BuildContext globalNavigator;
 
-  HomeNavigator({this.navigatorKey});
+  HomeNavigator({this.navigatorKey, this.globalNavigator});
 
-  Map<String, WidgetBuilder> _routeBuilder(BuildContext context) {
+  Map<String, CustomWidgetBuilder> _routeBuilder(BuildContext context) {
     return {
-      HomeNavigatorRoutes.root: (ctx) => Home(),
-      HomeNavigatorRoutes.categories: (ctx) => CategoriesPage(),
-      HomeNavigatorRoutes.events: (ctx) => EventsPage(),
-      HomeNavigatorRoutes.posts: (ctx) => PostsPage(),
-      HomeNavigatorRoutes.sponsored_posts: (ctx) => SponsoredPostsPage(),
+      // HomeNavigatorRoutes.root: (ctx) =>  BlocProvider<EventsBloc>(create: (context)=>EventsBloc(eventRepository: context.read<EventsRepository>(),)..getEvents(10, "CREATEDAT_DESC"), child: Home()),
+      HomeNavigatorRoutes.root: (ctx, _) => Home(
+            globalNavigator: globalNavigator,
+          ),
+      HomeNavigatorRoutes.categories: (ctx, _) => CategoriesPage(),
+      HomeNavigatorRoutes.subcategories: (ctx, _) => Subcategory(),
+      HomeNavigatorRoutes.events: (ctx, _) => BlocProvider<EventsBloc>(
+            create: (context) => EventsBloc(
+              eventRepository: context.read<EventsRepository>(),
+            )..getEvents(10, "CREATEDAT_DESC"),
+            child: EventsPage(globalNavigator: globalNavigator),
+          ),
+      HomeNavigatorRoutes.posts: (ctx, setting) {
+        List<dynamic> arguments = setting.arguments as List;
+
+        return BlocProvider<StoryBloc>(
+          create: (context) => StoryBloc(
+            postRepository: context.read<PostRepository>(),
+          ),
+          child: PostsPage(
+            posts: arguments[0] as List<Post>,
+            selectedPost: arguments[1] as int,
+          ),
+        );
+      },
+      HomeNavigatorRoutes.sponsored_posts: (ctx, _) =>
+          BlocProvider<SponsoredBloc>(
+            create: (context) => SponsoredBloc(
+              businessRepository: context.read<BusinessRepository>(),
+            )..getSponsored(10),
+            child: SponsoredPostsPage(globalNavigator: globalNavigator),
+          ),
     };
   }
 
@@ -36,7 +72,8 @@ class HomeNavigator extends TabNavigator {
       initialRoute: HomeNavigatorRoutes.root,
       onGenerateRoute: (routeSettings) {
         return MaterialPageRoute(
-          builder: (ctx) => routeBuilders[routeSettings.name](ctx),
+          builder: (ctx) =>
+              routeBuilders[routeSettings.name](ctx, routeSettings),
         );
       },
     );
@@ -49,16 +86,20 @@ class SearchNavigatorRoutes {
 
 class SearchNavigator extends TabNavigator {
   final GlobalKey<NavigatorState> navigatorKey;
+  final BuildContext globalNavigator;
 
-  SearchNavigator({this.navigatorKey});
+  SearchNavigator({this.navigatorKey, this.globalNavigator});
 
-  Map<String, WidgetBuilder> _routeBuilder(BuildContext context) {
+  Map<String, CustomWidgetBuilder> _routeBuilder(BuildContext context) {
     return {
-      SearchNavigatorRoutes.root: (ctx) => Container(
-        child: Center(
-          child: Text("Search"),
-        ),
-      ),
+      SearchNavigatorRoutes.root: (context, _) {
+        return BlocProvider<BusinessBloc>(
+          create: (context) => BusinessBloc(
+            businessRepository: context.read<BusinessRepository>(),
+          ),
+          child: SearchPage(globalNavigator: globalNavigator),
+        );
+      }
     };
   }
 
@@ -70,7 +111,8 @@ class SearchNavigator extends TabNavigator {
       initialRoute: SearchNavigatorRoutes.root,
       onGenerateRoute: (routeSettings) {
         return MaterialPageRoute(
-          builder: (ctx) => routeBuilders[routeSettings.name](ctx),
+          builder: (ctx) =>
+              routeBuilders[routeSettings.name](ctx, routeSettings),
         );
       },
     );
@@ -88,7 +130,36 @@ class FavoritesNavigator extends TabNavigator {
 
   Map<String, WidgetBuilder> _routeBuilder(BuildContext context) {
     return {
-      FavoriteNavigatorRoutes.root: (ctx) => FavoritesPage(),
+      FavoriteNavigatorRoutes.root: (ctx) {
+        if (ctx.read<AuthenticationBloc>().state.status ==
+            AuthenticationStatus.authenticated) {
+          return FavoritesPage();
+        } else {
+          return BlocProvider<LoginBloc>(
+            create: (context) => LoginBloc(
+              authenticationRepository:
+                  context.read<AuthenticationRepository>(),
+            ),
+            child: SignIn(),
+          );
+        }
+      },
+      SignUp.pathName: (ctx) {
+        return BlocProvider<SignUpBloc>(
+          create: (context) => SignUpBloc(
+            authenticationRepository: context.read<AuthenticationRepository>(),
+          ),
+          child: SignUp(),
+        );
+      },
+      SignIn.pathName: (ctx) {
+        return BlocProvider<LoginBloc>(
+          create: (context) => LoginBloc(
+            authenticationRepository: context.read<AuthenticationRepository>(),
+          ),
+          child: SignIn(),
+        );
+      }
     };
   }
 
@@ -107,39 +178,35 @@ class FavoritesNavigator extends TabNavigator {
   }
 }
 
-class MessageNavigatorRoutes {
-  static const String root = "/";
-}
-
-class MessagesNavigator extends TabNavigator {
-  final GlobalKey<NavigatorState> navigatorKey;
-
-  MessagesNavigator({this.navigatorKey});
-
-  Map<String, WidgetBuilder> _routeBuilder(BuildContext context) {
-    return {
-      MessageNavigatorRoutes.root: (ctx) => Container(
-        child: Center(
-          child: Text("Messages"),
-        ),
-      ),
-    };
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final routeBuilders = _routeBuilder(context);
-    return Navigator(
-      key: navigatorKey,
-      initialRoute: MessageNavigatorRoutes.root,
-      onGenerateRoute: (routeSettings) {
-        return MaterialPageRoute(
-          builder: (ctx) => routeBuilders[routeSettings.name](ctx),
-        );
-      },
-    );
-  }
-}
+// class MessageNavigatorRoutes {
+//   static const String root = "/";
+// }
+//
+// class MessagesNavigator extends TabNavigator {
+//   final GlobalKey<NavigatorState> navigatorKey;
+//
+//   MessagesNavigator({this.navigatorKey});
+//
+//   Map<String, WidgetBuilder> _routeBuilder(BuildContext context) {
+//     return {
+//       MessageNavigatorRoutes.root: (ctx) => BusinessDetail(),
+//     };
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final routeBuilders = _routeBuilder(context);
+//     return Navigator(
+//       key: navigatorKey,
+//       initialRoute: MessageNavigatorRoutes.root,
+//       onGenerateRoute: (routeSettings) {
+//         return MaterialPageRoute(
+//           builder: (ctx) => routeBuilders[routeSettings.name](ctx),
+//         );
+//       },
+//     );
+//   }
+// }
 
 class ProfileNavigatorRoutes {
   static const String root = "/";
@@ -152,7 +219,36 @@ class ProfileNavigator extends TabNavigator {
 
   Map<String, WidgetBuilder> _routeBuilder(BuildContext context) {
     return {
-      ProfileNavigatorRoutes.root: (ctx) => ProfilePage(),
+      ProfileNavigatorRoutes.root: (ctx) {
+        if (ctx.read<AuthenticationBloc>().state.status ==
+            AuthenticationStatus.authenticated) {
+          return ProfilePage();
+        } else {
+          return BlocProvider<LoginBloc>(
+            create: (context) => LoginBloc(
+              authenticationRepository:
+                  context.read<AuthenticationRepository>(),
+            ),
+            child: SignIn(),
+          );
+        }
+      },
+      SignUp.pathName: (ctx) {
+        return BlocProvider<SignUpBloc>(
+          create: (context) => SignUpBloc(
+            authenticationRepository: context.read<AuthenticationRepository>(),
+          ),
+          child: SignUp(),
+        );
+      },
+      SignIn.pathName: (ctx) {
+        return BlocProvider<LoginBloc>(
+          create: (context) => LoginBloc(
+            authenticationRepository: context.read<AuthenticationRepository>(),
+          ),
+          child: SignIn(),
+        );
+      }
     };
   }
 

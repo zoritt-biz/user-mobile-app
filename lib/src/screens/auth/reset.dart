@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'input_field_controller.dart';
+import 'package:zoritt_mobile_app_user/src/screens/input/input_field_controller.dart';
 
 class ResetPassword extends StatelessWidget {
   static const String pathName = "/reset_password";
@@ -40,8 +39,13 @@ class ResetPassword extends StatelessWidget {
                   height: 20.0,
                 ),
                 InputController(
-                  hintText: "Email Address",
+                  hintText: "",
                   icon: Icons.email_outlined,
+                  obscureElement: false,
+                  controller: null,
+                  validator: null,
+                  keyboardType: TextInputType.emailAddress,
+                  labelText: "Email Address",
                 ),
                 SizedBox(
                   height: 15.0,

@@ -37,7 +37,7 @@ class FirstPage extends StatelessWidget {
                 },
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all<Color>(
-                      Theme.of(context).accentColor,
+                    Theme.of(context).accentColor,
                   ),
                   elevation: MaterialStateProperty.all<double>(1),
                 ),
@@ -55,8 +55,8 @@ class FirstPage extends StatelessWidget {
                 Navigator.pushNamed(context, '/sign_in');
               },
               style: ButtonStyle(
-                side: MaterialStateProperty.all<BorderSide>(BorderSide(color: Colors.grey[400]))
-              ),
+                  side: MaterialStateProperty.all<BorderSide>(
+                      BorderSide(color: Colors.grey[400]))),
               child: Padding(
                 padding: EdgeInsets.all(13),
                 child: Text(

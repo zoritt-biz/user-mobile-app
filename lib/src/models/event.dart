@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 
 @immutable
-class Event {
+class Events {
   final String id;
   final String title;
   final String description;
   final String location;
   final String link;
-  final String video;
-  final String photos;
+  final List<String> video;
+  final List<String> photos;
+  final String logoPics;
 
-  Event({
+  Events({
     this.id,
     this.title,
     this.description,
@@ -18,5 +19,18 @@ class Event {
     this.link,
     this.video,
     this.photos,
+    this.logoPics,
   });
+
+  factory Events.fromJson(Map<String, dynamic> data) {
+    return Events(
+      title: data["title"],
+      description: data["description"],
+      location: data["location"],
+      link: data["link"],
+      id: data["_id"],
+      logoPics: data["owner"] != null ? data["owner"]["logoPics"] : null,
+      photos: (data['photos'] as List).map((e) => e.toString()).toList(),
+    );
+  }
 }

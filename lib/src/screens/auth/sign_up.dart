@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
-
-import 'input_field_controller.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/bloc.dart';
+import 'package:zoritt_mobile_app_user/src/screens/input/custom_button.dart';
+import 'package:zoritt_mobile_app_user/src/screens/input/input_field_controller.dart';
 
 class SignUp extends StatefulWidget {
   static const String pathName = '/sign_up';
@@ -50,195 +50,138 @@ class _SignUpState extends State<SignUp> {
   }
 
   @override
+  void dispose() {
+    nameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    phoneNumberController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return body(context);
+    return BlocConsumer<SignUpBloc, SignUpState>(
+      builder: (signUpCtx, signUpState) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text("Sign up"),
+          ),
+          body: signUpState is SignUpLoading || signUpState is SignUpSuccessful
+              ? Center(child: CircularProgressIndicator())
+              : body(context),
+        );
+      },
+      listener: (signUpCtx, signUpState) {
+        if (signUpState is SignUpFailure) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Something went wrong")),
+          );
+        }
+        if (signUpState is SignUpSuccessful) {
+          Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
+        }
+      },
+    );
   }
 
   Widget body(BuildContext context) {
     return Form(
       key: _formKey,
       child: Container(
-        padding: const EdgeInsets.only(right: 20, left: 20),
         decoration: BoxDecoration(color: Colors.white),
-        child: Column(
+        child: ListView(
+          padding: const EdgeInsets.only(right: 20, left: 20),
           children: [
-            Expanded(
-              child: ListView(
-                children: [
-                  SizedBox(
-                    height: 40.0,
-                  ),
-                  Center(
-                    child: Text(
-                      "Create your business account for free",
-                      style: TextStyle(
-                        color: Colors.grey[500],
-                        fontSize: 16,
-                        fontStyle: FontStyle.italic,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 20.0,
-                  ),
-                  InputController(
-                    hintText: "full Name",
-                    icon: Icons.account_circle,
-                    controller: nameController,
-                    obscureElement: false,
-                    validator: _usernameValidator,
-                  ),
-                  SizedBox(
-                    height: 10.0,
-                  ),
-                  InputController(
-                    hintText: "Email Address",
-                    icon: Icons.email_outlined,
-                    validator: _emailValidator,
-                    controller: emailController,
-                    obscureElement: false,
-                  ),
-                  InputController(
-                    hintText: "Phone Number",
-                    icon: Icons.phone,
-                    validator: _usernameValidator,
-                    controller: phoneNumberController,
-                    obscureElement: false,
-                  ),
-                  SizedBox(
-                    height: 10.0,
-                  ),
-                  InputController(
-                    hintText: "Password",
-                    icon: Icons.lock_outline_sharp,
-                    obscureElement: true,
-                    validator: _passwordValidator,
-                    controller: passwordController,
-                  ),
-                  SizedBox(
-                    height: 10.0,
-                  ),
-                  InputController(
-                    hintText: "Confirm Password",
-                    icon: Icons.lock_outline_sharp,
-                    obscureElement: true,
-                    validator: _passwordValidator,
-                    controller: confirmPasswordController,
-                  ),
-                  SizedBox(
-                    height: 40.0,
-                  ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      primary: Theme.of(context).accentColor,
-                      elevation: 1,
-                    ),
-                    onPressed: () {
-                      // if (_formKey.currentState.validate()) {
-                      //   _formKey.currentState.save();
-                      //   context.read<SignUpBloc>().signUp(
-                      //         email: emailController.text.trim(),
-                      //         password: passwordController.text,
-                      //         fullName: nameController.text,
-                      //         phoneNumber: phoneNumberController.text,
-                      //       );
-                      // }
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(13),
-                      child: Text(
-                        "Sign Up",
-                        style: TextStyle(color: Colors.white, fontSize: 16),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 20.0,
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          margin: EdgeInsets.only(right: 10.0),
-                          child: Divider(
-                            color: Colors.grey[400],
-                            thickness: 0.7,
-                          ),
-                        ),
-                      ),
-                      Text(
-                        "OR",
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                      Expanded(
-                        child: Container(
-                          margin: EdgeInsets.only(left: 10.0),
-                          child: Divider(
-                            color: Colors.grey[400],
-                            thickness: 0.7,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 15.0,
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            primary: Color(0xff4267B2),
-                            elevation: 0.0,
-                            side: BorderSide(
-                              color: Color(0xff4267B2),
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                            ),
-                          ),
-                          onPressed: () {},
-                          child: Container(
-                            height: 20,
-                            width: 20,
-                            child: SvgPicture.asset(
-                              "assets/images/facebook.svg",
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 10.0,
-                      ),
-                      Expanded(
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            primary: Colors.white,
-                            elevation: 0.0,
-                            side: BorderSide(
-                              color: Colors.black26,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                            ),
-                          ),
-                          onPressed: () {},
-                          child: Container(
-                            height: 20,
-                            width: 20,
-                            child: SvgPicture.asset(
-                              "assets/images/google.svg",
-                              fit: BoxFit.fill,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+            SizedBox(
+              height: 40.0,
+            ),
+            Center(
+              child: Text(
+                "Create your account",
+                style: TextStyle(
+                  color: Colors.grey[500],
+                  fontSize: 16,
+                  fontStyle: FontStyle.italic,
+                ),
               ),
+            ),
+            SizedBox(
+              height: 20.0,
+            ),
+            InputController(
+              hintText: "full Name",
+              labelText: null,
+              icon: Icons.account_circle,
+              controller: nameController,
+              obscureElement: false,
+              validator: _usernameValidator,
+              keyboardType: TextInputType.text,
+            ),
+            SizedBox(
+              height: 10.0,
+            ),
+            InputController(
+              hintText: "Email Address",
+              labelText: null,
+              icon: Icons.email_outlined,
+              validator: _emailValidator,
+              controller: emailController,
+              obscureElement: false,
+              keyboardType: TextInputType.emailAddress,
+            ),
+            InputController(
+              hintText: "Phone Number",
+              labelText: null,
+              icon: Icons.phone,
+              validator: _usernameValidator,
+              controller: phoneNumberController,
+              obscureElement: false,
+              keyboardType: TextInputType.phone,
+            ),
+            SizedBox(
+              height: 10.0,
+            ),
+            InputController(
+              hintText: "Password",
+              labelText: null,
+              icon: Icons.lock_outline_sharp,
+              obscureElement: true,
+              validator: _passwordValidator,
+              controller: passwordController,
+              keyboardType: TextInputType.text,
+            ),
+            SizedBox(
+              height: 10.0,
+            ),
+            InputController(
+              hintText: "Confirm Password",
+              labelText: null,
+              icon: Icons.lock_outline_sharp,
+              obscureElement: true,
+              validator: _passwordValidator,
+              controller: confirmPasswordController,
+              keyboardType: TextInputType.text,
+            ),
+            SizedBox(
+              height: 40.0,
+            ),
+            CustomButton(
+              onPressed: () {
+                if (_formKey.currentState.validate()) {
+                  _formKey.currentState.save();
+                  context.read<SignUpBloc>().signUp(
+                        email: emailController.text.trim(),
+                        password: passwordController.text,
+                        fullName: nameController.text,
+                        phoneNumber: phoneNumberController.text,
+                      );
+                }
+              },
+              text: "Sign Up",
+            ),
+            SizedBox(
+              height: 20.0,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,

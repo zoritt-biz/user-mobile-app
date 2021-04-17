@@ -1,11 +1,66 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/bloc.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/navigation/NavigationBloc.dart';
+import 'package:zoritt_mobile_app_user/src/repository/event/events_repository.dart';
+import 'package:zoritt_mobile_app_user/src/repository/repository.dart';
 import 'package:zoritt_mobile_app_user/src/screens/screens.dart';
 
-class ZoritBusinessOwner extends StatelessWidget {
+import 'client/client.dart';
+
+class ZoritBusinessUser extends StatelessWidget {
+  final AuthenticationRepository authenticationRepository =
+      AuthenticationRepository(
+    firebaseAuth: FirebaseAuth.instance,
+    userRepository: UserRepository(client: client()),
+  );
+
+  final EventsRepository eventsRepository = EventsRepository(client: client());
+
+  final PostRepository postRepository = PostRepository(client: client());
+
+  final CategoryRepository categoryRepository = CategoryRepository(
+    client: client(),
+  );
+
+  final BusinessRepository businessRepository = BusinessRepository(
+    client: client(),
+    firebaseStorage: FirebaseStorage.instance,
+  );
 
   @override
   Widget build(BuildContext context) {
-    return ZorittApp();
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider.value(value: authenticationRepository),
+        RepositoryProvider.value(value: eventsRepository),
+        RepositoryProvider.value(value: postRepository),
+        RepositoryProvider.value(value: businessRepository),
+      ],
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider<AuthenticationBloc>(
+            create: (context) => AuthenticationBloc(
+              authenticationRepository:
+                  context.read<AuthenticationRepository>(),
+            ),
+            lazy: false,
+          ),
+          BlocProvider<NavigationBloc>(
+            create: (context) => NavigationBloc(),
+            lazy: false,
+          ),
+          BlocProvider<CategoryBloc>(
+            create: (context) => CategoryBloc(
+              categoryRepository: categoryRepository,
+            ),
+          ),
+        ],
+        child: ZorittApp(),
+      ),
+    );
   }
 }
 

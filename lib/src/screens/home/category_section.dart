@@ -10,7 +10,7 @@ class CategorySection extends StatelessWidget {
         child: Column(
           children: List.generate(
             2,
-            (index) {
+            (i) {
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: List.generate(
@@ -21,15 +21,25 @@ class CategorySection extends StatelessWidget {
                       backgroundColor:
                           MaterialStateProperty.all<Color>(Colors.grey[100]),
                       padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                          EdgeInsets.all(10)),
+                        EdgeInsets.all(10),
+                      ),
                     ),
                     onPressed: () {
-                      Navigator.pushNamed(context, "/categories");
+                      if (index == 3 && i == 1) {
+                        Navigator.pushNamed(context, "/categories");
+                      } else {}
                     },
                     child: Column(
                       children: [
-                        Icon(Icons.category, color: Colors.black),
-                        Text("Category", style: TextStyle(color: Colors.black)),
+                        index == 3 && i == 1
+                            ? Icon(Icons.more_horiz, color: Colors.black)
+                            : Icon(Icons.category, color: Colors.black),
+                        Text(
+                          index == 3 && i == 1 ? "More" : "Category",
+                          style: TextStyle(
+                              color: Colors.black54,
+                              fontWeight: FontWeight.w400),
+                        ),
                       ],
                     ),
                   ),
