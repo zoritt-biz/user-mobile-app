@@ -37,7 +37,7 @@ class Events {
               : ""
           : "",
       photos: (data['photos'] as List).map((e) => e.toString()).toList(),
-      businessName: data["owner"]["businessName"],
+      businessName: data["owner"] != null ? data["owner"]["businessName"] : "",
     );
   }
 }

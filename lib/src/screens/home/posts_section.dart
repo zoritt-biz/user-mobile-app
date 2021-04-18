@@ -122,7 +122,7 @@ class PostItems extends StatelessWidget {
                     height: 160,
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: NetworkImage(posts[index]?.photos[0]),
+                        image: NetworkImage(posts[index]?.photos?.elementAt(0) ?? ""),
                         fit: BoxFit.cover,
                       ),
                       borderRadius: BorderRadius.circular(12),
