@@ -28,91 +28,40 @@ class PostsSection extends StatelessWidget {
             ),
           ),
           Container(
-            height: 150,
-            child: BlocBuilder<PostBloc, PostState>(builder: (context, state) {
-              if (state is PostLoadSuccessful) {
-                print(state.posts);
-                if (state.posts.isNotEmpty) {
-                  return body(context, state.posts);
+            height: 160,
+            child: BlocBuilder<PostBloc, PostState>(
+              builder: (context, state) {
+                if (state is PostLoadSuccessful) {
+                  if (state.posts.isNotEmpty) {
+                    return PostItems(buildContext: context, posts: state.posts);
+                  } else {
+                    return Container(
+                      child: Center(child: Text("No recent Posts")),
+                    );
+                  }
                 } else {
-                  return Container(
-                    child: Center(child: Text("No recent Posts")),
+                  return Padding(
+                    padding: EdgeInsets.only(left: 10, right: 10),
+                    child: Row(
+                      children: [
+                        Expanded(child: shimmerItem()),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Expanded(child: shimmerItem()),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Expanded(child: shimmerItem()),
+                      ],
+                    ),
                   );
                 }
-              } else {
-                return Padding(
-                  padding: EdgeInsets.only(left: 10, right: 10),
-                  child: Row(
-                    children: [
-                      Expanded(child: shimmerItem()),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      Expanded(child: shimmerItem()),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      Expanded(child: shimmerItem()),
-                    ],
-                  ),
-                );
-              }
-            }),
+              },
+            ),
           ),
         ],
       ),
-    );
-  }
-
-  Widget body(BuildContext context, List<Post> posts) {
-    return ListView.builder(
-      scrollDirection: Axis.horizontal,
-      padding: EdgeInsets.only(left: 10, right: 10),
-      itemCount: posts.length,
-      itemBuilder: (context, index) {
-        return Container(
-          width: 120.0,
-          child: GestureDetector(
-            onTap: () {
-              Navigator.pushNamed(globalNavigator, "/postsPage",
-                  arguments: [posts, index]);
-            },
-            child: Card(
-              elevation: 3,
-              shadowColor: Colors.white24,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Stack(
-                children: [
-                  Container(
-                    height: 150,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: NetworkImage(posts[index]?.photos[0]
-                          // "https://images.unsplash.com/photo-1614823498916-a28a7d67182c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80",
-                        ),
-                        fit: BoxFit.cover,
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  Align(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        posts[index] != null ? posts[index].businessName : "",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                    alignment: Alignment.bottomLeft,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
     );
   }
 
@@ -137,6 +86,83 @@ class PostsSection extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class PostItems extends StatelessWidget {
+  final BuildContext buildContext;
+  final List<Post> posts;
+
+  const PostItems({Key key, this.buildContext, this.posts}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      scrollDirection: Axis.horizontal,
+      padding: EdgeInsets.only(left: 10, right: 10),
+      itemCount: posts.length,
+      itemBuilder: (context, index) {
+        return Container(
+          width: 120.0,
+          child: GestureDetector(
+            onTap: () {
+              Navigator.pushNamed(buildContext, "/postsPage",
+                  arguments: [posts, index]);
+            },
+            child: Card(
+              elevation: 3,
+              shadowColor: Colors.white24,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Stack(
+                children: [
+                  Container(
+                    height: 160,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: NetworkImage(posts[index]?.photos[0]),
+                        fit: BoxFit.cover,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.bottomLeft,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.transparent,
+                            Colors.transparent,
+                            Colors.transparent,
+                            Colors.black.withOpacity(0.3),
+                            Colors.black.withOpacity(0.6),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                  Align(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        posts[index] != null ? posts[index].businessName : "",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                    alignment: Alignment.bottomLeft,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

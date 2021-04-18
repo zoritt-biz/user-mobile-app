@@ -1,5 +1,4 @@
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share/share.dart';
@@ -7,8 +6,6 @@ import 'package:zoritt_mobile_app_user/src/bloc/bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/events/events_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/events/events_state.dart';
 import 'package:zoritt_mobile_app_user/src/models/models.dart';
-import 'package:zoritt_mobile_app_user/src/repository/repository.dart';
-import 'package:zoritt_mobile_app_user/src/screens/screens.dart';
 
 class EventsPage extends StatelessWidget {
   final BuildContext globalNavigator;
@@ -22,7 +19,7 @@ class EventsPage extends StatelessWidget {
         title: Text("Events"),
       ),
       body: BlocConsumer<EventsBloc, EventsState>(
-        builder: (context, state) {
+        builder: (eventCtx, state) {
           if (state is EventsLoadSuccessful) {
             if (state.events.isNotEmpty) {
               return body(state.events, globalNavigator);
@@ -72,9 +69,8 @@ class EventsPage extends StatelessWidget {
           itemCount: events.length,
           shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
-          itemBuilder: (context, index) => EventCard(
-            events: events[index],
-          ),
+          itemBuilder: (ctx, index) =>
+              EventCard(events: events[index], context: context),
         ),
       ],
     );
@@ -83,8 +79,9 @@ class EventsPage extends StatelessWidget {
 
 class EventCard extends StatefulWidget {
   final Events events;
+  final BuildContext context;
 
-  EventCard({@required this.events});
+  EventCard({@required this.events, this.context});
 
   @override
   _EventCardState createState() => _EventCardState();
@@ -117,7 +114,6 @@ class _EventCardState extends State<EventCard> {
           ),
         )
         .toList();
-
     return Padding(
       padding: const EdgeInsets.only(bottom: 10, left: 10, right: 10),
       child: Card(
@@ -207,25 +203,20 @@ class _EventCardState extends State<EventCard> {
                       // crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
-                          child: GestureDetector(
-                            child: Icon(
-                              Icons.favorite,
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.favorite_border_rounded,
                               color: Colors.orange,
                               size: 30,
                             ),
-                            onTap: () {
+                            onPressed: () {
                               if (context
                                       .read<AuthenticationBloc>()
                                       .state
                                       .status ==
                                   AuthenticationStatus.authenticated) {
-                                // return FavoritesPage();
                               } else {
-                                return BlocProvider<LoginBloc>(
-                                    create: (context) => LoginBloc(
-                                        authenticationRepository: context
-                                            .read<AuthenticationRepository>()),
-                                    child: SignIn());
+                                Navigator.pushNamed(widget.context, "/sign_in");
                               }
                             },
                           ),
@@ -250,28 +241,44 @@ class _EventCardState extends State<EventCard> {
             Padding(
               padding: const EdgeInsets.only(
                   left: 10, right: 10, bottom: 15, top: 10),
-              child: Row(
+              child: Column(
                 children: [
-                  Expanded(
-                    child: RichText(
-                      text: TextSpan(
-                        text: widget.events.description,
-                        style: TextStyle(color: Colors.grey[600], fontSize: 15),
-                        children: <TextSpan>[
-                          TextSpan(
-                            text: ' See More',
-                            style:
-                                TextStyle(color: Colors.orange, fontSize: 15),
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () {
-                                print('See More clicked');
-                                // navigate to desired screen
-                              },
-                          )
-                        ],
+                  Row(
+                    children: [
+                      Expanded(
+                        child: RichText(
+                          text: TextSpan(
+                            text: widget.events.description,
+                            style: TextStyle(
+                                color: Colors.grey[600], fontSize: 15),
+                            children: <TextSpan>[
+                              TextSpan(text: "  "),
+                              TextSpan(
+                                text: widget.events.link,
+                                style: TextStyle(
+                                  color: Colors.blue,
+                                  fontSize: 15,
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        widget.events.businessName,
+                        style: TextStyle(
+                          fontSize: 17,
+                          fontStyle: FontStyle.italic,
+                        ),
                       ),
                     ),
-                  ),
+                  )
                 ],
               ),
             )

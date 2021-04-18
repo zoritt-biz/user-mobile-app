@@ -12,8 +12,7 @@ class BusinessList extends Equatable {
   });
 
   @override
-  List<Object> get props =>
-      [id, autocompleteTerm];
+  List<Object> get props => [id, autocompleteTerm];
 
   factory BusinessList.fromJson(Map<String, dynamic> data) {
     return BusinessList(
@@ -23,6 +22,5 @@ class BusinessList extends Equatable {
   }
 
   @override
-  String toString() =>
-      'Business { id: $id, businessName: $autocompleteTerm }';
+  String toString() => 'Business { id: $id, businessName: $autocompleteTerm }';
 }

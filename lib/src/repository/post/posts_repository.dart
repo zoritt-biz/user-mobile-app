@@ -9,11 +9,11 @@ class PostRepository {
   PostRepository({@required this.client});
 
   Future<List<Post>> getPosts(
-      int limit,
-      String sort,
-      String filterDate,
-      int skip,
-      ) async {
+    int limit,
+    String sort,
+    String filterDate,
+    int skip,
+  ) async {
     final result = await client.query(
       QueryOptions(
         document: gql(GET_ALL_POSTS),

@@ -15,7 +15,6 @@ class EventsBloc extends Cubit<EventsState> {
       List<Events> events = await eventRepository.getEvents(limit, sort);
       emit(EventsLoadSuccessful(events: events));
     } catch (e) {
-      print(e);
       emit(EventsLoadFailure(e.toString()));
     }
   }

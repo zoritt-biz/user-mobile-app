@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+import 'category_list.dart';
 
 class CategoriesPage extends StatelessWidget {
   @override
@@ -11,47 +12,20 @@ class CategoriesPage extends StatelessWidget {
       body: GridView.count(
         padding: EdgeInsets.symmetric(horizontal: 25, vertical: 15),
         crossAxisCount:
-        MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 3,
+            MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 3,
         crossAxisSpacing: 30.0,
         mainAxisSpacing: 25.0,
         // shrinkWrap: true,
-        children: [
-          GridItem(
-              'Arts, Media & Entertainment',
-              Icons.ondemand_video_sharp,
-              context
-          ),
-          GridItem(
-              'Food & Catering',
-              Icons.local_cafe_outlined,context
-          ),
-          GridItem('Hotel & Hospitality', Icons.hotel_outlined,context),
-          GridItem('Shopping', Icons.add_shopping_cart_outlined,context),
-          GridItem('Financial Services', Icons.loop_outlined,context),
-          GridItem('Tour, Travel & Transport', Icons.flight_outlined,context),
-          GridItem('Health', Icons.local_hospital_outlined,context),
-          GridItem('Sports and Leisure', Icons.lens_outlined,context),
-          GridItem(
-              'Beauty & Spa',
-              Icons.spa_outlined,
-              context
-          ),
-          GridItem('Event Organisers', FontAwesomeIcons.birthdayCake,context),
-          GridItem('Education & Training', FontAwesomeIcons.bookOpen,context),
-          GridItem('Automotive & Gas stations', FontAwesomeIcons.carSide,context),
-          GridItem('Night Life', FontAwesomeIcons.wineGlassAlt,context),
-          GridItem('Import/Export', FontAwesomeIcons.exchangeAlt,context),
-          GridItem('Construction and Engineering',
-              FontAwesomeIcons.exclamationTriangle,context),
-          GridItem(
-              'Local Services',
-              FontAwesomeIcons.wrench,
-              context
-          ),
-          GridItem('Religious Organizations', FontAwesomeIcons.cross,context),
-          GridItem('Governmental Institutions', Icons.account_balance_outlined,context),
-          GridItem('NGOs & Humanitarian', Icons.location_city_outlined,context),
-        ],
+        children: List.generate(
+          CATEGORY_LIST.length,
+          (index) {
+            return GridItem(
+              CATEGORY_LIST[index]["name"],
+              CATEGORY_LIST[index]["icon"],
+              CATEGORY_LIST[index]["sub_categories"],
+            );
+          },
+        ),
       ),
     );
   }
@@ -60,9 +34,9 @@ class CategoriesPage extends StatelessWidget {
 class GridItem extends StatelessWidget {
   final String title;
   final IconData icon;
-  final BuildContext ctx;
+  final List<dynamic> subCategories;
 
-  GridItem(this.title, this.icon, this.ctx);
+  GridItem(this.title, this.icon, this.subCategories);
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +59,8 @@ class GridItem extends StatelessWidget {
         child: InkWell(
           splashColor: Colors.grey[300],
           onTap: () {
-            Navigator.pushNamed(ctx, "/subcategories");
+            Navigator.pushNamed(context, "/subcategories",
+                arguments: [subCategories]);
           },
           borderRadius: BorderRadius.circular(20),
           child: Column(

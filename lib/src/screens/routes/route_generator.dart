@@ -38,7 +38,8 @@ class RouteGenerator {
       case MenuDisplay.pathName:
         return MaterialPageRoute(builder: (_) => MenuDisplay());
       case BusinessMoreInfo.pathName:
-        return MaterialPageRoute(builder: (_) => BusinessMoreInfo());
+        return MaterialPageRoute(
+            builder: (_) => BusinessMoreInfo(business: arguments[0]));
       case BusinessDetail.pathName:
         return MaterialPageRoute(
           builder: (_) => BlocProvider<BusinessDetailBloc>(
@@ -65,12 +66,14 @@ class RouteGenerator {
   }
 
   static Route<dynamic> _errorRoute() {
-    return MaterialPageRoute(builder: (_) {
-      return Scaffold(
-        body: Center(
-          child: Text('ERROR'),
-        ),
-      );
-    });
+    return MaterialPageRoute(
+      builder: (_) {
+        return Scaffold(
+          body: Center(
+            child: Text('ERROR'),
+          ),
+        );
+      },
+    );
   }
 }

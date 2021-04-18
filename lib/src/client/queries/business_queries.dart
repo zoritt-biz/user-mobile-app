@@ -29,6 +29,11 @@ query ($id: MongoID!){
       videos
       photos
       createdAt
+      owner {
+        businessName
+        location
+        logoPics
+      }
     }
     events {
       _id
@@ -39,6 +44,11 @@ query ($id: MongoID!){
       videos
       photos
       createdAt
+      owner {
+        businessName
+        location
+        logoPics
+      }
     }
     categories {
       _id
@@ -50,12 +60,15 @@ query ($id: MongoID!){
 """;
 
 const GET_BUSINESS_MANY = r"""
-query(
-  $limit: Int,
-  $filter: FilterFindManyBusinessInput,
-  $skip:Int
-){
-  businessMany(limit: $limit, filter: $filter, skip: $skip){
+query($searchArray: [String], $limit: Int){
+  businessMany(
+    filter: {
+      _operators: {
+        searchIndex: {in: $searchArray}
+      }
+    }
+    limit: $limit
+  ){
     _id
     businessName
     phoneNumber
@@ -63,19 +76,7 @@ query(
     emails
     website
     logoPics
-    slogan
-    description
-    specialization
-    history
-    establishedIn
-    updatedAt
-    createdAt
     pictures
-    openHours {
-      day
-      opens
-      closes
-    }
   }
 }
 """;

@@ -18,7 +18,7 @@ class SponsoredPostsOverview extends StatelessWidget {
         if (sponsoredState is SponsoredLoadSuccess) {
           return SliverList(
             delegate: SliverChildBuilderDelegate(
-                  (BuildContext context, int index) {
+              (BuildContext context, int index) {
                 return SponsorItem(
                   business: sponsoredState.sponsored[index],
                   globalNavigator: globalNavigator,
@@ -30,7 +30,7 @@ class SponsoredPostsOverview extends StatelessWidget {
         } else {
           return SliverList(
             delegate: SliverChildBuilderDelegate(
-                  (BuildContext context, int index) {
+              (BuildContext context, int index) {
                 return Padding(
                   padding: EdgeInsets.only(left: 12, right: 12),
                   child: ShimmerItem(),
@@ -103,7 +103,8 @@ class _SponsorItemState extends State<SponsorItem> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(widget.globalNavigator, "/business_detail", arguments: [widget.business.id]);
+        Navigator.pushNamed(widget.globalNavigator, "/business_detail",
+            arguments: [widget.business.id]);
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
@@ -122,9 +123,9 @@ class _SponsorItemState extends State<SponsorItem> {
               ),
               Padding(
                 padding:
-                MediaQuery.of(context).orientation == Orientation.portrait
-                    ? EdgeInsets.only(left: 15, right: 15, bottom: 15)
-                    : EdgeInsets.only(left: 40, right: 40, bottom: 15),
+                    MediaQuery.of(context).orientation == Orientation.portrait
+                        ? EdgeInsets.only(left: 15, right: 15, bottom: 15)
+                        : EdgeInsets.only(left: 40, right: 40, bottom: 15),
                 child: Column(
                   children: [
                     Padding(

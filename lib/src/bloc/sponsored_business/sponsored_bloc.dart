@@ -17,7 +17,8 @@ class SponsoredBloc extends Cubit<SponsoredState> {
   Future<void> getSponsored(int limit) async {
     emit(SponsoredLoading());
     try {
-      List<Business> businesses = await businessRepository.getSponsoredBusinesses(limit);
+      List<Business> businesses =
+          await businessRepository.getSponsoredBusinesses(limit);
       emit(SponsoredLoadSuccess(businesses));
     } catch (e) {
       emit(SponsoredOperationFailure(e.toString()));

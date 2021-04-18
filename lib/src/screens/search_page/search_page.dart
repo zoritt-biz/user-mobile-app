@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/bloc.dart';
-import 'package:zoritt_mobile_app_user/src/bloc/navigation/NavigationBloc.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/navigation/navigation_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/models/models.dart';
-import 'package:zoritt_mobile_app_user/src/repository/business/business_repository.dart';
+
+import 'business_search.dart';
+import 'search_filter.dart';
 
 class SearchPage extends StatelessWidget {
   final BuildContext globalNavigator;
@@ -16,7 +18,7 @@ class SearchPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<NavigationBloc, NavigationState>(
       listener: (context, state) {
-        if (state is NavigatedToSearch) {
+        if (state is NavigatedToSearchDelegate) {
           showSearch(
             delegate: BusinessSearch(buildContext: context),
             context: context,
@@ -43,19 +45,20 @@ class SearchPage extends StatelessWidget {
           ],
         ),
         body: BlocConsumer<BusinessBloc, BusinessState>(
-          builder: (context, state) {
-            if (state is BusinessLoadSuccess) {
-              if (state.business.isNotEmpty) {
-                return body(context, state.business);
+          builder: (bizCtx, bizState) {
+            if (bizState is BusinessLoadSuccess) {
+              if (bizState.business.isNotEmpty) {
+                return body(context, bizState.business);
               }
               return Center(
                 child: Text("No business found "),
               );
+            } else {
+              return shimmer(context);
             }
-            return shimmer(context);
           },
-          listener: (context, state) {
-            if (state is BusinessUnknown) {
+          listener: (bizCtx, bizState) {
+            if (bizState is BusinessUnknown) {
               // showSearch(
               //     delegate: BusinessSearch(buildContext: context),
               //     context: context);
@@ -89,26 +92,22 @@ class SearchPage extends StatelessWidget {
             ),
           ),
         ),
-        Expanded(
-          child: ListView.builder(
-            itemBuilder: (context, index) {
-              return GestureDetector(
-                onTap: () {
-                  Navigator.pushNamed(
-                    globalNavigator,
-                    "/business_detail",
-                    arguments: businesses[index].id,
-                  );
-                },
-                child: SearchResult(
-                  business: businesses[index],
-                ),
-              );
-            },
-            itemCount: businesses.length,
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-          ),
+        ListView.builder(
+          itemBuilder: (context, index) {
+            return GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(
+                  globalNavigator,
+                  "/business_detail",
+                  arguments: [businesses[index].id],
+                );
+              },
+              child: SearchResult(business: businesses[index]),
+            );
+          },
+          itemCount: businesses.length,
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
         ),
       ],
     );
@@ -277,7 +276,7 @@ class _SearchResultState extends State<SearchResult> {
             children: [
               Expanded(
                 child: Image.network(
-                  widget.business.logoPic,
+                  widget.business.pictures[0],
                   fit: BoxFit.fill,
                   height: 100,
                 ),
@@ -321,22 +320,6 @@ class _SearchResultState extends State<SearchResult> {
                       SizedBox(
                         height: 5,
                       ),
-                      // if (widget.business.relatedBusiness != true)
-                      //   Row(
-                      //     children: [
-                      //       Text(
-                      //         '\$${widget.price.toString()}',
-                      //         style: TextStyle(fontSize: 15),
-                      //       ),
-                      //       SizedBox(
-                      //         width: 15,
-                      //       ),
-                      //       Text(
-                      //         widget.name,
-                      //         style: TextStyle(fontSize: 15),
-                      //       )
-                      //     ],
-                      //   ),
                     ],
                   ),
                 ),
@@ -344,166 +327,6 @@ class _SearchResultState extends State<SearchResult> {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class SearchFilter extends StatefulWidget {
-  @override
-  _SearchFilterState createState() => _SearchFilterState();
-}
-
-class _SearchFilterState extends State<SearchFilter> {
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          Container(
-            padding: EdgeInsets.all(8),
-            child: Icon(
-              Icons.sort_outlined,
-            ),
-            decoration: BoxDecoration(
-                shape: BoxShape.circle, border: Border.all(color: Colors.grey)),
-          ),
-          Container(
-            padding: EdgeInsets.all(8),
-            child: Text(
-              'Open Now',
-            ),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(50),
-                border: Border.all(color: Colors.grey)),
-          ),
-          Container(
-            padding: EdgeInsets.all(5),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(50),
-                border: Border.all(color: Colors.grey)),
-            child: Row(
-              children: [
-                Text(
-                  'Price',
-                ),
-                Icon(
-                  Icons.keyboard_arrow_down_outlined,
-                  color: Colors.grey,
-                )
-              ],
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.all(8),
-            child: Text(
-              'All Filters',
-            ),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(50),
-                border: Border.all(color: Colors.grey)),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class BusinessSearch extends SearchDelegate<String> {
-  final BuildContext buildContext;
-  FilteredBusinessListBloc _filteredBusinessListBloc;
-  BusinessListBloc _businessListBloc;
-
-  BusinessSearch({this.buildContext}) {
-    _businessListBloc =
-        BusinessListBloc(buildContext.read<BusinessRepository>())
-          ..getBusinessList();
-    _filteredBusinessListBloc =
-        FilteredBusinessListBloc(businessListBloc: _businessListBloc);
-  }
-
-  @override
-  List<Widget> buildActions(BuildContext context) {
-    return [
-      IconButton(
-        icon: Icon(Icons.clear),
-        onPressed: () {
-          query = "";
-        },
-      )
-    ];
-  }
-
-  @override
-  Widget buildLeading(BuildContext context) {
-    return IconButton(
-      icon: Icon(Icons.arrow_back),
-      onPressed: () {
-        close(context, query);
-      },
-    );
-  }
-
-  @override
-  void showResults(BuildContext context) {
-    buildContext.read<BusinessBloc>().searchForBusinesses(query, 0, 100);
-    close(context, query);
-    super.showResults(context);
-  }
-
-  @override
-  Widget buildResults(BuildContext context) {
-    // c.read<BusinessBloc>().searchForBusinesses(query, 0, 100);
-    // close(context, query);
-    return Container();
-  }
-
-  @override
-  Widget buildSuggestions(BuildContext context) {
-    // print(query);
-
-    _filteredBusinessListBloc.filter(query: query);
-    return BlocProvider<FilteredBusinessListBloc>.value(
-      // create: (context){
-      //   print(query);
-      value: _filteredBusinessListBloc,
-      //   return FilteredBusinessListBloc(businessListBloc: buildContext.read<BusinessListBloc>())..filter(query: query);
-
-      child: BlocBuilder<FilteredBusinessListBloc, FilteredBusinessListState>(
-        builder: (context, state) {
-          if (state is FilteredBusinessListSuccessful) {
-            if (state.businessList != null && state.businessList.isNotEmpty) {
-              return Padding(
-                child: ListView.separated(
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text(
-                          state.businessList[index].autocompleteTerm,
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        onTap: () {
-                          query = state.businessList[index].autocompleteTerm;
-                          buildContext
-                              .read<BusinessBloc>()
-                              .searchForBusinesses(query, 0, 100);
-                          close(context, query);
-                        },
-                      );
-                    },
-                    separatorBuilder: (context, _) {
-                      return Divider(
-                        thickness: 1,
-                      );
-                    },
-                    itemCount: state.businessList.length),
-                padding: EdgeInsets.symmetric(horizontal: 20),
-              );
-            }
-          }
-          return Container();
-        },
       ),
     );
   }

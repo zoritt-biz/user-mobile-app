@@ -22,7 +22,7 @@ class SponsoredPostsPage extends StatelessWidget {
               return ListView(
                 children: [
                   ...sponsoredState.sponsored.map(
-                        (biz) => SponsorItem(
+                    (biz) => SponsorItem(
                       business: biz,
                       globalNavigator: globalNavigator,
                     ),

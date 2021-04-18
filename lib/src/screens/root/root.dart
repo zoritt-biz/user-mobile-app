@@ -32,11 +32,13 @@ class _HomePageState extends State<HomePage> {
     _globalNavigatorContext = context;
     tabNavigators = [
       HomeNavigator(
-          navigatorKey: tabNavigatorKeys[TabItem.home.index],
-          globalNavigator: _globalNavigatorContext),
+        navigatorKey: tabNavigatorKeys[TabItem.home.index],
+        globalNavigator: _globalNavigatorContext,
+      ),
       SearchNavigator(
-          navigatorKey: tabNavigatorKeys[TabItem.search.index],
-          globalNavigator: _globalNavigatorContext),
+        navigatorKey: tabNavigatorKeys[TabItem.search.index],
+        globalNavigator: _globalNavigatorContext,
+      ),
       FavoritesNavigator(
           navigatorKey: tabNavigatorKeys[TabItem.favorites.index]),
       // MessagesNavigator(navigatorKey: tabNavigatorKeys[TabItem.messages.index]),
@@ -104,7 +106,7 @@ class _HomePageState extends State<HomePage> {
 
     return BlocListener<NavigationBloc, NavigationState>(
         listener: (context, state) {
-          if (state is NavigatedToSearch) {
+          if (state is NavigatedToSearchDelegate || state is NavigatedToSearch) {
             setCurrentIndex(TabItem.search);
           }
         },

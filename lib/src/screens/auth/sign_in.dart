@@ -141,9 +141,9 @@ class _SignInState extends State<SignIn> {
               if (_formKey.currentState.validate()) {
                 _formKey.currentState.save();
                 context.read<LoginBloc>().logInWithCredentials(
-                  email: emailController.text.trim(),
-                  password: passwordController.text,
-                );
+                      email: emailController.text.trim(),
+                      password: passwordController.text,
+                    );
               }
             },
             text: "Sign In",

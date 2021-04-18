@@ -24,7 +24,11 @@ class Post {
       description: data['description'],
       photos: (data['photos'] as List).map((e) => e.toString()).toList(),
       businessName: data['owner']['businessName'],
-      businessLogo: data['owner']['logoPics'],
+      businessLogo: data["owner"] != null
+          ? data["owner"]["logoPics"] != null
+              ? data["owner"]["logoPics"]
+              : ""
+          : "",
     );
   }
 }

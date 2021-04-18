@@ -68,17 +68,64 @@ class EventsSection extends StatelessWidget {
       padding: EdgeInsets.only(left: 10, right: 10),
       itemCount: events.length,
       itemBuilder: (context, index) {
-        return eventItem(context, events[index]);
+        return EventItem(buildContext: context, event: events[index]);
       },
     );
   }
 
-  Widget eventItem(BuildContext context, Events event) {
+  Widget shimmerItem() {
+    return Container(
+      width: 140.0,
+      child: Shimmer.fromColors(
+        baseColor: Colors.grey[200],
+        highlightColor: Colors.grey[100],
+        child: Container(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: Colors.grey[300],
+                ),
+                height: 100,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 6),
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: Colors.grey,
+                  ),
+                  height: 15,
+                  width: 80,
+                ),
+              ),
+              SizedBox(
+                height: 5,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class EventItem extends StatelessWidget {
+  final BuildContext buildContext;
+  final Events event;
+
+  const EventItem({Key key, this.buildContext, this.event}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       width: 140.0,
       child: GestureDetector(
         onTap: () {
-          Navigator.pushNamed(context, "/events");
+          if (buildContext != null)
+            Navigator.pushNamed(buildContext, "/events");
         },
         child: Card(
           elevation: 3,
@@ -94,8 +141,8 @@ class EventsSection extends StatelessWidget {
                 decoration: BoxDecoration(
                   image: DecorationImage(
                     image: NetworkImage(event?.photos?.elementAt(0) ?? ""
-                      // "https://images.unsplash.com/photo-1614823498916-a28a7d67182c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80",
-                    ),
+                        // "https://images.unsplash.com/photo-1614823498916-a28a7d67182c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80",
+                        ),
                     fit: BoxFit.cover,
                   ),
                   borderRadius: BorderRadius.only(
@@ -131,44 +178,6 @@ class EventsSection extends StatelessWidget {
                     ),
                   ],
                 ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget shimmerItem() {
-    return Container(
-      width: 140.0,
-      child: Shimmer.fromColors(
-        baseColor: Colors.grey[200],
-        highlightColor: Colors.grey[100],
-        child: Container(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: Colors.grey[300],
-                ),
-                height: 100,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 6),
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: Colors.grey,
-                  ),
-                  height: 15,
-                  width: 80,
-                ),
-              ),
-              SizedBox(
-                height: 5,
               ),
             ],
           ),

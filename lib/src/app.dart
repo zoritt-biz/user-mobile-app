@@ -3,7 +3,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/bloc.dart';
-import 'package:zoritt_mobile_app_user/src/bloc/navigation/NavigationBloc.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/navigation/navigation_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/repository/event/events_repository.dart';
 import 'package:zoritt_mobile_app_user/src/repository/repository.dart';
 import 'package:zoritt_mobile_app_user/src/screens/screens.dart';
@@ -57,6 +57,11 @@ class ZoritBusinessUser extends StatelessWidget {
               categoryRepository: categoryRepository,
             ),
           ),
+          BlocProvider<BusinessBloc>(
+            create: (context) => BusinessBloc(
+              businessRepository: businessRepository,
+            ),
+          )
         ],
         child: ZorittApp(),
       ),
