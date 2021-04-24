@@ -19,6 +19,7 @@ class BusinessRepository {
       QueryOptions(
         document: gql(GET_BUSINESS_DETAIL),
         variables: {"id": id},
+        fetchPolicy: FetchPolicy.networkOnly,
       ),
     );
     if (result.hasException) {
@@ -33,6 +34,7 @@ class BusinessRepository {
       QueryOptions(
         document: gql(GET_BUSINESS_DETAIL),
         variables: {"id": id},
+        fetchPolicy: FetchPolicy.networkOnly,
       ),
     );
     if (result.hasException) {
@@ -70,12 +72,26 @@ class BusinessRepository {
     return data.map((e) => BusinessList.fromJson(e)).toList();
   }
 
+  Future<List<Business>> getFavoritesList(String id) async {
+    final results = await client.query(
+      QueryOptions(
+        document: gql(GET_FAVORITES_LIST_MANY),
+        variables: {"id": id},
+        fetchPolicy: FetchPolicy.networkOnly,
+      ),
+    );
+    if (results.hasException) {
+      throw results.exception;
+    }
+    final data = results.data['userById']['favorites'] as List;
+    return data.map((e) => Business.fromJson(e)).toList();
+  }
+
   Future<List<Business>> getBusinesses(
     String query,
     int skip,
     int limit,
   ) async {
-    print(query);
     final results = await client.query(
       QueryOptions(
         document: gql(GET_BUSINESS_MANY),
@@ -83,6 +99,7 @@ class BusinessRepository {
           "searchArray": [...query.split(" ").map((e) => e.toLowerCase())],
           "limit": limit,
         },
+        fetchPolicy: FetchPolicy.networkOnly,
       ),
     );
     if (results.hasException) {

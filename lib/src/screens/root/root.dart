@@ -20,7 +20,6 @@ class _HomePageState extends State<HomePage> {
     GlobalKey<NavigatorState>(),
     GlobalKey<NavigatorState>(),
     GlobalKey<NavigatorState>(),
-    // GlobalKey<NavigatorState>(),
     GlobalKey<NavigatorState>(),
   ];
 
@@ -40,9 +39,11 @@ class _HomePageState extends State<HomePage> {
         globalNavigator: _globalNavigatorContext,
       ),
       FavoritesNavigator(
-          navigatorKey: tabNavigatorKeys[TabItem.favorites.index]),
-      // MessagesNavigator(navigatorKey: tabNavigatorKeys[TabItem.messages.index]),
-      ProfileNavigator(navigatorKey: tabNavigatorKeys[TabItem.profile.index]),
+        navigatorKey: tabNavigatorKeys[TabItem.favorites.index],
+      ),
+      ProfileNavigator(
+        navigatorKey: tabNavigatorKeys[TabItem.profile.index],
+      ),
     ];
     super.initState();
   }
@@ -106,7 +107,8 @@ class _HomePageState extends State<HomePage> {
 
     return BlocListener<NavigationBloc, NavigationState>(
         listener: (context, state) {
-          if (state is NavigatedToSearchDelegate || state is NavigatedToSearch) {
+          if (state is NavigatedToSearchDelegate ||
+              state is NavigatedToSearch) {
             setCurrentIndex(TabItem.search);
           }
         },
@@ -153,8 +155,12 @@ class _HomePageState extends State<HomePage> {
                   child: _buildOffstageNavigator(TabItem.home),
                 ),
                 _buildOffstageNavigator(TabItem.search),
-                _buildOffstageNavigator(TabItem.favorites),
-                // _buildOffstageNavigator(TabItem.messages),
+                BlocProvider<UserBloc>(
+                  create: (context) => UserBloc(
+                    userRepository: context.read<UserRepository>(),
+                  ),
+                  child: _buildOffstageNavigator(TabItem.favorites),
+                ),
                 _buildOffstageNavigator(TabItem.profile),
               ],
             ),

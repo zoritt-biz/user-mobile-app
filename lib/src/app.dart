@@ -19,6 +19,8 @@ class ZoritBusinessUser extends StatelessWidget {
 
   final EventsRepository eventsRepository = EventsRepository(client: client());
 
+  final UserRepository userRepository = UserRepository(client: client());
+
   final PostRepository postRepository = PostRepository(client: client());
 
   final CategoryRepository categoryRepository = CategoryRepository(
@@ -38,13 +40,14 @@ class ZoritBusinessUser extends StatelessWidget {
         RepositoryProvider.value(value: eventsRepository),
         RepositoryProvider.value(value: postRepository),
         RepositoryProvider.value(value: businessRepository),
+        RepositoryProvider.value(value: userRepository),
       ],
       child: MultiBlocProvider(
         providers: [
           BlocProvider<AuthenticationBloc>(
             create: (context) => AuthenticationBloc(
-              authenticationRepository:
-                  context.read<AuthenticationRepository>(),
+              authenticationRepository: authenticationRepository,
+              userRepository: userRepository,
             ),
             lazy: false,
           ),
@@ -61,7 +64,7 @@ class ZoritBusinessUser extends StatelessWidget {
             create: (context) => BusinessBloc(
               businessRepository: businessRepository,
             ),
-          )
+          ),
         ],
         child: ZorittApp(),
       ),
@@ -79,8 +82,9 @@ class _ZorittAppState extends State<ZorittApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        primaryColor: Color(0xffFFA500),
-        accentColor: Color(0xFF10B49E),
+        primaryColor: Color(0xFF2FEAA9),
+        // primaryColor: Color(0xA8454545),
+        accentColor: Color(0xffFFA500),
         appBarTheme: AppBarTheme(
           elevation: 2,
           backgroundColor: Colors.white,

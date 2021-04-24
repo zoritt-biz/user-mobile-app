@@ -83,9 +83,26 @@ query($searchArray: [String], $limit: Int){
 
 const GET_BUSINESS_LIST_MANY = r"""
 query{
-  businessListMany{
+  businessListMany(limit: 2000){
     _id,
     autocompleteTerm
+  }
+}
+""";
+
+const GET_FAVORITES_LIST_MANY = r"""
+query($id: MongoID!){
+  userById(_id: $id){
+    favorites{
+      _id
+      businessName
+      phoneNumber
+      location
+      emails
+      website
+      logoPics
+      pictures
+    }
   }
 }
 """;

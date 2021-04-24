@@ -12,10 +12,7 @@ class PostsPage extends StatefulWidget {
   PostsPage({this.posts, this.selectedPost = 0});
 
   @override
-  State<StatefulWidget> createState() {
-    // TODO: implement createState
-    return _PostsPageState();
-  }
+  State<StatefulWidget> createState() => _PostsPageState();
 }
 
 class _PostsPageState extends State<PostsPage> {
@@ -32,16 +29,17 @@ class _PostsPageState extends State<PostsPage> {
       body: Column(
         children: [
           Expanded(
-              child: Post(
-            posts: widget.posts
-                .map(
-                  (post) => Story(
-                    post: post,
-                  ),
-                )
-                .toList(),
-            index: widget.selectedPost,
-          ))
+            child: Post(
+              posts: widget.posts
+                  .map(
+                    (post) => Story(
+                      post: post,
+                    ),
+                  )
+                  .toList(),
+              index: widget.selectedPost,
+            ),
+          )
         ],
       ),
     );

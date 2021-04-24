@@ -107,6 +107,7 @@ class PostItems extends StatelessWidget {
           width: 120.0,
           child: GestureDetector(
             onTap: () {
+              print([posts, index]);
               Navigator.pushNamed(buildContext, "/postsPage",
                   arguments: [posts, index]);
             },
@@ -122,7 +123,8 @@ class PostItems extends StatelessWidget {
                     height: 160,
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: NetworkImage(posts[index]?.photos?.elementAt(0) ?? ""),
+                        image: NetworkImage(
+                            posts[index]?.photos?.elementAt(0) ?? ""),
                         fit: BoxFit.cover,
                       ),
                       borderRadius: BorderRadius.circular(12),

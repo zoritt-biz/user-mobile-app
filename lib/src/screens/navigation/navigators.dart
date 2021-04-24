@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/bloc.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/favorites_bloc/favorites_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/models/models.dart';
 import 'package:zoritt_mobile_app_user/src/repository/repository.dart';
 
@@ -128,20 +129,40 @@ class FavoritesNavigator extends TabNavigator {
 
   Map<String, WidgetBuilder> _routeBuilder(BuildContext context) {
     return {
-      FavoriteNavigatorRoutes.root: (ctx) {
-        if (ctx.read<AuthenticationBloc>().state.status ==
-            AuthenticationStatus.authenticated) {
-          return FavoritesPage();
-        } else {
-          return BlocProvider<LoginBloc>(
-            create: (context) => LoginBloc(
-              authenticationRepository:
-                  context.read<AuthenticationRepository>(),
-            ),
-            child: SignIn(),
-          );
-        }
-      },
+      FavoriteNavigatorRoutes.root: (ctx) =>
+          BlocBuilder<AuthenticationBloc, AuthenticationState>(
+            builder: (authCtx, authState) {
+              if (authState.status == AuthenticationStatus.authenticated) {
+                BlocProvider.of<UserBloc>(context).add(UserLoad(authState.user.firebaseId));
+
+                return BlocBuilder<UserBloc, UserState>(
+                    builder: (userCtx, userState) {
+                      if (userState is UserLoadSuccess) {
+                        return BlocProvider<FavoritesBloc>(
+                          create: (context) => FavoritesBloc(
+                            context.read<BusinessRepository>(),
+                          )..getBusinessList(userState.user.id),
+                          child: FavoritesPage(),
+                        );
+                      } else {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                    },
+                  );
+              } else {
+                return BlocProvider<LoginBloc>(
+                  create: (context) => LoginBloc(
+                    authenticationRepository:
+                        context.read<AuthenticationRepository>(),
+                    authenticationBloc: context.read<AuthenticationBloc>(),
+                  ),
+                  child: SignIn(),
+                );
+              }
+            },
+          ),
       SignUp.pathName: (ctx) {
         return BlocProvider<SignUpBloc>(
           create: (context) => SignUpBloc(
@@ -154,6 +175,7 @@ class FavoritesNavigator extends TabNavigator {
         return BlocProvider<LoginBloc>(
           create: (context) => LoginBloc(
             authenticationRepository: context.read<AuthenticationRepository>(),
+            authenticationBloc: context.read<AuthenticationBloc>(),
           ),
           child: SignIn(),
         );
@@ -226,6 +248,7 @@ class ProfileNavigator extends TabNavigator {
             create: (context) => LoginBloc(
               authenticationRepository:
                   context.read<AuthenticationRepository>(),
+              authenticationBloc: context.read<AuthenticationBloc>(),
             ),
             child: SignIn(),
           );
@@ -243,6 +266,7 @@ class ProfileNavigator extends TabNavigator {
         return BlocProvider<LoginBloc>(
           create: (context) => LoginBloc(
             authenticationRepository: context.read<AuthenticationRepository>(),
+            authenticationBloc: context.read<AuthenticationBloc>(),
           ),
           child: SignIn(),
         );

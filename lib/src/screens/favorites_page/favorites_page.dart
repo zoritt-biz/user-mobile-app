@@ -1,31 +1,40 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/favorites_bloc/favorites_bloc.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/favorites_bloc/favorites_state.dart';
 import 'package:zoritt_mobile_app_user/src/screens/search_page/search_page.dart';
 
 class FavoritesPage extends StatelessWidget {
-  List<String> imageList = [
-    "https://images.unsplash.com/photo-1614823498916-a28a7d67182c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80",
-    "https://images.unsplash.com/photo-1614823498916-a28a7d67182c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80",
-    "https://images.unsplash.com/photo-1614823498916-a28a7d67182c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80",
-    "https://images.unsplash.com/photo-1614823498916-a28a7d67182c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80"
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Favorites"),
       ),
-      body: ListView.builder(
-          itemCount: imageList.length,
-          itemBuilder: (context, index) => SearchResult(
-              // title: 'Wow Burger',
-              // address: 'Arat kilo, Addis Ababa',
-              // phoneNumber: '+251912365478',
-              // name: 'Burger, Shawarma',
-              // price: 2,
-              // imageLink:
-              //     "https://images.unsplash.com/photo-1614823498916-a28a7d67182c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80",
-              )),
+      body: BlocBuilder<FavoritesBloc, FavoritesState>(
+        builder: (favoriteCtx, favoritesState) {
+          if (favoritesState is FavoritesLoadSuccessful) {
+            if (favoritesState.business.isNotEmpty) {
+              return ListView.builder(
+                padding: EdgeInsets.symmetric(vertical: 20),
+                itemCount: favoritesState.business.length,
+                itemBuilder: (context, index) => SearchResult(
+                  business: favoritesState.business[0],
+                ),
+              );
+            } else {
+              return Center(
+                child: Text("You have note liked any business"),
+              );
+            }
+          } else {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        },
+      ),
     );
   }
 }

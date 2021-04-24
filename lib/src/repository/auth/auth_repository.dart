@@ -48,16 +48,23 @@ class AuthenticationRepository {
     }
   }
 
-  Future<void> logInWithEmailAndPassword({
+  Future<user_model.User> logInWithEmailAndPassword({
     @required String email,
     @required String password,
   }) async {
     assert(email != null && password != null);
     try {
-      await firebaseAuth.signInWithEmailAndPassword(
+      user_model.User newUser;
+      await firebaseAuth
+          .signInWithEmailAndPassword(
         email: email,
         password: password,
-      );
+      )
+          .then((value) async {
+        newUser = await userRepository.getUser(value.user.uid);
+      });
+
+      return newUser;
     } on FirebaseAuthException catch (e) {
       throw Exception(e.message);
     } catch (e) {

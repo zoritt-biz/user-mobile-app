@@ -7,14 +7,18 @@ import 'package:zoritt_mobile_app_user/src/models/user.dart';
 import 'package:zoritt_mobile_app_user/src/repository/repository.dart';
 
 part 'auth_event.dart';
+
 part 'auth_state.dart';
 
 enum AuthenticationStatus { authenticated, unauthenticated, unknown }
 
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
+  final UserRepository userRepository;
+
   AuthenticationBloc({
     @required AuthenticationRepository authenticationRepository,
+    @required this.userRepository,
   })  : assert(authenticationRepository != null),
         _authenticationRepository = authenticationRepository,
         super(const AuthenticationState.unknown()) {
@@ -42,6 +46,18 @@ class AuthenticationBloc
     }
   }
 
+  void pauseSubscription() {
+    if (!_userSubscription.isPaused) {
+      _userSubscription.pause();
+    }
+  }
+
+  void resumeSubscription() {
+    if (_userSubscription.isPaused) {
+      _userSubscription.resume();
+    }
+  }
+
   @override
   Future<void> close() {
     _userSubscription?.cancel();
@@ -51,30 +67,10 @@ class AuthenticationBloc
   Stream<AuthenticationState> _mapAuthStatusChangedToState(
     AuthenticationStatusChanged event,
   ) async* {
-    yield event.user == null
-        ? AuthenticationState.unauthenticated()
-        : AuthenticationState.authenticated(event.user);
-    // switch (event.status) {
-    //   case AuthenticationStatus.unauthenticated:
-    //     yield AuthenticationState.unauthenticated();
-    //     break;
-    //   case AuthenticationStatus.authenticated:
-    //   // final user = await _tryGetUser();
-    //   //   _authenticationRepository.persistToken(event.user);
-    //     yield AuthenticationState.authenticated(event.user);
-    //
-    //     break;
-    //   default:
-    //
-    //     // User user=await _authenticationRepository.getPersistedUser();
-    //     // if(user!=null){
-    //     //   yield AuthenticationState.authenticated(user);
-    //     // }else{
-    //       yield AuthenticationState.unknown();
-    //
-    //     // }
-    //
-    //
-    // }
+    if (event.user == null) {
+      yield AuthenticationState.unauthenticated();
+    } else {
+      yield AuthenticationState.authenticated(event.user);
+    }
   }
 }
