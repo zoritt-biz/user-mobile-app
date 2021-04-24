@@ -65,6 +65,11 @@ class ZoritBusinessUser extends StatelessWidget {
               businessRepository: businessRepository,
             ),
           ),
+          BlocProvider<UserBloc>(
+            create: (context) => UserBloc(
+              userRepository: context.read<UserRepository>(),
+            ),
+          ),
         ],
         child: ZorittApp(),
       ),

@@ -54,4 +54,44 @@ class UserRepository {
           (data['businesses'] as List).map((e) => e['_id'].toString()).toList(),
     );
   }
+
+  Future<User> getUserProfile(String firebaseId) async {
+    final result = await client.query(
+      QueryOptions(
+        document: gql(GET_USER_PROFILE),
+        variables: {
+          'firebaseId': firebaseId,
+        },
+      ),
+    );
+    if (result.hasException) {
+      throw result.exception;
+    }
+    final data = result.data['userOne'];
+    return User(
+      id: data['_id'],
+      fullName: data['fullName'],
+      email: data['email'],
+      phoneNumber: data['phoneNumber'],
+      firebaseId: data['firebaseId'],
+      userType: data['userType'],
+      events: (data['interestedInEvents'] as List).length > 0 ? (data['interestedInEvents'] as List).map(
+        (e) => Events(
+          businessName: e['owner']['businessName'],
+          description: e['description'],
+          title: e['title'],
+          location: e['location'],
+          link: e['link'],
+        ),
+      ) : [],
+      posts: (data['likedPosts'] as List).length > 0 ? (data['likedPosts'] as List).map(
+        (e) => Post(
+          businessName: e['owner']['businessName'],
+          businessLogo: e['owner']['logoPics'],
+          description: e['description'],
+          photos: e['photos'],
+        ),
+      ) : [],
+    );
+  }
 }

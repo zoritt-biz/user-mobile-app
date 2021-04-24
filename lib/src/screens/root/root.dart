@@ -155,12 +155,7 @@ class _HomePageState extends State<HomePage> {
                   child: _buildOffstageNavigator(TabItem.home),
                 ),
                 _buildOffstageNavigator(TabItem.search),
-                BlocProvider<UserBloc>(
-                  create: (context) => UserBloc(
-                    userRepository: context.read<UserRepository>(),
-                  ),
-                  child: _buildOffstageNavigator(TabItem.favorites),
-                ),
+                _buildOffstageNavigator(TabItem.favorites),
                 _buildOffstageNavigator(TabItem.profile),
               ],
             ),
