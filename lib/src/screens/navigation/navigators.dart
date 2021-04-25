@@ -2,7 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/bloc.dart';
-import 'package:zoritt_mobile_app_user/src/models/models.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/favorites_bloc/favorites_bloc.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/profile_bloc/profile_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/repository/repository.dart';
 
 import '../screens.dart';
@@ -17,7 +18,6 @@ class HomeNavigatorRoutes {
   static const String categories = "/categories";
   static const String subcategories = "/subcategories";
   static const String events = "/events";
-  static const String posts = "/posts";
   static const String sponsored_posts = "/sponsored_posts";
 }
 
@@ -29,7 +29,6 @@ class HomeNavigator extends TabNavigator {
 
   Map<String, CustomWidgetBuilder> _routeBuilder(BuildContext context) {
     return {
-      // HomeNavigatorRoutes.root: (ctx) =>  BlocProvider<EventsBloc>(create: (context)=>EventsBloc(eventRepository: context.read<EventsRepository>(),)..getEvents(10, "CREATEDAT_DESC"), child: Home()),
       HomeNavigatorRoutes.root: (ctx, _) => Home(
             globalNavigator: globalNavigator,
           ),
@@ -44,19 +43,6 @@ class HomeNavigator extends TabNavigator {
             )..getEvents(10, "CREATEDAT_DESC"),
             child: EventsPage(globalNavigator: globalNavigator),
           ),
-      HomeNavigatorRoutes.posts: (ctx, setting) {
-        List<dynamic> arguments = setting.arguments as List;
-
-        return BlocProvider<StoryBloc>(
-          create: (context) => StoryBloc(
-            postRepository: context.read<PostRepository>(),
-          ),
-          child: PostsPage(
-            posts: arguments[0] as List<Post>,
-            selectedPost: arguments[1] as int,
-          ),
-        );
-      },
       HomeNavigatorRoutes.sponsored_posts: (ctx, _) =>
           BlocProvider<SponsoredBloc>(
             create: (context) => SponsoredBloc(
@@ -128,20 +114,39 @@ class FavoritesNavigator extends TabNavigator {
 
   Map<String, WidgetBuilder> _routeBuilder(BuildContext context) {
     return {
-      FavoriteNavigatorRoutes.root: (ctx) {
-        if (ctx.read<AuthenticationBloc>().state.status ==
-            AuthenticationStatus.authenticated) {
-          return FavoritesPage();
-        } else {
-          return BlocProvider<LoginBloc>(
-            create: (context) => LoginBloc(
-              authenticationRepository:
-                  context.read<AuthenticationRepository>(),
-            ),
-            child: SignIn(),
-          );
-        }
-      },
+      FavoriteNavigatorRoutes.root: (ctx) =>
+          BlocBuilder<AuthenticationBloc, AuthenticationState>(
+            builder: (authCtx, authState) {
+              if (authState.status == AuthenticationStatus.authenticated) {
+                BlocProvider.of<UserBloc>(context)
+                    .add(UserLoad(authState.user.firebaseId));
+
+                return BlocBuilder<UserBloc, UserState>(
+                  builder: (userCtx, userState) {
+                    if (userState is UserLoadSuccess) {
+                      return BlocProvider<FavoritesBloc>(
+                        create: (context) => FavoritesBloc(
+                          context.read<BusinessRepository>(),
+                        )..getBusinessList(userState.user.id),
+                        child: FavoritesPage(),
+                      );
+                    } else {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                  },
+                );
+              } else {
+                return BlocProvider<LoginBloc>(
+                  create: (context) => LoginBloc(
+                    authenticationRepository:
+                        context.read<AuthenticationRepository>(),
+                    authenticationBloc: context.read<AuthenticationBloc>(),
+                  ),
+                  child: SignIn(),
+                );
+              }
+            },
+          ),
       SignUp.pathName: (ctx) {
         return BlocProvider<SignUpBloc>(
           create: (context) => SignUpBloc(
@@ -154,6 +159,7 @@ class FavoritesNavigator extends TabNavigator {
         return BlocProvider<LoginBloc>(
           create: (context) => LoginBloc(
             authenticationRepository: context.read<AuthenticationRepository>(),
+            authenticationBloc: context.read<AuthenticationBloc>(),
           ),
           child: SignIn(),
         );
@@ -176,36 +182,6 @@ class FavoritesNavigator extends TabNavigator {
   }
 }
 
-// class MessageNavigatorRoutes {
-//   static const String root = "/";
-// }
-//
-// class MessagesNavigator extends TabNavigator {
-//   final GlobalKey<NavigatorState> navigatorKey;
-//
-//   MessagesNavigator({this.navigatorKey});
-//
-//   Map<String, WidgetBuilder> _routeBuilder(BuildContext context) {
-//     return {
-//       MessageNavigatorRoutes.root: (ctx) => BusinessDetail(),
-//     };
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     final routeBuilders = _routeBuilder(context);
-//     return Navigator(
-//       key: navigatorKey,
-//       initialRoute: MessageNavigatorRoutes.root,
-//       onGenerateRoute: (routeSettings) {
-//         return MaterialPageRoute(
-//           builder: (ctx) => routeBuilders[routeSettings.name](ctx),
-//         );
-//       },
-//     );
-//   }
-// }
-
 class ProfileNavigatorRoutes {
   static const String root = "/";
 }
@@ -217,20 +193,39 @@ class ProfileNavigator extends TabNavigator {
 
   Map<String, WidgetBuilder> _routeBuilder(BuildContext context) {
     return {
-      ProfileNavigatorRoutes.root: (ctx) {
-        if (ctx.read<AuthenticationBloc>().state.status ==
-            AuthenticationStatus.authenticated) {
-          return ProfilePage();
-        } else {
-          return BlocProvider<LoginBloc>(
-            create: (context) => LoginBloc(
-              authenticationRepository:
-                  context.read<AuthenticationRepository>(),
-            ),
-            child: SignIn(),
-          );
-        }
-      },
+      ProfileNavigatorRoutes.root: (ctx) =>
+          BlocBuilder<AuthenticationBloc, AuthenticationState>(
+            builder: (authCtx, authState) {
+              if (authState.status == AuthenticationStatus.authenticated) {
+                BlocProvider.of<UserBloc>(context)
+                    .add(UserLoad(authState.user.firebaseId));
+
+                return BlocBuilder<UserBloc, UserState>(
+                  builder: (userCtx, userState) {
+                    if (userState is UserLoadSuccess) {
+                      return BlocProvider<ProfileBloc>(
+                        create: (context) => ProfileBloc(
+                          context.read<UserRepository>(),
+                        )..getUserProfile(userState.user.firebaseId),
+                        child: ProfilePage(),
+                      );
+                    } else {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                  },
+                );
+              } else {
+                return BlocProvider<LoginBloc>(
+                  create: (context) => LoginBloc(
+                    authenticationRepository:
+                        context.read<AuthenticationRepository>(),
+                    authenticationBloc: context.read<AuthenticationBloc>(),
+                  ),
+                  child: SignIn(),
+                );
+              }
+            },
+          ),
       SignUp.pathName: (ctx) {
         return BlocProvider<SignUpBloc>(
           create: (context) => SignUpBloc(
@@ -243,6 +238,7 @@ class ProfileNavigator extends TabNavigator {
         return BlocProvider<LoginBloc>(
           create: (context) => LoginBloc(
             authenticationRepository: context.read<AuthenticationRepository>(),
+            authenticationBloc: context.read<AuthenticationBloc>(),
           ),
           child: SignIn(),
         );

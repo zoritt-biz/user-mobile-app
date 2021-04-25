@@ -12,13 +12,10 @@ class CategoryRepository {
     final result = await client.query(
       QueryOptions(document: gql(GET_ALL_CATEGORIES)),
     );
-
     if (result.hasException) {
       throw result.exception;
     }
-
     final data = result.data['categoryMany'] as List;
-
     return data
         .map((e) => new Category(
               id: e['_id'],

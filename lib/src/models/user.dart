@@ -1,4 +1,6 @@
 import 'package:equatable/equatable.dart';
+import 'package:zoritt_mobile_app_user/src/models/event.dart';
+import 'package:zoritt_mobile_app_user/src/models/post.dart';
 
 class User extends Equatable {
   final String id;
@@ -9,6 +11,8 @@ class User extends Equatable {
   final String password;
   final String userType;
   final List<String> businesses;
+  final List<Events> events;
+  final List<Post> posts;
 
   User({
     this.id,
@@ -19,6 +23,8 @@ class User extends Equatable {
     this.userType,
     this.businesses,
     this.phoneNumber,
+    this.events,
+    this.posts,
   });
 
   @override

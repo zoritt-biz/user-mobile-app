@@ -33,7 +33,7 @@ class PostsSection extends StatelessWidget {
               builder: (context, state) {
                 if (state is PostLoadSuccessful) {
                   if (state.posts.isNotEmpty) {
-                    return PostItems(buildContext: context, posts: state.posts);
+                    return PostItems(buildContext: globalNavigator, posts: state.posts);
                   } else {
                     return Container(
                       child: Center(child: Text("No recent Posts")),
@@ -107,6 +107,7 @@ class PostItems extends StatelessWidget {
           width: 120.0,
           child: GestureDetector(
             onTap: () {
+              print([posts, index]);
               Navigator.pushNamed(buildContext, "/postsPage",
                   arguments: [posts, index]);
             },
@@ -122,7 +123,8 @@ class PostItems extends StatelessWidget {
                     height: 160,
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: NetworkImage(posts[index]?.photos[0]),
+                        image: NetworkImage(
+                            posts[index]?.photos?.elementAt(0) ?? ""),
                         fit: BoxFit.cover,
                       ),
                       borderRadius: BorderRadius.circular(12),
