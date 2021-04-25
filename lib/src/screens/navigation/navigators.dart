@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/favorites_bloc/favorites_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/profile_bloc/profile_bloc.dart';
-import 'package:zoritt_mobile_app_user/src/models/models.dart';
 import 'package:zoritt_mobile_app_user/src/repository/repository.dart';
 
 import '../screens.dart';
@@ -19,7 +18,6 @@ class HomeNavigatorRoutes {
   static const String categories = "/categories";
   static const String subcategories = "/subcategories";
   static const String events = "/events";
-  static const String posts = "/posts";
   static const String sponsored_posts = "/sponsored_posts";
 }
 
@@ -45,19 +43,6 @@ class HomeNavigator extends TabNavigator {
             )..getEvents(10, "CREATEDAT_DESC"),
             child: EventsPage(globalNavigator: globalNavigator),
           ),
-      HomeNavigatorRoutes.posts: (ctx, setting) {
-        List<dynamic> arguments = setting.arguments as List;
-
-        return BlocProvider<StoryBloc>(
-          create: (context) => StoryBloc(
-            postRepository: context.read<PostRepository>(),
-          ),
-          child: PostsPage(
-            posts: arguments[0] as List<Post>,
-            selectedPost: arguments[1] as int,
-          ),
-        );
-      },
       HomeNavigatorRoutes.sponsored_posts: (ctx, _) =>
           BlocProvider<SponsoredBloc>(
             create: (context) => SponsoredBloc(

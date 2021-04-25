@@ -173,7 +173,7 @@ class _HomePageState extends State<HomePage> {
   Widget _buildOffstageNavigator(TabItem item) {
     return Visibility(
       visible: _currentTab == item,
-      maintainState: true,
+      // maintainState: true,
       child: tabNavigators[item.index],
     );
   }

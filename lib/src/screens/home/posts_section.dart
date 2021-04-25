@@ -33,7 +33,7 @@ class PostsSection extends StatelessWidget {
               builder: (context, state) {
                 if (state is PostLoadSuccessful) {
                   if (state.posts.isNotEmpty) {
-                    return PostItems(buildContext: context, posts: state.posts);
+                    return PostItems(buildContext: globalNavigator, posts: state.posts);
                   } else {
                     return Container(
                       child: Center(child: Text("No recent Posts")),

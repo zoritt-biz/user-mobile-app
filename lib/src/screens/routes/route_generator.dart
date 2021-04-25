@@ -19,6 +19,7 @@ class RouteGenerator {
             create: (context) => LoginBloc(
               authenticationRepository:
                   context.read<AuthenticationRepository>(),
+              authenticationBloc: context.read<AuthenticationBloc>(),
             ),
             child: SignIn(),
           ),

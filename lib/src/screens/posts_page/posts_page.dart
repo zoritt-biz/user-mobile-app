@@ -18,7 +18,6 @@ class PostsPage extends StatefulWidget {
 class _PostsPageState extends State<PostsPage> {
   @override
   void initState() {
-    // SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top]);
     super.initState();
   }
 

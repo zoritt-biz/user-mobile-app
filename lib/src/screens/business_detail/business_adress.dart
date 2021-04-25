@@ -70,9 +70,8 @@ class BusinessAddress extends StatelessWidget {
                     child: IconButton(
                       icon: Icon(Icons.phone_outlined),
                       onPressed: () async {
-                        await canLaunch("tel:$phoneNumber")
-                            ? await launch("tel:$phoneNumber")
-                            : throw 'Could not launch $phoneNumber';
+                        if (await canLaunch("tel:$phoneNumber"))
+                          await launch("tel:$phoneNumber");
                       },
                     ),
                   ),
@@ -82,9 +81,7 @@ class BusinessAddress extends StatelessWidget {
                     child: IconButton(
                       icon: Icon(Icons.language_outlined),
                       onPressed: () async {
-                        await canLaunch(website)
-                            ? await launch(website)
-                            : throw 'Could not launch $website';
+                        if (await canLaunch(website)) await launch(website);
                       },
                     ),
                   ),
