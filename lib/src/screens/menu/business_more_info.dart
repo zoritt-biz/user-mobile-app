@@ -13,7 +13,10 @@ class BusinessMoreInfo extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Business Info'),
+        title: Text('Business Info',
+          style: TextStyle(color: Colors.black),
+        ),
+        iconTheme: IconThemeData(color: Colors.black),
       ),
       body: ListView(
         children: [

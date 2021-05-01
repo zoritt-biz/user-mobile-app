@@ -27,7 +27,10 @@ class SearchPage extends StatelessWidget {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Search"),
+          title: Text("Search",
+            style: TextStyle(color: Colors.black),
+          ),
+          iconTheme: IconThemeData(color: Colors.black),
           actions: [
             IconButton(
               onPressed: () {

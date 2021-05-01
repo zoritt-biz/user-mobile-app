@@ -65,7 +65,10 @@ class _SignUpState extends State<SignUp> {
       builder: (signUpCtx, signUpState) {
         return Scaffold(
           appBar: AppBar(
-            title: Text("Sign up"),
+            title: Text("Sign up",
+              style: TextStyle(color: Colors.black),
+            ),
+            iconTheme: IconThemeData(color: Colors.black),
           ),
           body: signUpState is SignUpLoading || signUpState is SignUpSuccessful
               ? Center(child: CircularProgressIndicator())

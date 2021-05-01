@@ -16,7 +16,10 @@ class EventsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Events"),
+        title: Text("Events",
+          style: TextStyle(color: Colors.black),
+        ),
+        iconTheme: IconThemeData(color: Colors.black),
       ),
       body: BlocConsumer<EventsBloc, EventsState>(
         builder: (eventCtx, state) {
