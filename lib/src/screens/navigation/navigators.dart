@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/favorites_bloc/favorites_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/profile_bloc/profile_bloc.dart';
@@ -37,11 +38,35 @@ class HomeNavigator extends TabNavigator {
         List<dynamic> arguments = setting.arguments as List;
         return Subcategory(arguments[0]);
       },
-      HomeNavigatorRoutes.events: (ctx, _) => BlocProvider<EventsBloc>(
-            create: (context) => EventsBloc(
-              eventRepository: context.read<EventsRepository>(),
-            )..getEvents(10, "CREATEDAT_DESC"),
-            child: EventsPage(globalNavigator: globalNavigator),
+      HomeNavigatorRoutes.events: (ctx, _) =>
+          BlocBuilder<AuthenticationBloc, AuthenticationState>(
+            builder: (authBloc, authState) {
+              if(authState.status == AuthenticationStatus.authenticated){
+                BlocProvider.of<UserBloc>(context)
+                    .add(UserLoad(authState.user.firebaseId));
+
+                return BlocBuilder<UserBloc, UserState>(
+                  builder: (userCtx, userState) {
+                    if (userState is UserLoadSuccess) {
+                      return BlocProvider<EventsBloc>(
+                        create: (context) => EventsBloc(
+                          eventRepository: context.read<EventsRepository>(),
+                        )..getEventsLoggedIn(limit: 50, sort: "desc", userId: userState.user.id),
+                        child: EventsPage(globalNavigator: globalNavigator),
+                      );
+                    } else {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                  },
+                );
+              }
+              return BlocProvider<EventsBloc>(
+                create: (context) => EventsBloc(
+                  eventRepository: context.read<EventsRepository>(),
+                )..getEvents(1, "CREATEDAT_DESC"),
+                child: EventsPage(globalNavigator: globalNavigator),
+              );
+            },
           ),
       HomeNavigatorRoutes.sponsored_posts: (ctx, _) =>
           BlocProvider<SponsoredBloc>(
@@ -151,6 +176,7 @@ class FavoritesNavigator extends TabNavigator {
         return BlocProvider<SignUpBloc>(
           create: (context) => SignUpBloc(
             authenticationRepository: context.read<AuthenticationRepository>(),
+            authenticationBloc: context.read<AuthenticationBloc>(),
           ),
           child: SignUp(),
         );
@@ -230,6 +256,7 @@ class ProfileNavigator extends TabNavigator {
         return BlocProvider<SignUpBloc>(
           create: (context) => SignUpBloc(
             authenticationRepository: context.read<AuthenticationRepository>(),
+            authenticationBloc: context.read<AuthenticationBloc>(),
           ),
           child: SignUp(),
         );

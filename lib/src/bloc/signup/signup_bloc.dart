@@ -10,7 +10,7 @@ part 'signup_state.dart';
 class SignUpBloc extends Cubit<SignUpState> {
   SignUpBloc({
     @required AuthenticationRepository authenticationRepository,
-    AuthenticationBloc authenticationBloc,
+    @required AuthenticationBloc authenticationBloc,
   })  : assert(authenticationRepository != null),
         _authenticationRepository = authenticationRepository,
         _authenticationBloc = authenticationBloc,

@@ -30,6 +30,7 @@ class RouteGenerator {
             create: (context) => SignUpBloc(
               authenticationRepository:
                   context.read<AuthenticationRepository>(),
+              authenticationBloc: context.read<AuthenticationBloc>(),
             ),
             child: SignUp(),
           ),
