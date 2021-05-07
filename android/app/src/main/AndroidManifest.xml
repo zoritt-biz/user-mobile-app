@@ -3,7 +3,7 @@
 
     <application
         android:icon="@mipmap/ic_launcher"
-        android:label="zoritt_mobile_app_user"
+        android:label="Zorit Business Menu"
         android:requestLegacyExternalStorage="true"
         android:usesCleartextTraffic="true">
         <activity
