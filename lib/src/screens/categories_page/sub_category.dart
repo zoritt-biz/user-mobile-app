@@ -13,7 +13,10 @@ class Subcategory extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Subcategory"),
+        title: Text("Subcategory",
+          style: TextStyle(color: Colors.black),
+        ),
+        iconTheme: IconThemeData(color: Colors.black),
       ),
       body: ListView.builder(
         itemCount: subCategories.length,

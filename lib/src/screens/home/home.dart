@@ -169,7 +169,7 @@ class _HomeState extends State<Home> {
                         EdgeInsets.all(15),
                       ),
                       backgroundColor: MaterialStateProperty.all<Color>(
-                          Theme.of(context).primaryColor)),
+                          Theme.of(context).accentColor)),
                   onPressed: () {
                     Navigator.pushNamed(context, "/sponsored_posts");
                   },

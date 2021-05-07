@@ -87,9 +87,8 @@ class _ZorittAppState extends State<ZorittApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        primaryColor: Color(0xFF2FEAA9),
-        // primaryColor: Color(0xA8454545),
-        accentColor: Color(0xffFFA500),
+        primaryColor: Color(0xFF533C3C),
+        accentColor: Color(0xffffa500),
         appBarTheme: AppBarTheme(
           elevation: 2,
           backgroundColor: Colors.white,

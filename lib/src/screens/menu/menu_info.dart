@@ -12,7 +12,10 @@ class MenuDisplay extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Explore Our Menu'),
+        title: Text('Explore Our Menu',
+          style: TextStyle(color: Colors.black),
+        ),
+        iconTheme: IconThemeData(color: Colors.black),
       ),
       body:
           // MenuItem(

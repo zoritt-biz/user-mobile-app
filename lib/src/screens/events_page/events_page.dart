@@ -16,7 +16,11 @@ class EventsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Events"),
+        title: Text(
+          "Events",
+          style: TextStyle(color: Colors.black),
+        ),
+        iconTheme: IconThemeData(color: Colors.black),
       ),
       body: BlocConsumer<EventsBloc, EventsState>(
         builder: (eventCtx, state) {
@@ -91,7 +95,6 @@ class _EventCardState extends State<EventCard> {
   int _current = 0;
 
   void share(BuildContext context, Events events) {
-    // final RenderBox renderBox=context.findRenderObject();
     String subject =
         "${events.title} \n ${events.description} \n ${events.link} ";
     Share.share(subject, subject: events.description);
@@ -129,7 +132,6 @@ class _EventCardState extends State<EventCard> {
                     autoPlayInterval: Duration(seconds: 5),
                     autoPlay: true,
                     viewportFraction: 1,
-                    // enlargeCenterPage: true,
                     aspectRatio: 2.0,
                     onPageChanged: (index, reason) {
                       setState(
@@ -172,11 +174,9 @@ class _EventCardState extends State<EventCard> {
                     flex: 3,
                     child: Row(
                       children: [
-                        CircleAvatar(
-                            radius: 20,
-                            backgroundImage: NetworkImage(widget
-                                    .events.logoPics ??
-                                "https://images.unsplash.com/photo-1614823498916-a28a7d67182c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80")),
+                        CircleAvatar(radius: 20, backgroundImage: NetworkImage(
+                            // widget.events.logoPics ??
+                            "https://images.unsplash.com/photo-1614823498916-a28a7d67182c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80")),
                         SizedBox(
                           width: 10,
                         ),
@@ -200,12 +200,13 @@ class _EventCardState extends State<EventCard> {
                   Expanded(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      // crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
                           child: IconButton(
                             icon: Icon(
-                              Icons.favorite_border_rounded,
+                              widget.events.isInterested
+                                  ? Icons.bookmark_rounded
+                                  : Icons.bookmark_rounded,
                               color: Colors.orange,
                               size: 30,
                             ),
@@ -215,6 +216,8 @@ class _EventCardState extends State<EventCard> {
                                       .state
                                       .status ==
                                   AuthenticationStatus.authenticated) {
+                                if (widget.events.isInterested) {
+                                } else {}
                               } else {
                                 Navigator.pushNamed(widget.context, "/sign_in");
                               }

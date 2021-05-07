@@ -53,8 +53,6 @@ class BusinessSearch extends SearchDelegate<String> {
 
   @override
   Widget buildResults(BuildContext context) {
-    // c.read<BusinessBloc>().searchForBusinesses(query, 0, 100);
-    // close(context, query);
     return Container();
   }
 
@@ -63,11 +61,7 @@ class BusinessSearch extends SearchDelegate<String> {
     _filteredBusinessListBloc.filter(query: query);
 
     return BlocProvider<FilteredBusinessListBloc>.value(
-      // create: (context){
-      //   print(query);
       value: _filteredBusinessListBloc,
-      //   return FilteredBusinessListBloc(businessListBloc: buildContext.read<BusinessListBloc>())..filter(query: query);
-
       child: BlocBuilder<FilteredBusinessListBloc, FilteredBusinessListState>(
         builder: (context, state) {
           if (state is FilteredBusinessListSuccessful) {

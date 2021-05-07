@@ -12,7 +12,10 @@ class SponsoredPostsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Sponsored Posts"),
+        title: Text("Sponsored Posts",
+          style: TextStyle(color: Colors.black),
+        ),
+        iconTheme: IconThemeData(color: Colors.black),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 20),

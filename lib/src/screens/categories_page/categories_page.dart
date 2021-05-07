@@ -7,7 +7,10 @@ class CategoriesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Categories"),
+        title: Text("Categories",
+          style: TextStyle(color: Colors.black),
+        ),
+        iconTheme: IconThemeData(color: Colors.black),
       ),
       body: GridView.count(
         padding: EdgeInsets.symmetric(horizontal: 25, vertical: 15),

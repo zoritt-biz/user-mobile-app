@@ -10,6 +10,19 @@ abstract class EventsState extends Equatable {
 
 class EventsLoading extends EventsState {}
 
+class EventsLiking extends EventsState {}
+
+class EventsLikingSuccessful extends EventsState {}
+
+class EventsLikingFailure extends EventsState {
+  final String message;
+
+  EventsLikingFailure(this.message);
+
+  @override
+  List<Object> get props => [message];
+}
+
 class EventsLoadSuccessful extends EventsState {
   final List<Events> events;
 

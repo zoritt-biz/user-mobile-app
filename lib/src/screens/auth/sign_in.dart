@@ -52,7 +52,10 @@ class _SignInState extends State<SignIn> {
       builder: (loginCtx, loginState) {
         return Scaffold(
           appBar: AppBar(
-            title: Text("Sign in"),
+            title: Text("Sign in",
+              style: TextStyle(color: Colors.black),
+            ),
+            iconTheme: IconThemeData(color: Colors.black),
           ),
           body: loginState is LoginLoading || loginState is LoginSuccessful
               ? Center(child: CircularProgressIndicator())
@@ -118,21 +121,21 @@ class _SignInState extends State<SignIn> {
           SizedBox(
             height: 10.0,
           ),
-          Align(
-            alignment: Alignment.centerRight,
-            child: TextButton(
-              onPressed: () {
-                Navigator.pushNamed(context, "/reset_password");
-              },
-              child: Text(
-                "Forget Password?",
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xff4267B2),
-                ),
-              ),
-            ),
-          ),
+          // Align(
+          //   alignment: Alignment.centerRight,
+          //   child: TextButton(
+          //     onPressed: () {
+          //       Navigator.pushNamed(context, "/reset_password");
+          //     },
+          //     child: Text(
+          //       "Forget Password?",
+          //       style: TextStyle(
+          //         fontWeight: FontWeight.w600,
+          //         color: Color(0xff4267B2),
+          //       ),
+          //     ),
+          //   ),
+          // ),
           SizedBox(
             height: 35.0,
           ),

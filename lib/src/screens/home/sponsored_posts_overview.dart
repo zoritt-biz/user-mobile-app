@@ -114,13 +114,13 @@ class _SponsorItemState extends State<SponsorItem> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(5),
-                  topRight: Radius.circular(5),
-                ),
-                child: Image.network(widget.business.pictures[0]),
-              ),
+              // ClipRRect(
+              //   borderRadius: BorderRadius.only(
+              //     topLeft: Radius.circular(5),
+              //     topRight: Radius.circular(5),
+              //   ),
+              //   child: Image.network(widget.business.pictures[0]),
+              // ),
               Padding(
                 padding:
                     MediaQuery.of(context).orientation == Orientation.portrait

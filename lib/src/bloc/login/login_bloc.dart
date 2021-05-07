@@ -34,7 +34,6 @@ class LoginBloc extends Cubit<LoginState> {
       emit(LoginSuccessful(user: newUser));
     } catch (e) {
       _authenticationBloc.resumeSubscription();
-
       emit(LoginFailure(e.toString()));
     }
   }

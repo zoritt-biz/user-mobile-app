@@ -7,6 +7,7 @@ class Events {
   final String description;
   final String location;
   final String link;
+  final bool isInterested;
   final List<String> video;
   final List<String> photos;
   final String logoPics;
@@ -21,6 +22,7 @@ class Events {
     this.video,
     this.photos,
     this.logoPics,
+    this.isInterested,
     this.businessName,
   });
 
@@ -31,6 +33,7 @@ class Events {
       location: data["location"],
       link: data["link"],
       id: data["_id"],
+      isInterested: data["isInterested"],
       logoPics: data["owner"] != null
           ? data["owner"]["logoPics"] != null
               ? data["owner"]["logoPics"]
