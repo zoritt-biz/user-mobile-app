@@ -6,6 +6,7 @@ class Post {
   final String description;
   final List<String> video;
   final List<String> photos;
+  final bool isLiked;
   final String businessLogo;
   final String businessName;
 
@@ -14,6 +15,7 @@ class Post {
     this.description,
     this.video,
     this.photos,
+    this.isLiked,
     this.businessLogo,
     this.businessName,
   });
@@ -23,6 +25,7 @@ class Post {
       id: data['_id'],
       description: data['description'],
       photos: (data['photos'] as List).map((e) => e.toString()).toList(),
+      isLiked: data["isLiked"],
       businessName: data["owner"] != null ? data['owner']['businessName'] : "",
       businessLogo: data["owner"] != null
           ? data["owner"]["logoPics"] != null

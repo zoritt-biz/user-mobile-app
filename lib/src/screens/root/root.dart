@@ -129,30 +129,76 @@ class _HomePageState extends State<HomePage> {
             body: IndexedStack(
               index: _currentTab.index,
               children: [
-                MultiBlocProvider(
-                  providers: [
-                    BlocProvider<EventsBloc>(
-                      create: (context) => EventsBloc(
-                        eventRepository: context.read<EventsRepository>(),
-                      )..getEvents(10, "CREATEDAT_DESC"),
-                    ),
-                    BlocProvider<PostBloc>(
-                      create: (context) => PostBloc(
-                        postRepository: context.read<PostRepository>(),
-                      )..getPosts(
-                          10,
-                          "CREATEDAT_DESC",
-                          "${dateTime.year}/${dateTime.month}/${dateTime.day}",
-                          0,
+                BlocBuilder<AuthenticationBloc, AuthenticationState>(
+                  builder: (authBloc, authState) {
+                    if (authState.status ==
+                        AuthenticationStatus.authenticated) {
+                      BlocProvider.of<UserBloc>(context)
+                          .add(UserLoad(authState.user.firebaseId));
+
+                      return BlocBuilder<UserBloc, UserState>(
+                        builder: (userCtx, userState) {
+                          if (userState is UserLoadSuccess) {
+                            return MultiBlocProvider(
+                              providers: [
+                                BlocProvider<EventsBloc>(
+                                  create: (context) => EventsBloc(
+                                    eventRepository:
+                                        context.read<EventsRepository>(),
+                                  )..getEvents(10, "CREATEDAT_DESC"),
+                                ),
+                                BlocProvider<PostBloc>(
+                                  create: (context) => PostBloc(
+                                    postRepository:
+                                        context.read<PostRepository>(),
+                                  )..getPostLoggedIn(
+                                      limit: 20,
+                                      sort: "desc",
+                                      userId: userState.user.id,
+                                    ),
+                                ),
+                                BlocProvider<SponsoredBloc>(
+                                  create: (context) => SponsoredBloc(
+                                    businessRepository:
+                                        context.read<BusinessRepository>(),
+                                  )..getSponsored(5),
+                                ),
+                              ],
+                              child: _buildOffstageNavigator(TabItem.home),
+                            );
+                          } else {
+                            return Center(child: CircularProgressIndicator());
+                          }
+                        },
+                      );
+                    }
+                    return MultiBlocProvider(
+                      providers: [
+                        BlocProvider<EventsBloc>(
+                          create: (context) => EventsBloc(
+                            eventRepository: context.read<EventsRepository>(),
+                          )..getEvents(10, "CREATEDAT_DESC"),
                         ),
-                    ),
-                    BlocProvider<SponsoredBloc>(
-                      create: (context) => SponsoredBloc(
-                        businessRepository: context.read<BusinessRepository>(),
-                      )..getSponsored(5),
-                    ),
-                  ],
-                  child: _buildOffstageNavigator(TabItem.home),
+                        BlocProvider<PostBloc>(
+                          create: (context) => PostBloc(
+                            postRepository: context.read<PostRepository>(),
+                          )..getPosts(
+                              10,
+                              "CREATEDAT_DESC",
+                              "${dateTime.year}/${dateTime.month}/${dateTime.day}",
+                              0,
+                            ),
+                        ),
+                        BlocProvider<SponsoredBloc>(
+                          create: (context) => SponsoredBloc(
+                            businessRepository:
+                                context.read<BusinessRepository>(),
+                          )..getSponsored(5),
+                        ),
+                      ],
+                      child: _buildOffstageNavigator(TabItem.home),
+                    );
+                  },
                 ),
                 _buildOffstageNavigator(TabItem.search),
                 _buildOffstageNavigator(TabItem.favorites),

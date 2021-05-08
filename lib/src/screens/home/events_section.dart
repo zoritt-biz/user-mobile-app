@@ -139,10 +139,10 @@ class EventItem extends StatelessWidget {
               Container(
                 height: 100,
                 decoration: BoxDecoration(
-                  // image: DecorationImage(
-                  //   image: NetworkImage(event?.photos?.elementAt(0) ?? ""),
-                  //   fit: BoxFit.cover,
-                  // ),
+                  image: DecorationImage(
+                    image: NetworkImage(event?.photos?.elementAt(0) ?? ""),
+                    fit: BoxFit.cover,
+                  ),
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(12),
                     topRight: Radius.circular(12),

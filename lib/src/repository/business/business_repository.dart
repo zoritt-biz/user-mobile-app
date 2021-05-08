@@ -49,7 +49,7 @@ class BusinessRepository {
       QueryOptions(
         document: gql(GET_SPONSORED_BUSINESSES),
         variables: {
-          "subscriptions": "FEATHER_4",
+          "subscriptions": "SPONSORED",
           "limit": limit,
         },
       ),

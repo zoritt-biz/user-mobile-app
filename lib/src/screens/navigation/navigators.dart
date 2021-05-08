@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/favorites_bloc/favorites_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/profile_bloc/profile_bloc.dart';
@@ -52,7 +51,7 @@ class HomeNavigator extends TabNavigator {
                         create: (context) => EventsBloc(
                           eventRepository: context.read<EventsRepository>(),
                         )..getEventsLoggedIn(limit: 50, sort: "desc", userId: userState.user.id),
-                        child: EventsPage(globalNavigator: globalNavigator),
+                        child: EventsPage(globalNavigator: globalNavigator, userId: userState.user.id),
                       );
                     } else {
                       return Center(child: CircularProgressIndicator());

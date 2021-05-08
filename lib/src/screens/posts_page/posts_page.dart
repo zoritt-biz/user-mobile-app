@@ -29,13 +29,7 @@ class _PostsPageState extends State<PostsPage> {
         children: [
           Expanded(
             child: Post(
-              posts: widget.posts
-                  .map(
-                    (post) => Story(
-                      post: post,
-                    ),
-                  )
-                  .toList(),
+              posts: widget.posts.map((post) => Story(post: post)).toList(),
               index: widget.selectedPost,
             ),
           )

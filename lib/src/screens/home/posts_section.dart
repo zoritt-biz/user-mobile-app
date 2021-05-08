@@ -107,7 +107,6 @@ class PostItems extends StatelessWidget {
           width: 120.0,
           child: GestureDetector(
             onTap: () {
-              print([posts, index]);
               Navigator.pushNamed(buildContext, "/postsPage",
                   arguments: [posts, index]);
             },

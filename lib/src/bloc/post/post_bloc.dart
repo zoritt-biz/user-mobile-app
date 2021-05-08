@@ -29,4 +29,22 @@ class PostBloc extends Cubit<PostState> {
       emit(PostLoadFailure(e.toString()));
     }
   }
+
+  Future<void> getPostLoggedIn({
+    int limit,
+    String sort,
+    String userId,
+  }) async {
+    emit(PostLoading());
+    try {
+      List<Post> posts = await postRepository.getPostLoggedIn(
+        limit: limit,
+        sort: sort,
+        userId: userId,
+      );
+      emit(PostLoadSuccessful(posts: posts));
+    } catch (e) {
+      emit(PostLoadFailure(e.toString()));
+    }
+  }
 }

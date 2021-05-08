@@ -16,6 +16,16 @@ class SponsoredPostsOverview extends StatelessWidget {
     return BlocBuilder<SponsoredBloc, SponsoredState>(
       builder: (sponsoredCtx, sponsoredState) {
         if (sponsoredState is SponsoredLoadSuccess) {
+          if (sponsoredState.sponsored.isEmpty) {
+            return SliverToBoxAdapter(
+              child: SizedBox(
+                height: 15,
+                child: Center(
+                  child: Text("Here"),
+                ),
+              ),
+            );
+          }
           return SliverList(
             delegate: SliverChildBuilderDelegate(
               (BuildContext context, int index) {
@@ -101,105 +111,92 @@ class SponsorItem extends StatefulWidget {
 class _SponsorItemState extends State<SponsorItem> {
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.pushNamed(widget.globalNavigator, "/business_detail",
-            arguments: [widget.business.id]);
-      },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
-        child: Card(
-          elevation: 3,
-          shadowColor: Colors.white24,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // ClipRRect(
-              //   borderRadius: BorderRadius.only(
-              //     topLeft: Radius.circular(5),
-              //     topRight: Radius.circular(5),
-              //   ),
-              //   child: Image.network(widget.business.pictures[0]),
-              // ),
-              Padding(
-                padding:
-                    MediaQuery.of(context).orientation == Orientation.portrait
-                        ? EdgeInsets.only(left: 15, right: 15, bottom: 15)
-                        : EdgeInsets.only(left: 40, right: 40, bottom: 15),
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 13, bottom: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+      child: Card(
+        elevation: 3,
+        shadowColor: Colors.white24,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(5),
+                topRight: Radius.circular(5),
+              ),
+              child: Image.network(widget.business.pictures[0]),
+            ),
+            Padding(
+              padding:
+                  MediaQuery.of(context).orientation == Orientation.portrait
+                      ? EdgeInsets.only(left: 15, right: 15, bottom: 15)
+                      : EdgeInsets.only(left: 40, right: 40, bottom: 15),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 13, bottom: 10),
+                    child: Text(
+                      widget.business.businessName,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 20),
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.location_on_rounded,
+                        color: Colors.grey[600],
+                      ),
+                      SizedBox(
+                        width: 15,
+                      ),
+                      Text(
+                        widget.business.location,
+                        style: TextStyle(color: Colors.grey[600]),
+                      )
+                    ],
+                  ),
+                  SizedBox(height: 5),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
                         children: [
-                          Text(
-                            widget.business.businessName,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 20),
+                          Icon(
+                            Icons.phone_outlined,
+                            color: Colors.grey[600],
                           ),
-                          Icon(Icons.favorite_border_outlined)
+                          SizedBox(
+                            width: 15,
+                          ),
+                          Text(
+                            widget.business.phoneNumber[0],
+                            style: TextStyle(color: Colors.grey[600]),
+                          )
                         ],
                       ),
-                    ),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.location_on_rounded,
-                          color: Colors.grey[600],
-                        ),
-                        SizedBox(
-                          width: 15,
-                        ),
-                        Text(
-                          widget.business.location,
-                          style: TextStyle(color: Colors.grey[600]),
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.phone_outlined,
-                              color: Colors.grey[600],
-                            ),
-                            SizedBox(
-                              width: 15,
-                            ),
-                            Text(
-                              widget.business.phoneNumber[0],
-                              style: TextStyle(color: Colors.grey[600]),
-                            )
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.language_outlined,
-                              color: Colors.grey[600],
-                            ),
-                            SizedBox(
-                              width: 15,
-                            ),
-                            Text(
-                              widget.business.website,
-                              style: TextStyle(color: Colors.grey[600]),
-                            )
-                          ],
-                        )
-                      ],
-                    ),
-                  ],
-                ),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.language_outlined,
+                            color: Colors.grey[600],
+                          ),
+                          SizedBox(
+                            width: 15,
+                          ),
+                          Text(
+                            widget.business.website,
+                            style: TextStyle(color: Colors.grey[600]),
+                          )
+                        ],
+                      )
+                    ],
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

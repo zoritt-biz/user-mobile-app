@@ -141,8 +141,11 @@ class _HomeState extends State<Home> {
             ),
           ),
           CategorySection(),
+          SliverToBoxAdapter(child: SizedBox(height: 15)),
           EventsSection(),
+          SliverToBoxAdapter(child: SizedBox(height: 15)),
           PostsSection(globalNavigator: widget.globalNavigator),
+          SliverToBoxAdapter(child: SizedBox(height: 15)),
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.only(top: 10, bottom: 10),
@@ -166,7 +169,7 @@ class _HomeState extends State<Home> {
                 child: ElevatedButton(
                   style: ButtonStyle(
                       padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                        EdgeInsets.all(15),
+                        EdgeInsets.all(10),
                       ),
                       backgroundColor: MaterialStateProperty.all<Color>(
                           Theme.of(context).accentColor)),
@@ -175,7 +178,7 @@ class _HomeState extends State<Home> {
                   },
                   child: Text(
                     "See More",
-                    style: TextStyle(fontSize: 18),
+                    style: TextStyle(fontSize: 13),
                   ),
                 ),
               ),

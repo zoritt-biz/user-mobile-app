@@ -26,7 +26,8 @@ class EventsRepository {
     return data.map((e) => Events.fromJson(e)).toList();
   }
 
-  Future<List<Events>> getEventsLoggedIn({String userId, int limit, String sort}) async {
+  Future<List<Events>> getEventsLoggedIn(
+      {String userId, int limit, String sort}) async {
     final result = await client.query(
       QueryOptions(
         document: gql(GET_ALL_EVENTS_LOGGED_IN),
@@ -49,11 +50,22 @@ class EventsRepository {
     final result = await client.query(
       QueryOptions(
         document: gql(LIKE_EVENT),
-        variables: {
-          "user_id": userId,
-          "event_id": eventId
-        },
+        variables: {"user_id": userId, "event_id": eventId},
+        fetchPolicy: FetchPolicy.networkOnly,
       ),
+    );
+    if (result.hasException) {
+      throw result.exception;
+    }
+    return true;
+  }
+
+  Future<bool> unlikeEvent(String userId, String eventId) async {
+    final result = await client.query(
+      QueryOptions(
+          document: gql(UNLIKE_EVENT),
+          variables: {"user_id": userId, "event_id": eventId},
+          fetchPolicy: FetchPolicy.networkOnly),
     );
     if (result.hasException) {
       throw result.exception;

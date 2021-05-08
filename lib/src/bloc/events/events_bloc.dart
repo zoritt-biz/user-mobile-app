@@ -33,14 +33,4 @@ class EventsBloc extends Cubit<EventsState> {
       emit(EventsLoadFailure(e.toString()));
     }
   }
-
-  Future<void> likeEvent(String userId, String eventId) async {
-    emit(EventsLiking());
-    try {
-      final events = await eventRepository.likeEvent(userId, eventId);
-      emit(EventsLikingSuccessful());
-    } catch (e) {
-      emit(EventsLikingFailure(e.toString()));
-    }
-  }
 }

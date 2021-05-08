@@ -2,8 +2,14 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share/share.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/auth/auth_bloc.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/post_like_bloc/post_like_bloc.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/post_like_bloc/post_like_state.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/stories/stories_bloc.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/user/user_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/models/post.dart';
+import 'package:zoritt_mobile_app_user/src/models/user.dart';
+import 'package:zoritt_mobile_app_user/src/repository/post/posts_repository.dart';
 
 class Story extends StatefulWidget {
   final Post post;
@@ -25,7 +31,6 @@ class _StoryState extends State<Story> with SingleTickerProviderStateMixin {
     _pageController = PageController();
     _animController = AnimationController(vsync: this);
 
-    // final String firstImage = widget.images.first;
     _loadStory(animateToPage: false);
 
     _animController.addStatusListener((status) {
@@ -38,9 +43,6 @@ class _StoryState extends State<Story> with SingleTickerProviderStateMixin {
             _loadStory(image: widget.post.photos[_currentIndex]);
           } else {
             context.read<StoryBloc>().emitStoryFinished();
-
-            // _currentIndex = 0;
-            // _loadStory(image: widget.images[_currentIndex]);
           }
         });
       }
@@ -83,21 +85,22 @@ class _StoryState extends State<Story> with SingleTickerProviderStateMixin {
                       );
                     },
                     imageBuilder: (context, imageProvider) {
-                      Future.delayed(Duration(milliseconds: 500)).then(
-                        (value) {
-                          _animController?.forward();
-                        },
-                      );
+                      // Future.delayed(Duration(milliseconds: 600)).then(
+                      //   (value) {
+                      //     _animController?.forward();
+                      //   },
+                      // );
 
                       return Container(
-                          decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: imageProvider,
-                          fit: BoxFit.cover,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: imageProvider,
+                            fit: BoxFit.fitWidth,
+                          ),
                         ),
-                      ));
+                      );
                     },
-                    fit: BoxFit.cover,
+                    fit: BoxFit.fitWidth,
                     width: double.infinity,
                     height: double.infinity,
                   );
@@ -123,6 +126,27 @@ class _StoryState extends State<Story> with SingleTickerProviderStateMixin {
                     .toList(),
               ),
             ),
+            Align(
+              alignment: Alignment.bottomLeft,
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.transparent,
+                      Colors.transparent,
+                      Colors.transparent,
+                      Colors.transparent,
+                      Colors.transparent,
+                      Colors.black.withOpacity(0.5),
+                      Colors.black.withOpacity(0.7),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
             Positioned(
               bottom: 20,
               left: 15,
@@ -132,11 +156,16 @@ class _StoryState extends State<Story> with SingleTickerProviderStateMixin {
                   horizontal: 1.5,
                   vertical: 10.0,
                 ),
-                child: UserInfo(
-                  post: widget.post,
+                child: BlocProvider<PostLikeBloc>(
+                  create: (context) => PostLikeBloc(
+                    postRepository: context.read<PostRepository>(),
+                  ),
+                  child: BusinessInfo(
+                    post: widget.post,
+                  ),
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -160,9 +189,6 @@ class _StoryState extends State<Story> with SingleTickerProviderStateMixin {
           _loadStory(image: widget.post.photos[_currentIndex]);
         } else {
           context.read<StoryBloc>().emitStoryFinished();
-
-          // _currentIndex = 0;
-          // _loadStory(image: widget.images[_currentIndex]);
         }
       });
     }
@@ -172,7 +198,6 @@ class _StoryState extends State<Story> with SingleTickerProviderStateMixin {
     _animController.stop();
     _animController.reset();
     _animController.duration = Duration(seconds: 3);
-    // _animController.forward();
 
     if (animateToPage) {
       _pageController.animateToPage(
@@ -246,8 +271,21 @@ class AnimatedBar extends StatelessWidget {
   }
 }
 
-class UserInfo extends StatelessWidget {
+class BusinessInfo extends StatefulWidget {
   final Post post;
+
+  const BusinessInfo({
+    Key key,
+    @required this.post,
+  }) : super(key: key);
+
+  @override
+  _BusinessInfoState createState() => _BusinessInfoState();
+}
+
+class _BusinessInfoState extends State<BusinessInfo> {
+  bool localChange = false;
+  bool value = false;
 
   void share(BuildContext context, Post post) {
     // final RenderBox renderBox=context.findRenderObject();
@@ -256,82 +294,129 @@ class UserInfo extends StatelessWidget {
     Share.share(subject, subject: post.description);
   }
 
-  const UserInfo({
-    Key key,
-    @required this.post,
-  }) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "You can attend our event",
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 18.0,
-            fontWeight: FontWeight.bold,
+    return BlocConsumer<PostLikeBloc, PostLikeState>(
+      listener: (postBloc, postState) {
+        if (postState is PostLikingSuccessful) {
+          setState(() {
+            localChange = true;
+            value = true;
+          });
+        } else if (postState is PostUnlikingSuccessful) {
+          setState(() {
+            localChange = true;
+            value = false;
+          });
+        }
+      },
+      builder: (postBloc, postState) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            widget.post.description,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 18.0,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        ),
-        const SizedBox(height: 20.0),
-        Row(
-          children: <Widget>[
-            CircleAvatar(
-              radius: 20.0,
-              backgroundColor: Colors.grey[300],
-              backgroundImage: AssetImage(
-                "assets/images/image.jpg",
+          const SizedBox(height: 20.0),
+          Row(
+            children: <Widget>[
+              CircleAvatar(
+                radius: 20.0,
+                backgroundColor: Colors.grey[300],
+                backgroundImage: NetworkImage(
+                  widget.post.businessLogo != null &&
+                          widget.post.businessLogo != ""
+                      ? widget.post.businessLogo
+                      : "https://images.unsplash.com/photo-1614823498916-a28a7d67182c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80",
+                  scale: 1,
+                ),
               ),
-            ),
-            const SizedBox(width: 10.0),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    post.businessName ?? "",
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.bold,
+              const SizedBox(width: 10.0),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.post.businessName ?? "",
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  // ),
-                  // Expanded(
-                  Text(
-                    post.description ?? "",
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 12.0,
+                    Text(
+                      widget.post.description ?? "",
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 12.0,
+                      ),
                     ),
-                    // ),
-                  ),
-                ],
+                  ],
+                ),
+                flex: 2,
               ),
-              flex: 2,
-            ),
-            IconButton(
-              icon: const Icon(
-                Icons.favorite,
-                size: 30.0,
-                color: Color(0xffDF9C20),
+              IconButton(
+                icon: Icon(
+                  localChange
+                      ? value
+                          ? Icons.favorite_rounded
+                          : Icons.favorite_border_rounded
+                      : widget.post.isLiked
+                          ? Icons.favorite_rounded
+                          : Icons.favorite_border_rounded,
+                  size: 30.0,
+                  color: Color(0xffDF9C20),
+                ),
+                onPressed: () {
+                  if (context.read<AuthenticationBloc>().state.status ==
+                      AuthenticationStatus.authenticated) {
+                    String userId =
+                        (context.read<UserBloc>().state.props[0] as User).id;
+                    if (postState is! PostLiking &&
+                        postState is! PostUnliking) {
+                      if (localChange) {
+                        if (value) {
+                          context
+                              .read<PostLikeBloc>()
+                              .unlikePost(userId, widget.post.id);
+                        } else {
+                          context
+                              .read<PostLikeBloc>()
+                              .likePost(userId, widget.post.id);
+                        }
+                      } else {
+                        if (widget.post.isLiked) {
+                          context
+                              .read<PostLikeBloc>()
+                              .unlikePost(userId, widget.post.id);
+                        } else {
+                          context
+                              .read<PostLikeBloc>()
+                              .likePost(userId, widget.post.id);
+                        }
+                      }
+                    }
+                  } else {
+                    Navigator.pushNamed(context, "/sign_in");
+                  }
+                },
               ),
-              onPressed: () => {},
-            ),
-            IconButton(
-              icon: const Icon(
-                Icons.share,
-                size: 30.0,
-                color: Colors.white,
+              IconButton(
+                icon: const Icon(
+                  Icons.share,
+                  size: 30.0,
+                  color: Colors.white,
+                ),
+                onPressed: () => share(context, widget.post),
               ),
-              onPressed: () {
-                share(context, post);
-              },
-            ),
-          ],
-        )
-      ],
+            ],
+          )
+        ],
+      ),
     );
   }
 }
