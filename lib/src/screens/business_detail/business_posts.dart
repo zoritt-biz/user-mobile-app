@@ -30,7 +30,11 @@ class BusinessPost extends StatelessWidget {
               posts.length > 0
                   ? Container(
                       height: 160,
-                      child: PostItems(buildContext: context, posts: posts),
+                      child: PostItems(
+                        buildContext: context,
+                        posts: posts,
+                        isVertical: false,
+                      ),
                     )
                   : Column(
                       children: [

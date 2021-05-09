@@ -33,25 +33,25 @@ class BusinessInfo extends StatelessWidget {
                   Icon(Icons.phone_outlined)
                 ],
               ),
-              Divider(
-                color: Colors.grey,
-                height: 30,
-              ),
-              GestureDetector(
-                onTap: () {
-                  Navigator.pushNamed(context, "/menu_display");
-                },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Explore The Menu',
-                      style: TextStyle(fontSize: 15),
-                    ),
-                    Icon(Icons.search_outlined)
-                  ],
-                ),
-              ),
+              // Divider(
+              //   color: Colors.grey,
+              //   height: 30,
+              // ),
+              // GestureDetector(
+              //   onTap: () {
+              //     Navigator.pushNamed(context, "/menu_display");
+              //   },
+              //   child: Row(
+              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //     children: [
+              //       Text(
+              //         'Explore The Menu',
+              //         style: TextStyle(fontSize: 15),
+              //       ),
+              //       Icon(Icons.search_outlined)
+              //     ],
+              //   ),
+              // ),
               Divider(
                 color: Colors.grey,
                 height: 30,

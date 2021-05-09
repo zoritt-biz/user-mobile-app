@@ -209,7 +209,7 @@ class _BusinessDetailState extends State<BusinessDetail> {
           BlocProvider<RelatedBusinessesBloc>(
             create: (ctx) => RelatedBusinessesBloc(
               businessRepository: context.read<BusinessRepository>(),
-            )..getRelatedBusinesses(business.categories[0].parent),
+            )..getRelatedBusinesses(category: business.categories[0].parent, skipId: business.id),
             child: RelatedBusiness(),
           )
         ],

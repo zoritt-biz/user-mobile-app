@@ -1,6 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/events/events_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/events/events_state.dart';
 import 'package:zoritt_mobile_app_user/src/models/models.dart';
@@ -124,8 +126,161 @@ class EventItem extends StatelessWidget {
       width: 140.0,
       child: GestureDetector(
         onTap: () {
-          if (buildContext != null)
-            Navigator.pushNamed(buildContext, "/events");
+          showDialog(
+            context: context,
+            barrierColor: Colors.black.withOpacity(0.8),
+            barrierDismissible: true,
+            barrierLabel: event.title,
+            builder: (BuildContext context) {
+              return Stack(
+                children: [
+                  CachedNetworkImage(
+                    imageUrl: event.photos[0],
+                    placeholder: (context, url) {
+                      return Container(
+                        color: Colors.black,
+                        child: Center(child: CircularProgressIndicator()),
+                      );
+                    },
+                    imageBuilder: (context, imageProvider) {
+                      return Container(
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: imageProvider,
+                            fit: BoxFit.fitWidth,
+                          ),
+                        ),
+                      );
+                    },
+                    fit: BoxFit.fitWidth,
+                    width: double.infinity,
+                    height: double.infinity,
+                  ),
+                  Align(
+                    alignment: Alignment.bottomLeft,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.black.withOpacity(0.5),
+                            Colors.black.withOpacity(0.3),
+                            Colors.transparent,
+                            Colors.transparent,
+                            Colors.transparent,
+                            Colors.transparent,
+                            Colors.transparent,
+                            Colors.black.withOpacity(0.3),
+                            Colors.black.withOpacity(0.5),
+                            Colors.black.withOpacity(0.7),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 15),
+                    child: Text(
+                      event.title,
+                      textAlign: TextAlign.start,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.bottomLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 15),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            event.description,
+                            textAlign: TextAlign.start,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 10.0),
+                          if(event.link != "") TextButton(
+                            onPressed: () async {
+                              if (await canLaunch(event.link)) await launch(event.link);
+                            },
+                            child: Text(
+                              event.link,
+                              textAlign: TextAlign.start,
+                              style: const TextStyle(
+                                color: Colors.blue,
+                                decoration: TextDecoration.underline,
+                                fontSize: 18.0,
+                              ),
+                            ),
+                          ),
+                          if(event.link != "") const SizedBox(height: 10.0),
+                          Text(
+                            event.location,
+                            textAlign: TextAlign.start,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 15.0,
+                            ),
+                          ),
+                          const SizedBox(height: 20.0),
+                          Row(
+                            children: <Widget>[
+                              CircleAvatar(
+                                radius: 20.0,
+                                backgroundColor: Colors.grey[300],
+                                backgroundImage: NetworkImage(
+                                  event.logoPics != null &&
+                                      event.logoPics != ""
+                                      ? event.logoPics
+                                      : "https://images.unsplash.com/photo-1614823498916-a28a7d67182c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80",
+                                  scale: 1,
+                                ),
+                              ),
+                              const SizedBox(width: 10.0),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      event.businessName ?? "",
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18.0,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Text(
+                                      event.description ?? "",
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12.0,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                flex: 2,
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              );
+            },
+          );
         },
         child: Card(
           elevation: 3,

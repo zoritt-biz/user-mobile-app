@@ -11,6 +11,7 @@ class CategorySection extends StatelessWidget {
         padding: EdgeInsets.all(10),
         decoration: BoxDecoration(color: Colors.grey[100]),
         child: GridView.count(
+          physics: const NeverScrollableScrollPhysics(),
           childAspectRatio: 3 / 2,
           padding: EdgeInsets.only(top: 15),
           crossAxisCount: 4,

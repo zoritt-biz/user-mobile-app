@@ -24,6 +24,7 @@ class PostRepository {
           "sort": sort,
           "filterDate": filterDate
         },
+        fetchPolicy: FetchPolicy.networkOnly,
       ),
     );
     if (result.hasException) {
@@ -44,6 +45,7 @@ class PostRepository {
           "user_id": userId,
           "fromDate": "2021-05-03"
         },
+        fetchPolicy: FetchPolicy.networkOnly,
       ),
     );
     if (result.hasException) {
@@ -53,11 +55,11 @@ class PostRepository {
     return data.map((e) => Post.fromJson(e)).toList();
   }
 
-  Future<bool> likeEvent(String userId, String eventId) async {
+  Future<bool> likePost(String userId, String postId) async {
     final result = await client.query(
       QueryOptions(
         document: gql(LIKE_POST),
-        variables: {"user_id": userId, "event_id": eventId},
+        variables: {"user_id": userId, "post_id": postId},
         fetchPolicy: FetchPolicy.networkOnly,
       ),
     );
@@ -67,11 +69,11 @@ class PostRepository {
     return true;
   }
 
-  Future<bool> unlikeEvent(String userId, String eventId) async {
+  Future<bool> unlikePost(String userId, String postId) async {
     final result = await client.query(
       QueryOptions(
           document: gql(UNLIKE_POST),
-          variables: {"user_id": userId, "event_id": eventId},
+          variables: {"user_id": userId, "post_id": postId},
           fetchPolicy: FetchPolicy.networkOnly),
     );
     if (result.hasException) {

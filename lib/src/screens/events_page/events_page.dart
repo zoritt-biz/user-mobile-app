@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -124,7 +125,7 @@ class _EventCardState extends State<EventCard> {
             ),
             child: Image.network(
               item,
-              fit: BoxFit.fill,
+              fit: BoxFit.cover,
               width: double.infinity,
             ),
           ),
@@ -153,20 +154,56 @@ class _EventCardState extends State<EventCard> {
               Stack(
                 alignment: Alignment.bottomCenter,
                 children: [
-                  CarouselSlider(
-                    items: imageSliders,
-                    options: CarouselOptions(
-                      autoPlayInterval: Duration(seconds: 5),
-                      autoPlay: false,
-                      viewportFraction: 1,
-                      aspectRatio: 2.0,
-                      onPageChanged: (index, reason) {
-                        setState(
-                          () {
-                            _current = index;
-                          },
-                        );
-                      },
+                  GestureDetector(
+                    onTap: (){
+                      showDialog(
+                        context: context,
+                        barrierColor: Colors.black.withOpacity(0.8),
+                        barrierDismissible: true,
+                        builder: (BuildContext context) {
+                          return Stack(
+                            children: [
+                              CachedNetworkImage(
+                                imageUrl: widget.events.photos[_current],
+                                placeholder: (context, url) {
+                                  return Container(
+                                    child: Center(child: CircularProgressIndicator()),
+                                  );
+                                },
+                                imageBuilder: (context, imageProvider) {
+                                  return Container(
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                        image: imageProvider,
+                                        fit: BoxFit.fitWidth,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                fit: BoxFit.fitWidth,
+                                width: double.infinity,
+                                height: double.infinity,
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                    child: CarouselSlider(
+                      items: imageSliders,
+                      options: CarouselOptions(
+                        autoPlayInterval: Duration(seconds: 5),
+                        autoPlay: false,
+                        viewportFraction: 1,
+                        aspectRatio: 2.0,
+                        onPageChanged: (index, reason) {
+                          setState(
+                            () {
+                              _current = index;
+                            },
+                          );
+                        },
+                      ),
                     ),
                   ),
                   Row(

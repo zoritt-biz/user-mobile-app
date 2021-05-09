@@ -40,7 +40,7 @@ class HomeNavigator extends TabNavigator {
       HomeNavigatorRoutes.events: (ctx, _) =>
           BlocBuilder<AuthenticationBloc, AuthenticationState>(
             builder: (authBloc, authState) {
-              if(authState.status == AuthenticationStatus.authenticated){
+              if (authState.status == AuthenticationStatus.authenticated) {
                 BlocProvider.of<UserBloc>(context)
                     .add(UserLoad(authState.user.firebaseId));
 
@@ -50,8 +50,11 @@ class HomeNavigator extends TabNavigator {
                       return BlocProvider<EventsBloc>(
                         create: (context) => EventsBloc(
                           eventRepository: context.read<EventsRepository>(),
-                        )..getEventsLoggedIn(limit: 50, sort: "desc", userId: userState.user.id),
-                        child: EventsPage(globalNavigator: globalNavigator, userId: userState.user.id),
+                        )..getEventsLoggedIn(
+                            limit: 50, sort: "desc", userId: userState.user.id),
+                        child: EventsPage(
+                            globalNavigator: globalNavigator,
+                            userId: userState.user.id),
                       );
                     } else {
                       return Center(child: CircularProgressIndicator());
@@ -213,8 +216,9 @@ class ProfileNavigatorRoutes {
 
 class ProfileNavigator extends TabNavigator {
   final GlobalKey<NavigatorState> navigatorKey;
+  final BuildContext globalNavigator;
 
-  ProfileNavigator({this.navigatorKey});
+  ProfileNavigator({this.navigatorKey, this.globalNavigator});
 
   Map<String, WidgetBuilder> _routeBuilder(BuildContext context) {
     return {
@@ -232,7 +236,11 @@ class ProfileNavigator extends TabNavigator {
                         create: (context) => ProfileBloc(
                           context.read<UserRepository>(),
                         )..getUserProfile(userState.user.firebaseId),
-                        child: ProfilePage(),
+                        child: ProfilePage(
+                          firebaseId: userState.user.firebaseId,
+                          userId: userState.user.id,
+                          globalNavigator: globalNavigator,
+                        ),
                       );
                     } else {
                       return Center(child: CircularProgressIndicator());

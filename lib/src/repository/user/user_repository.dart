@@ -69,29 +69,57 @@ class UserRepository {
     }
     final data = result.data['userOne'];
     return User(
-      id: data['_id'],
-      fullName: data['fullName'],
-      email: data['email'],
-      phoneNumber: data['phoneNumber'],
-      firebaseId: data['firebaseId'],
-      userType: data['userType'],
-      events: (data['interestedInEvents'] as List).length > 0 ? (data['interestedInEvents'] as List).map(
-        (e) => Events(
-          businessName: e['owner']['businessName'],
-          description: e['description'],
-          title: e['title'],
-          location: e['location'],
-          link: e['link'],
-        ),
-      ) : [],
-      posts: (data['likedPosts'] as List).length > 0 ? (data['likedPosts'] as List).map(
-        (e) => Post(
-          businessName: e['owner']['businessName'],
-          businessLogo: e['owner']['logoPics'],
-          description: e['description'],
-          photos: e['photos'],
-        ),
-      ) : [],
+        id: data['_id'],
+        fullName: data['fullName'],
+        email: data['email'],
+        phoneNumber: data['phoneNumber'],
+        firebaseId: data['firebaseId'],
+        userType: data['userType']);
+  }
+
+  Future<List<Events>> getUserEvents(String firebaseId) async {
+    final result = await client.query(
+      QueryOptions(
+        document: gql(GET_USER_EVENTS),
+        variables: {
+          'firebaseId': firebaseId,
+        },
+        fetchPolicy: FetchPolicy.networkOnly,
+      ),
     );
+    if (result.hasException) {
+      throw result.exception;
+    }
+    final data = result.data['userOne']['interestedInEvents'] as List;
+    if (data.length == 0) {
+      return [];
+    }
+    return data.map((e) {
+      e['isInterested'] = true;
+      return Events.fromJson(e);
+    }).toList();
+  }
+
+  Future<List<Post>> getUserPosts(String firebaseId) async {
+    final result = await client.query(
+      QueryOptions(
+        document: gql(GET_USER_POSTS),
+        variables: {
+          'firebaseId': firebaseId,
+        },
+        fetchPolicy: FetchPolicy.networkOnly,
+      ),
+    );
+    if (result.hasException) {
+      throw result.exception;
+    }
+    final data = result.data['userOne']['likedPosts'] as List;
+    if (data.length == 0) {
+      return [];
+    }
+    return data.map((e) {
+      e['isLiked'] = true;
+      return Post.fromJson(e);
+    }).toList();
   }
 }

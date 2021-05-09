@@ -1,9 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/auth/auth_bloc.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/events_like_bloc/events_like_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/profile_bloc/profile_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/profile_bloc/profile_state.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/profile_bloc/user_events_bloc/user_events_bloc.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/profile_bloc/user_events_bloc/user_events_state.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/profile_bloc/user_posts_bloc/user_posts_bloc.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/profile_bloc/user_posts_bloc/user_posts_state.dart';
+import 'package:zoritt_mobile_app_user/src/repository/repository.dart';
+import 'package:zoritt_mobile_app_user/src/screens/events_page/events_page.dart';
+import 'package:zoritt_mobile_app_user/src/screens/home/posts_section.dart';
 
 class ProfilePage extends StatefulWidget {
+  final String firebaseId;
+  final String userId;
+  final BuildContext globalNavigator;
+
+  const ProfilePage(
+      {Key key, this.firebaseId, this.userId, this.globalNavigator})
+      : super(key: key);
+
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
@@ -22,15 +40,26 @@ class _ProfilePageState extends State<ProfilePage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Profile",
+        title: Text(
+          "Profile",
           style: TextStyle(color: Colors.black),
         ),
+        actions: [
+          TextButton(
+              onPressed: () {
+                context
+                    .read<AuthenticationBloc>()
+                    .add(AuthenticationLogoutRequested());
+              },
+              child: Text("Logout"))
+        ],
         iconTheme: IconThemeData(color: Colors.black),
       ),
       body: BlocBuilder<ProfileBloc, ProfileState>(
         builder: (profileCtx, profileState) {
           if (profileState is ProfileLoadSuccessful) {
             return ListView(
+              primary: false,
               children: [
                 Container(
                   width: 100,
@@ -39,14 +68,12 @@ class _ProfilePageState extends State<ProfilePage>
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     image: DecorationImage(
-                        image: NetworkImage(
-                            "https://images.unsplash.com/photo-1614823498916-a28a7d67182c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80"),
-                        fit: BoxFit.fill),
+                      image: AssetImage("assets/images/user_image.png"),
+                      fit: BoxFit.contain,
+                    ),
                   ),
                 ),
-                SizedBox(
-                  height: 10,
-                ),
+                SizedBox(height: 10),
                 Center(
                   child: Text(
                     profileState.user.fullName,
@@ -56,9 +83,7 @@ class _ProfilePageState extends State<ProfilePage>
                         color: Colors.grey[700]),
                   ),
                 ),
-                SizedBox(
-                  height: 5,
-                ),
+                SizedBox(height: 5),
                 Center(
                   child: Text(
                     profileState.user.email,
@@ -68,9 +93,28 @@ class _ProfilePageState extends State<ProfilePage>
                         color: Colors.grey[700]),
                   ),
                 ),
-                SizedBox(
-                  height: 20,
+                SizedBox(height: 10),
+                Center(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(50),
+                      border: Border.all(
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                    child: TextButton(
+                      onPressed: () async {
+                        if (await canLaunch("https://zoritt-app.web.app/"))
+                          await launch("https://zoritt-app.web.app/");
+                      },
+                      child: Text(
+                        "Add your business",
+                        style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+                      ),
+                    ),
+                  ),
                 ),
+                SizedBox(height: 10),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Divider(
@@ -81,10 +125,16 @@ class _ProfilePageState extends State<ProfilePage>
                   controller: _tabController,
                   tabs: <Widget>[
                     Tab(
-                      icon: Icon(Icons.favorite_border_outlined),
+                      icon: Icon(
+                        Icons.favorite_border_outlined,
+                        color: Colors.black,
+                      ),
                     ),
                     Tab(
-                      icon: Icon(Icons.bookmark_border_outlined),
+                      icon: Icon(
+                        Icons.bookmark_border_outlined,
+                        color: Colors.black,
+                      ),
                     ),
                   ],
                 ),
@@ -93,8 +143,61 @@ class _ProfilePageState extends State<ProfilePage>
                   child: TabBarView(
                     controller: _tabController,
                     children: [
-                      Center(child: Text('Favorited')),
-                      Center(child: Text('Bookmarked')),
+                      BlocProvider(
+                        create: (context) => UserPostsBloc(
+                          context.read<UserRepository>(),
+                        )..getUserPosts(widget.firebaseId),
+                        child: BlocBuilder<UserPostsBloc, UserPostsState>(
+                            builder: (postsCtx, postsState) {
+                          if (postsState is UserPostsSuccessful) {
+                            return PostItems(
+                              buildContext: widget.globalNavigator,
+                              posts: postsState.posts,
+                              isVertical: true,
+                            );
+                          } else if (postsState is UserPostsLoading) {
+                            return Center(child: CircularProgressIndicator());
+                          } else {
+                            return Center(child: Text('Likes'));
+                          }
+                        }),
+                      ),
+                      BlocProvider(
+                        create: (context) => UserEventsBloc(
+                          context.read<UserRepository>(),
+                        )..getUserEvents(widget.firebaseId),
+                        child: BlocBuilder<UserEventsBloc, UserEventsState>(
+                            builder: (eventsCtx, eventsState) {
+                          if (eventsState is UserEventsSuccessful) {
+                            return ListView(
+                              primary: true,
+                              children: [
+                                ListView.builder(
+                                  itemCount: eventsState.events.length,
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  itemBuilder: (ctx, index) =>
+                                      BlocProvider<EventsLikeBloc>(
+                                    create: (context) => EventsLikeBloc(
+                                      eventRepository:
+                                          context.read<EventsRepository>(),
+                                    ),
+                                    child: EventCard(
+                                      events: eventsState.events[index],
+                                      context: context,
+                                      userId: widget.userId,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          } else if (eventsState is UserEventsLoading) {
+                            return Center(child: CircularProgressIndicator());
+                          } else {
+                            return Center(child: Text('BookMarks'));
+                          }
+                        }),
+                      ),
                     ],
                   ),
                 )

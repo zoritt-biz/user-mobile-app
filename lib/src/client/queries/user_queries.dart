@@ -24,22 +24,46 @@ query($firebaseId: String){
     phoneNumber
     firebaseId
     userType
+  }
+}
+""";
+
+const GET_USER_EVENTS = r"""
+query($firebaseId: String){
+  userOne(filter: {firebaseId: $firebaseId}){
+    _id
     interestedInEvents{
+      _id
       title
       description
       location
       link
-      owner{
+      photos
+      isInterested
+      owner {
         businessName
+        location
+        logoPics
       }
     }
+  }
+}
+""";
+
+const GET_USER_POSTS = r"""
+query($firebaseId: String){
+  userOne(filter: {firebaseId: $firebaseId}){
+    _id
     likedPosts{
+      _id
       description
       photos
-      owner{
+      isLiked
+      createdAt
+      owner {
         businessName
-        logoPics
         location
+        logoPics
       }
     }
   }

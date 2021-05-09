@@ -43,6 +43,7 @@ class _HomePageState extends State<HomePage> {
       ),
       ProfileNavigator(
         navigatorKey: tabNavigatorKeys[TabItem.profile.index],
+        globalNavigator: _globalNavigatorContext,
       ),
     ];
     super.initState();
@@ -71,6 +72,9 @@ class _HomePageState extends State<HomePage> {
       BottomNavigationData(
         onPressed: () {
           setCurrentIndex(TabItem.search);
+          if(context.read<NavigationBloc>().state is NavigationUnknown){
+            context.read<NavigationBloc>().navigateToSearchDelegate();
+          }
         },
         icon: Icons.search,
         color: _currentTab == TabItem.search

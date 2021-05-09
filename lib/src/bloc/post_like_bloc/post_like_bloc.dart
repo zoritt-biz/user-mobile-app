@@ -9,20 +9,20 @@ class PostLikeBloc extends Cubit<PostLikeState> {
 
   PostLikeBloc({@required this.postRepository}) : super(PostLikeUnknown());
 
-  Future<void> likePost(String userId, String eventId) async {
+  Future<void> likePost(String userId, String postId) async {
     emit(PostLiking());
     try {
-      await postRepository.likeEvent(userId, eventId);
+      await postRepository.likePost(userId, postId);
       emit(PostLikingSuccessful());
     } catch (e) {
       emit(PostLikingFailure(e.toString()));
     }
   }
 
-  Future<void> unlikePost(String userId, String eventId) async {
+  Future<void> unlikePost(String userId, String postId) async {
     emit(PostUnliking());
     try {
-      await postRepository.unlikeEvent(userId, eventId);
+      await postRepository.unlikePost(userId, postId);
       emit(PostUnlikingSuccessful());
     } catch (e) {
       emit(PostUnlikingFailure(e.toString()));

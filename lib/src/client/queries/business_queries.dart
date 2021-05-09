@@ -81,6 +81,52 @@ query($searchArray: [String], $limit: Int){
 }
 """;
 
+const GET_BUSINESS_RELATED_MANY = r"""
+query($searchArray: [String], $limit: Int, $id: MongoID){
+  businessMany(
+    filter: {
+      _operators: {
+        searchIndex: {in: $searchArray}
+        _id: {ne: $id}
+      }
+    }
+    limit: $limit
+  ){
+    _id
+    businessName
+    phoneNumber
+    location
+    emails
+    website
+    logoPics
+    pictures
+  }
+}
+""";
+
+const GET_BUSINESS_BY_FILTER = r"""
+query($searchArray: [String], $limit: Int, $day: String){
+  businessMany(
+    filter: {
+      _operators: {
+        searchIndex: {in: $searchArray},
+      }
+      openHours: {day: $day, isOpen: true}
+    }
+    limit: $limit
+  ){
+    _id
+    businessName
+    phoneNumber
+    location
+    emails
+    website
+    logoPics
+    pictures
+  }
+}
+""";
+
 const GET_BUSINESS_LIST_MANY = r"""
 query{
   businessListMany(limit: 2000){

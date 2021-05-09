@@ -19,10 +19,10 @@ query(
     photos
     isInterested
     owner {
-        businessName
-        location
-        logoPics
-     }
+      businessName
+      location
+      logoPics
+    }
   }
 }
 """;

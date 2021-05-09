@@ -6,7 +6,7 @@ class Post {
   final String description;
   final List<String> video;
   final List<String> photos;
-  final bool isLiked;
+  bool isLiked;
   final String businessLogo;
   final String businessName;
 

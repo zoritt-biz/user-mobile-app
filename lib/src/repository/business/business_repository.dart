@@ -108,4 +108,57 @@ class BusinessRepository {
     final data = results.data['businessMany'] as List;
     return data.map((e) => Business.fromJson(e)).toList();
   }
+
+  Future<List<Business>> getRelatedBusinesses({
+    String query,
+    String skipId,
+    int limit,
+  }) async {
+    final results = await client.query(
+      QueryOptions(
+        document: gql(GET_BUSINESS_RELATED_MANY),
+        variables: {
+          "searchArray": [...query.split(" ").map((e) => e.toLowerCase())],
+          "limit": limit,
+          "id": skipId
+        },
+        fetchPolicy: FetchPolicy.networkOnly,
+      ),
+    );
+    if (results.hasException) {
+      throw results.exception;
+    }
+    final data = results.data['businessMany'] as List;
+    return data.map((e) => Business.fromJson(e)).toList();
+  }
+
+  Future<List<Business>> getBusinessesByFilter(
+      {String query, int skip, int limit}) async {
+    List<String> days = [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday"
+    ];
+
+    final results = await client.query(
+      QueryOptions(
+        document: gql(GET_BUSINESS_BY_FILTER),
+        variables: {
+          "searchArray": [...query.split(" ").map((e) => e.toLowerCase())],
+          "day": days[DateTime.now().weekday - 1],
+          "limit": limit
+        },
+        fetchPolicy: FetchPolicy.networkOnly,
+      ),
+    );
+    if (results.hasException) {
+      throw results.exception;
+    }
+    final data = results.data['businessMany'] as List;
+    return data.map((e) => Business.fromJson(e)).toList();
+  }
 }

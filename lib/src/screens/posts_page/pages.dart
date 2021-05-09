@@ -85,11 +85,11 @@ class _StoryState extends State<Story> with SingleTickerProviderStateMixin {
                       );
                     },
                     imageBuilder: (context, imageProvider) {
-                      // Future.delayed(Duration(milliseconds: 600)).then(
-                      //   (value) {
-                      //     _animController?.forward();
-                      //   },
-                      // );
+                      Future.delayed(Duration(milliseconds: 600)).then(
+                        (value) {
+                          _animController?.forward();
+                        },
+                      );
 
                       return Container(
                         decoration: BoxDecoration(
@@ -125,6 +125,10 @@ class _StoryState extends State<Story> with SingleTickerProviderStateMixin {
                     .values
                     .toList(),
               ),
+            ),
+            SizedBox(
+              height: 30,
+              child: Container(decoration: BoxDecoration(color: Colors.white)),
             ),
             Align(
               alignment: Alignment.bottomLeft,
@@ -287,6 +291,10 @@ class _BusinessInfoState extends State<BusinessInfo> {
   bool localChange = false;
   bool value = false;
 
+  // Setting to true will force the tab to never be disposed. This could be dangerous.
+  // @override
+  // bool get wantKeepAlive => true;
+
   void share(BuildContext context, Post post) {
     // final RenderBox renderBox=context.findRenderObject();
     String subject =
@@ -302,11 +310,13 @@ class _BusinessInfoState extends State<BusinessInfo> {
           setState(() {
             localChange = true;
             value = true;
+            widget.post.isLiked = true;
           });
         } else if (postState is PostUnlikingSuccessful) {
           setState(() {
             localChange = true;
             value = false;
+            widget.post.isLiked = false;
           });
         }
       },

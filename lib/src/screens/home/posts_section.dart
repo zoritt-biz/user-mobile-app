@@ -33,7 +33,11 @@ class PostsSection extends StatelessWidget {
               builder: (context, state) {
                 if (state is PostLoadSuccessful) {
                   if (state.posts.isNotEmpty) {
-                    return PostItems(buildContext: globalNavigator, posts: state.posts);
+                    return PostItems(
+                      buildContext: globalNavigator,
+                      posts: state.posts,
+                      isVertical: false,
+                    );
                   } else {
                     return Container(
                       child: Center(child: Text("No recent Posts")),
@@ -93,13 +97,15 @@ class PostsSection extends StatelessWidget {
 class PostItems extends StatelessWidget {
   final BuildContext buildContext;
   final List<Post> posts;
+  final bool isVertical;
 
-  const PostItems({Key key, this.buildContext, this.posts}) : super(key: key);
+  const PostItems({Key key, this.buildContext, this.posts, this.isVertical})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      scrollDirection: Axis.horizontal,
+      scrollDirection: isVertical ? Axis.vertical : Axis.horizontal,
       padding: EdgeInsets.only(left: 10, right: 10),
       itemCount: posts.length,
       itemBuilder: (context, index) {

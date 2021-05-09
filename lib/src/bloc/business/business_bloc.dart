@@ -22,4 +22,22 @@ class BusinessBloc extends Cubit<BusinessState> {
       emit(BusinessOperationFailure(e.toString()));
     }
   }
+
+  void searchForBusinessesByFilter({
+    String query,
+    int skip,
+    int limit,
+  }) async {
+    emit(BusinessLoading());
+    try {
+      final item = await businessRepository.getBusinessesByFilter(
+        query: query,
+        limit: limit,
+        skip: skip,
+      );
+      emit(BusinessLoadSuccess(item));
+    } catch (e) {
+      emit(BusinessOperationFailure(e.toString()));
+    }
+  }
 }

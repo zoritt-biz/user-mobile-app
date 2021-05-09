@@ -10,10 +10,10 @@ class RelatedBusinessesBloc extends Cubit<RelatedBusinessesState> {
       : assert(businessRepository != null),
         super(RelatedBusinessesLoading());
 
-  Future<void> getRelatedBusinesses(String category) async {
+  Future<void> getRelatedBusinesses({String category, String skipId}) async {
     emit(RelatedBusinessesLoading());
     try {
-      final item = await businessRepository.getBusinesses(category, 0, 3);
+      final item = await businessRepository.getRelatedBusinesses(limit: 3, query: category, skipId: skipId);
       emit(RelatedBusinessesLoadSuccess(item));
     } catch (e) {
       emit(RelatedBusinessesOperationFailure(e.toString()));

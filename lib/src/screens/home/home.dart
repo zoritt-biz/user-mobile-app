@@ -1,12 +1,15 @@
 import 'dart:ui';
 
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/navigation/navigation_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'category_section.dart';
 import 'events_section.dart';
@@ -27,6 +30,7 @@ class _HomeState extends State<Home> {
   DateTime dateTime = DateTime.now().subtract(Duration(days: 5));
   ScrollController _scrollController;
   bool lastStatus = true;
+  int _current = 0;
 
   _scrollListener() {
     if (isShrink != lastStatus) {
@@ -66,8 +70,16 @@ class _HomeState extends State<Home> {
     await Future.delayed(Duration(milliseconds: 3000), () {});
   }
 
+  final List<Widget> imageSliders = [
+    "https://images.unsplash.com/photo-1614823498916-a28a7d67182c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80",
+    "https://images.unsplash.com/photo-1614823498916-a28a7d67182c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80"
+  ]
+      .map((item) => ClipRRect(child: Image.network(item, fit: BoxFit.fill)))
+      .toList();
+
   @override
   Widget build(BuildContext context) {
+    final TextStyle headline3 = Theme.of(context).textTheme.headline3;
     return RefreshIndicator(
       onRefresh: _onRefresh,
       displacement: 50.0,
@@ -84,9 +96,21 @@ class _HomeState extends State<Home> {
               background: Stack(
                 fit: StackFit.expand,
                 children: [
-                  Image.network(
-                    "https://images.unsplash.com/photo-1614823498916-a28a7d67182c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80",
-                    fit: BoxFit.cover,
+                  CarouselSlider(
+                    items: imageSliders,
+                    options: CarouselOptions(
+                      autoPlayInterval: Duration(seconds: 7),
+                      autoPlay: true,
+                      viewportFraction: 1,
+                      height: double.infinity,
+                      onPageChanged: (index, reason) {
+                        setState(
+                          () {
+                            _current = index;
+                          },
+                        );
+                      },
+                    ),
                   ),
                   Container(
                     decoration: BoxDecoration(
@@ -99,10 +123,11 @@ class _HomeState extends State<Home> {
                       padding: EdgeInsets.only(left: 20, right: 20, bottom: 80),
                       child: Text(
                         "You can find anything on Zorit",
-                        style: TextStyle(
-                          fontSize: 40,
-                          fontWeight: FontWeight.w900,
+                        style: GoogleFonts.montserrat(
+                          textStyle: headline3,
                           color: Colors.grey[200],
+                          fontWeight: FontWeight.w900,
+                          fontSize: 40,
                         ),
                       ),
                     ),
@@ -123,7 +148,9 @@ class _HomeState extends State<Home> {
                   autofocus: false,
                   readOnly: true,
                   onTap: () {
-                    context.read<NavigationBloc>().navigateToSearchDelegate();
+                    widget.globalNavigator
+                        .read<NavigationBloc>()
+                        .navigateToSearchDelegate();
                   },
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.zero,
@@ -179,6 +206,31 @@ class _HomeState extends State<Home> {
                   child: Text(
                     "See More",
                     style: TextStyle(fontSize: 13),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              child: Center(
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(50),
+                    border: Border.all(
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                  child: TextButton(
+                    onPressed: () async {
+                      if (await canLaunch("https://zoritt-app.web.app/"))
+                        await launch("https://zoritt-app.web.app/");
+                    },
+                    child: Text(
+                      "Add your business",
+                      style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+                    ),
                   ),
                 ),
               ),

@@ -6,12 +6,12 @@ class NavigationBloc extends Cubit<NavigationState> {
 
   void navigateToSearchDelegate() {
     emit(NavigatedToSearchDelegate());
-    emit(NavigationUnknown());
+    emit(NavigationSuccess());
   }
 
   void navigateToSearch() {
     emit(NavigatedToSearch());
-    emit(NavigationUnknown());
+    emit(NavigationSuccess());
   }
 }
 
@@ -23,5 +23,7 @@ abstract class NavigationState extends Equatable {
 class NavigatedToSearchDelegate extends NavigationState {}
 
 class NavigatedToSearch extends NavigationState {}
+
+class NavigationSuccess extends NavigationState {}
 
 class NavigationUnknown extends NavigationState {}

@@ -9,25 +9,55 @@ import 'package:zoritt_mobile_app_user/src/models/models.dart';
 import 'business_search.dart';
 import 'search_filter.dart';
 
-class SearchPage extends StatelessWidget {
+class SearchPage extends StatefulWidget {
   final BuildContext globalNavigator;
 
   const SearchPage({Key key, this.globalNavigator}) : super(key: key);
 
   @override
+  _SearchPageState createState() => _SearchPageState();
+}
+
+class _SearchPageState extends State<SearchPage> {
+  String query = "";
+  bool openNow = false;
+
+  setQuery(String q) {
+    setState(() {
+      query = q;
+    });
+  }
+
+  setFilterState() {
+    setState(() {
+      openNow = !openNow;
+    });
+    if (openNow) {
+      context.read<BusinessBloc>().searchForBusinessesByFilter(
+            query: query,
+            skip: 0,
+            limit: 100,
+          );
+    } else {
+      context.read<BusinessBloc>().searchForBusinesses(query, 0, 100);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocListener<NavigationBloc, NavigationState>(
-      listener: (context, state) {
+      listener: (navCtx, state) {
         if (state is NavigatedToSearchDelegate) {
           showSearch(
-            delegate: BusinessSearch(buildContext: context),
+            delegate: BusinessSearch(buildContext: context, setQuery: setQuery),
             context: context,
           );
         }
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Search",
+          title: Text(
+            "Search",
             style: TextStyle(color: Colors.black),
           ),
           iconTheme: IconThemeData(color: Colors.black),
@@ -35,7 +65,8 @@ class SearchPage extends StatelessWidget {
             IconButton(
               onPressed: () {
                 showSearch(
-                  delegate: BusinessSearch(buildContext: context),
+                  delegate:
+                      BusinessSearch(buildContext: context, setQuery: setQuery),
                   context: context,
                 );
               },
@@ -53,18 +84,22 @@ class SearchPage extends StatelessWidget {
               if (bizState.business.isNotEmpty) {
                 return body(context, bizState.business);
               }
-              return Center(
-                child: Text("No business found "),
-              );
-            } else {
+              return Center(child: Text("No business found "));
+            } else if (bizState is BusinessLoading) {
               return shimmer(context);
+            } else if (bizState is BusinessOperationFailure) {
+              return Center(child: Text(bizState.message));
+            } else {
+              return Center(child: Text("Show Some thing"));
             }
           },
           listener: (bizCtx, bizState) {
             if (bizState is BusinessUnknown) {
-              // showSearch(
-              //     delegate: BusinessSearch(buildContext: context),
-              //     context: context);
+              showSearch(
+                delegate:
+                    BusinessSearch(buildContext: context, setQuery: setQuery),
+                context: context,
+              );
             }
           },
         ),
@@ -75,7 +110,7 @@ class SearchPage extends StatelessWidget {
   Widget body(BuildContext context, List<Business> businesses) {
     return ListView(
       children: [
-        SearchFilter(),
+        SearchFilter(openNow: openNow, setFilterState: setFilterState),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15),
           child: Divider(
@@ -100,7 +135,7 @@ class SearchPage extends StatelessWidget {
             return GestureDetector(
               onTap: () {
                 Navigator.pushNamed(
-                  globalNavigator,
+                  widget.globalNavigator,
                   "/business_detail",
                   arguments: [businesses[index].id],
                 );
@@ -192,8 +227,8 @@ class SearchPage extends StatelessWidget {
       height: 150,
       padding: const EdgeInsets.only(left: 10, right: 10, bottom: 5),
       child: Shimmer.fromColors(
-        baseColor: Colors.grey[300],
-        highlightColor: Colors.white,
+        baseColor: Colors.grey[200],
+        highlightColor: Colors.grey[100],
         child: Padding(
           padding: const EdgeInsets.all(10),
           child: Row(
@@ -201,7 +236,10 @@ class SearchPage extends StatelessWidget {
               Expanded(
                 child: Container(
                   height: 150,
-                  color: Colors.grey,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: Colors.grey[300],
+                  ),
                 ),
               ),
               Expanded(
@@ -215,7 +253,10 @@ class SearchPage extends StatelessWidget {
                         children: [
                           Expanded(
                             child: Container(
-                              color: Colors.grey,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                                color: Colors.grey[300],
+                              ),
                               width: 70,
                               height: 25,
                             ),
@@ -227,7 +268,10 @@ class SearchPage extends StatelessWidget {
                       ),
                       Expanded(
                         child: Container(
-                          color: Colors.grey,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: Colors.grey[300],
+                          ),
                           height: 20,
                         ),
                       ),
@@ -238,14 +282,13 @@ class SearchPage extends StatelessWidget {
                       Padding(
                         padding: EdgeInsets.only(right: 50),
                         child: Container(
-                          color: Colors.grey,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: Colors.grey[300],
+                          ),
                           height: 20,
                         ),
                       )
-                      // ),
-                      // SizedBox(
-                      //   height: 5,
-                      // ),
                     ],
                   ),
                 ),
