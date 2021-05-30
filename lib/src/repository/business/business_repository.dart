@@ -1,4 +1,3 @@
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:meta/meta.dart';
@@ -7,12 +6,10 @@ import 'package:zoritt_mobile_app_user/src/models/models.dart';
 
 class BusinessRepository {
   final GraphQLClient client;
-  final FirebaseStorage firebaseStorage;
 
   BusinessRepository({
-    @required this.client,
-    @required this.firebaseStorage,
-  }) : assert(GraphQLClient != null && FirebaseStorage != null);
+    @required this.client
+  }) : assert(GraphQLClient != null);
 
   Future<Business> getBusiness(String id) async {
     final result = await client.query(

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>888856675930-u9enovt7mlrbfs20ii1d8kifqqsjm308.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.888856675930-u9enovt7mlrbfs20ii1d8kifqqsjm308</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>888856675930-8r53j5leeqbqfc07sbv1i3817atue7cv.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyD_ddDcC4vuXWPnxRxL2fr_HOTj80c2Rt0</string>
+	<key>GCM_SENDER_ID</key>
+	<string>888856675930</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.nattigy.zorittMobileAppUser</string>
+	<key>PROJECT_ID</key>
+	<string>zoritt-app</string>
+	<key>STORAGE_BUCKET</key>
+	<string>zoritt-app.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:888856675930:ios:6b1e996ed34f3819c23a63</string>
+	<key>DATABASE_URL</key>
+	<string>https://zoritt-app-default-rtdb.europe-west1.firebasedatabase.app</string>
+</dict>
+</plist>
