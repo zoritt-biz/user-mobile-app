@@ -20,10 +20,22 @@ class PostsSection extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(top: 10, bottom: 10),
             child: TextButton(
-              onPressed: () {},
-              child: Text(
-                "What's new?",
-                style: TextStyle(fontSize: 25, color: Colors.black),
+              onPressed: () {
+                Navigator.pushNamed(context, "/what_is_new_page");
+              },
+              child: Row(
+                children: [
+                  Text(
+                    "What's new?",
+                    style: TextStyle(fontSize: 25, color: Colors.black),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.chevron_right, color: Colors.black),
+                    onPressed: () {
+                      Navigator.pushNamed(context, "/what_is_new_page");
+                    },
+                  )
+                ],
               ),
             ),
           ),

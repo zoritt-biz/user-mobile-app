@@ -30,11 +30,55 @@ class BusinessBloc extends Cubit<BusinessState> {
   }) async {
     emit(BusinessLoading());
     try {
-      final item = await businessRepository.getBusinessesByFilter(
+      final item = await businessRepository.searchForBusinessesByFilter(
         query: query,
         limit: limit,
         skip: skip,
       );
+      emit(BusinessLoadSuccess(item));
+    } catch (e) {
+      emit(BusinessOperationFailure(e.toString()));
+    }
+  }
+
+  void searchForBusinessesByFilterAndLocation({
+    String query,
+    int skip,
+    int limit,
+    double lat,
+    double km,
+    double lng,
+  }) async {
+    emit(BusinessLoading());
+    try {
+      final item =
+          await businessRepository.searchForBusinessesByFilterAndLocation(
+        query: query,
+        limit: limit,
+        skip: skip,
+        lat: lat,
+        lng: lng,
+            km: km
+      );
+      item.sort((biz1, biz2) => biz1.distance.compareTo(biz2.distance));
+      emit(BusinessLoadSuccess(item));
+    } catch (e) {
+      emit(BusinessOperationFailure(e.toString()));
+    }
+  }
+
+  void searchForBusinessesByLocation({
+    String query,
+    int skip,
+    int limit,
+    double km,
+    double lat,
+    double lng,
+  }) async {
+    emit(BusinessLoading());
+    try {
+      final item = await businessRepository.searchForBusinessesByLocation(
+          query: query, limit: limit, skip: skip, lat: lat, lng: lng, km: km);
       emit(BusinessLoadSuccess(item));
     } catch (e) {
       emit(BusinessOperationFailure(e.toString()));

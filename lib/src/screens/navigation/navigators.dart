@@ -18,6 +18,7 @@ class HomeNavigatorRoutes {
   static const String categories = "/categories";
   static const String subcategories = "/subcategories";
   static const String events = "/events";
+  static const String whatIsNew = "/what_is_new_page";
   static const String sponsored_posts = "/sponsored_posts";
 }
 
@@ -27,12 +28,19 @@ class HomeNavigator extends TabNavigator {
 
   HomeNavigator({this.navigatorKey, this.globalNavigator});
 
+  DateTime dateTime = DateTime.now().subtract(Duration(days: 8));
+
   Map<String, CustomWidgetBuilder> _routeBuilder(BuildContext context) {
     return {
       HomeNavigatorRoutes.root: (ctx, _) => Home(
             globalNavigator: globalNavigator,
           ),
-      HomeNavigatorRoutes.categories: (ctx, _) => CategoriesPage(),
+      HomeNavigatorRoutes.categories: (ctx, _) => BlocProvider<CategoryBloc>(
+            create: (context) => CategoryBloc(
+              categoryRepository: context.read<CategoryRepository>(),
+            )..getCategories(),
+            child: CategoriesPage(),
+          ),
       HomeNavigatorRoutes.subcategories: (ctx, setting) {
         List<dynamic> arguments = setting.arguments as List;
         return Subcategory(arguments[0]);
@@ -65,9 +73,47 @@ class HomeNavigator extends TabNavigator {
               return BlocProvider<EventsBloc>(
                 create: (context) => EventsBloc(
                   eventRepository: context.read<EventsRepository>(),
-                )..getEvents(1, "CREATEDAT_DESC"),
+                )..getEvents(10, "CREATEDAT_DESC",
+                    "${dateTime.year}-${dateTime.month}-${dateTime.day}"),
                 child: EventsPage(globalNavigator: globalNavigator),
               );
+            },
+          ),
+      HomeNavigatorRoutes.whatIsNew: (ctx, _) =>
+          BlocBuilder<AuthenticationBloc, AuthenticationState>(
+            builder: (authBloc, authState) {
+              if (authState.status == AuthenticationStatus.authenticated) {
+                BlocProvider.of<UserBloc>(context)
+                    .add(UserLoad(authState.user.firebaseId));
+                return BlocBuilder<UserBloc, UserState>(
+                  builder: (userCtx, userState) {
+                    if (userState is UserLoadSuccess) {
+                      return BlocProvider<PostBloc>(
+                        create: (postCtx) => PostBloc(
+                          postRepository: context.read<PostRepository>(),
+                        )..getPostLoggedIn(
+                            limit: 100,
+                            userId: userState.user.id,
+                            sort: "CREATEDAT_DESC"),
+                        child: WhatIsNewPage(
+                          globalNavigator: globalNavigator,
+                          userId: userState.user.id,
+                        ),
+                      );
+                    } else {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                  },
+                );
+              } else {
+                return BlocProvider<PostBloc>(
+                  create: (postCtx) => PostBloc(
+                    postRepository: context.read<PostRepository>(),
+                  )..getPosts(100, "CREATEDAT_DESC",
+                      "${dateTime.year}/${dateTime.month}/${dateTime.day}", 0),
+                  child: WhatIsNewPage(globalNavigator: globalNavigator),
+                );
+              }
             },
           ),
       HomeNavigatorRoutes.sponsored_posts: (ctx, _) =>
@@ -136,8 +182,9 @@ class FavoriteNavigatorRoutes {
 
 class FavoritesNavigator extends TabNavigator {
   final GlobalKey<NavigatorState> navigatorKey;
+  final BuildContext globalNavigator;
 
-  FavoritesNavigator({this.navigatorKey});
+  FavoritesNavigator({this.navigatorKey, this.globalNavigator});
 
   Map<String, WidgetBuilder> _routeBuilder(BuildContext context) {
     return {
@@ -155,7 +202,8 @@ class FavoritesNavigator extends TabNavigator {
                         create: (context) => FavoritesBloc(
                           context.read<BusinessRepository>(),
                         )..getBusinessList(userState.user.id),
-                        child: FavoritesPage(),
+                        child:
+                            FavoritesPage(globalNavigator, userState.user.id),
                       );
                     } else {
                       return Center(child: CircularProgressIndicator());

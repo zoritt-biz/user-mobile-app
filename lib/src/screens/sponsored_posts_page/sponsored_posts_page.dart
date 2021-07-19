@@ -11,39 +11,32 @@ class SponsoredPostsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Sponsored Posts",
-          style: TextStyle(color: Colors.black),
-        ),
-        iconTheme: IconThemeData(color: Colors.black),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        child: BlocBuilder<SponsoredBloc, SponsoredState>(
-          builder: (sponsoredCtx, sponsoredState) {
-            if (sponsoredState is SponsoredLoadSuccess) {
-              return ListView(
-                children: [
-                  ...sponsoredState.sponsored.map(
-                    (biz) => SponsorItem(
-                      business: biz,
-                      globalNavigator: globalNavigator,
-                    ),
+      appBar: AppBar(title: Text("Sponsored Posts")),
+      body: BlocBuilder<SponsoredBloc, SponsoredState>(
+        builder: (sponsoredCtx, sponsoredState) {
+          if (sponsoredState is SponsoredLoadSuccess) {
+            return ListView(
+              padding: EdgeInsets.all(10),
+              children: [
+                ...sponsoredState.sponsored.map(
+                  (biz) => SponsorItem(
+                    business: biz,
+                    globalNavigator: globalNavigator,
                   ),
-                ],
-              );
-            } else {
-              return ListView(
-                children: [
-                  ShimmerItem(),
-                  ShimmerItem(),
-                  ShimmerItem(),
-                  ShimmerItem(),
-                ],
-              );
-            }
-          },
-        ),
+                ),
+              ],
+            );
+          } else {
+            return ListView(
+              children: [
+                ShimmerItem(),
+                ShimmerItem(),
+                ShimmerItem(),
+                ShimmerItem(),
+              ],
+            );
+          }
+        },
       ),
     );
   }

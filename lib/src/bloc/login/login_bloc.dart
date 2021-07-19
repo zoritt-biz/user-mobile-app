@@ -37,4 +37,5 @@ class LoginBloc extends Cubit<LoginState> {
       emit(LoginFailure(e.toString()));
     }
   }
+
 }

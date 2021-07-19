@@ -8,8 +8,10 @@ class PostsPage extends StatefulWidget {
   static const pathName = "/postsPage";
   final List<model.Post> posts;
   final int selectedPost;
+  final BuildContext globalNavigator;
 
-  PostsPage({this.posts, this.selectedPost = 0});
+  PostsPage(
+      {this.posts, this.selectedPost = 0, @required this.globalNavigator});
 
   @override
   State<StatefulWidget> createState() => _PostsPageState();
@@ -29,7 +31,12 @@ class _PostsPageState extends State<PostsPage> {
         children: [
           Expanded(
             child: Post(
-              posts: widget.posts.map((post) => Story(post: post)).toList(),
+              posts: widget.posts
+                  .map((post) => Story(
+                        post: post,
+                        globalNavigator: widget.globalNavigator,
+                      ))
+                  .toList(),
               index: widget.selectedPost,
             ),
           )

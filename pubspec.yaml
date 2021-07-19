@@ -34,6 +34,7 @@ dependencies:
   firebase_analytics: ^8.0.4
   firebase_core: "^1.1.0"
   firebase_auth: "^1.1.3"
+  firebase_storage: "^8.0.5"
   transparent_image: ^2.0.0
   video_player: ^2.0.2
   carousel_slider: ^3.0.0
@@ -43,11 +44,17 @@ dependencies:
   font_awesome_flutter: ^9.0.0
   flutter_image_compress: ^1.0.0
   url_launcher: ^6.0.3
+  dio: ^4.0.0
+  flutter_polyline_points: ^0.2.6
+  google_maps_flutter: ^2.0.2
+  flutter_google_places: ^0.3.0
+  http: ^0.13.3
   google_fonts: ^2.0.0
-
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
+  location: ^4.1.1
+  google_maps_webservice: ^0.0.19
 
 dev_dependencies:
   flutter_test:
@@ -68,6 +75,27 @@ flutter:
   assets:
      - assets/images/
      - assets/images/user_image.png
+     - assets/images/category/agriculture.png
+     - assets/images/category/arts_and_media.png
+     - assets/images/category/automotive_and_gas.png
+     - assets/images/category/beauty.png
+     - assets/images/category/construction.png
+     - assets/images/category/education.png
+     - assets/images/category/event_organizer.png
+     - assets/images/category/finance.png
+     - assets/images/category/food.png
+     - assets/images/category/government.png
+     - assets/images/category/health.png
+     - assets/images/category/hotel.png
+     - assets/images/category/humanitarian.png
+     - assets/images/category/import_export.png
+     - assets/images/category/night_life.png
+     - assets/images/category/shoping.png
+     - assets/images/category/sport.png
+     - assets/images/category/tour_and_travel.png
+     - assets/images/category/worship_place.png
+     - assets/images/category/local_services.png
+     - assets/images/category/computer.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

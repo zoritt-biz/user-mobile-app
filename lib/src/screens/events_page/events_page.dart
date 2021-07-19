@@ -1,8 +1,12 @@
+import 'dart:ui';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share/share.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/events/events_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/events/events_state.dart';
@@ -15,49 +19,46 @@ class EventsPage extends StatelessWidget {
   final BuildContext globalNavigator;
   final String userId;
 
-  const EventsPage({Key key, this.globalNavigator, this.userId})
+  const EventsPage({Key key, @required this.globalNavigator, this.userId})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "Events",
-          style: TextStyle(color: Colors.black),
-        ),
-        iconTheme: IconThemeData(color: Colors.black),
-      ),
+      appBar: AppBar(title: Text("Events")),
       body: BlocConsumer<EventsBloc, EventsState>(
         builder: (eventCtx, state) {
           if (state is EventsLoadSuccessful) {
             if (state.events.isNotEmpty) {
               return body(state.events, globalNavigator);
+            } else if (state is EventsLoading) {
+              return Center(child: CircularProgressIndicator());
             } else {
               return Center(
                 child: Text("No Events"),
               );
             }
           }
-          if (state is EventsLoadFailure) {
-            return Center(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("Something went wrong"),
-                  TextButton(
-                    onPressed: () {
-                      context
-                          .read<EventsBloc>()
-                          .getEvents(10, "CREATEDAT_DESC");
-                    },
-                    child: Text("Retry"),
-                  ),
-                ],
-              ),
-            );
-          }
+
+          // if (state is EventsLoadFailure) {
+          //   return Center(
+          //     child: Column(
+          //       crossAxisAlignment: CrossAxisAlignment.center,
+          //       mainAxisAlignment: MainAxisAlignment.center,
+          //       children: [
+          //         Text("Something went wrong"),
+          //         TextButton(
+          //           onPressed: () {
+          //             context
+          //                 .read<EventsBloc>()
+          //                 .getEvents(10, "CREATEDAT_DESC");
+          //           },
+          //           child: Text("Retry"),
+          //         ),
+          //       ],
+          //     ),
+          //   );
+          // }
           return Center(child: CircularProgressIndicator());
         },
         listener: (context, state) {},
@@ -84,7 +85,11 @@ class EventsPage extends StatelessWidget {
               eventRepository: context.read<EventsRepository>(),
             ),
             child: EventCard(
-                events: events[index], context: context, userId: userId),
+              events: events[index],
+              context: context,
+              userId: userId,
+              globalNavigator: globalNavigator,
+            ),
           ),
         ),
       ],
@@ -95,9 +100,15 @@ class EventsPage extends StatelessWidget {
 class EventCard extends StatefulWidget {
   final Events events;
   final BuildContext context;
+  final BuildContext globalNavigator;
   final String userId;
 
-  EventCard({@required this.events, this.context, this.userId});
+  EventCard({
+    @required this.events,
+    this.context,
+    this.userId,
+    this.globalNavigator,
+  });
 
   @override
   _EventCardState createState() => _EventCardState();
@@ -123,10 +134,45 @@ class _EventCardState extends State<EventCard> {
               topLeft: Radius.circular(5),
               topRight: Radius.circular(5),
             ),
-            child: Image.network(
-              item,
-              fit: BoxFit.cover,
-              width: double.infinity,
+            child: Center(
+              child: Stack(
+                children: [
+                  CachedNetworkImage(
+                    imageUrl: item,
+                    imageBuilder: (context, imageProvider) {
+                      return Container(
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: imageProvider,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      );
+                    },
+                    fit: BoxFit.cover,
+                  ),
+                  BackdropFilter(
+                    child: Container(
+                      color: Colors.white10,
+                    ),
+                    filter: ImageFilter.blur(sigmaY: 2, sigmaX: 2),
+                  ),
+                  CachedNetworkImage(
+                    imageUrl: item,
+                    imageBuilder: (context, imageProvider) {
+                      return Container(
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: imageProvider,
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      );
+                    },
+                    fit: BoxFit.contain,
+                  ),
+                ],
+              ),
             ),
           ),
         )
@@ -155,7 +201,7 @@ class _EventCardState extends State<EventCard> {
                 alignment: Alignment.bottomCenter,
                 children: [
                   GestureDetector(
-                    onTap: (){
+                    onTap: () {
                       showDialog(
                         context: context,
                         barrierColor: Colors.black.withOpacity(0.8),
@@ -167,7 +213,8 @@ class _EventCardState extends State<EventCard> {
                                 imageUrl: widget.events.photos[_current],
                                 placeholder: (context, url) {
                                   return Container(
-                                    child: Center(child: CircularProgressIndicator()),
+                                    child: Center(
+                                        child: CircularProgressIndicator()),
                                   );
                                 },
                                 imageBuilder: (context, imageProvider) {
@@ -194,6 +241,8 @@ class _EventCardState extends State<EventCard> {
                       options: CarouselOptions(
                         autoPlayInterval: Duration(seconds: 5),
                         autoPlay: false,
+                        enableInfiniteScroll: false,
+                        disableCenter: true,
                         viewportFraction: 1,
                         aspectRatio: 2.0,
                         onPageChanged: (index, reason) {
@@ -236,31 +285,45 @@ class _EventCardState extends State<EventCard> {
                   children: [
                     Expanded(
                       flex: 3,
-                      child: Row(
-                        children: [
-                          CircleAvatar(
-                              radius: 20,
-                              backgroundImage: NetworkImage(
-                                widget.events.logoPics != null &&
-                                        widget.events.logoPics != ""
-                                    ? widget.events.logoPics
-                                    : "https://images.unsplash.com/photo-1614823498916-a28a7d67182c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80",
-                                scale: 1,
-                              )),
-                          SizedBox(width: 10),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                widget.events.title,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 18),
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(
+                            widget.globalNavigator,
+                            "/business_detail",
+                            arguments: [widget.events.owner],
+                          );
+                        },
+                        child: Row(
+                          children: [
+                            CircleAvatar(
+                                radius: 20,
+                                backgroundImage: NetworkImage(
+                                  widget.events.businessLogo != null &&
+                                          widget.events.businessLogo != ""
+                                      ? widget.events.businessLogo
+                                      : "https://firebasestorage.googleapis.com/v0/b/zoritt-app.appspot.com/o/ic_launcher.jpg?alt=media&token=37ef2fe4-bf31-43e4-87ca-9bab1b724483",
+                                  scale: 1,
+                                )),
+                            SizedBox(width: 10),
+                            SizedBox(
+                              width: 200,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    widget.events.title,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18),
+                                  ),
+                                  SizedBox(height: 2),
+                                  Text(widget.events.location)
+                                ],
                               ),
-                              SizedBox(height: 2),
-                              Text(widget.events.location)
-                            ],
-                          )
-                        ],
+                            )
+                          ],
+                        ),
                       ),
                     ),
                     Expanded(
@@ -286,7 +349,8 @@ class _EventCardState extends State<EventCard> {
                                         .state
                                         .status ==
                                     AuthenticationStatus.authenticated) {
-                                  if(eventState is !EventsLiking && eventState is !EventsUnliking){
+                                  if (eventState is! EventsLiking &&
+                                      eventState is! EventsUnliking) {
                                     if (localChange) {
                                       if (value) {
                                         context
@@ -349,12 +413,15 @@ class _EventCardState extends State<EventCard> {
                               children: <TextSpan>[
                                 TextSpan(text: "  "),
                                 TextSpan(
-                                  text: widget.events.link,
-                                  style: TextStyle(
-                                    color: Colors.blue,
-                                    fontSize: 15,
-                                  ),
-                                )
+                                    text: widget.events.link,
+                                    style: TextStyle(
+                                      color: Colors.blue,
+                                      fontSize: 15,
+                                    ),
+                                    recognizer: new TapGestureRecognizer()
+                                      ..onTap = () async {
+                                        await launch(widget.events.link);
+                                      }),
                               ],
                             ),
                           ),
@@ -369,7 +436,7 @@ class _EventCardState extends State<EventCard> {
                           child: Row(
                             children: [
                               Text(
-                                "Feb 02, 2021",
+                                widget.events.startDate.split("T")[0],
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontStyle: FontStyle.italic,
@@ -383,7 +450,7 @@ class _EventCardState extends State<EventCard> {
                                 ),
                               ),
                               Text(
-                                "Feb 05, 2021",
+                                widget.events.endDate.split("T")[0],
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontStyle: FontStyle.italic,

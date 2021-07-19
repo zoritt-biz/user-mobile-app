@@ -1,6 +1,10 @@
+import 'dart:ui';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:location/location.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/navigation/navigation_bloc.dart';
@@ -21,6 +25,14 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   String query = "";
   bool openNow = false;
+  bool nearby = false;
+  double km = 5;
+
+  Location location = new Location();
+
+  bool _serviceEnabled;
+  PermissionStatus _permissionGranted;
+  LocationData _locationData;
 
   setQuery(String q) {
     setState(() {
@@ -28,19 +40,145 @@ class _SearchPageState extends State<SearchPage> {
     });
   }
 
-  setFilterState() {
+  clearFilter() {
+    openNow = false;
+    nearby = false;
+  }
+
+  @override
+  void initState() {
+    locationPermission();
+    super.initState();
+  }
+
+  void locationPermission() async {
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return;
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+
+    _locationData = await location.getLocation();
+  }
+
+  setFilterState() async {
     setState(() {
       openNow = !openNow;
     });
-    if (openNow) {
+    locationPermission();
+    if (openNow && nearby) {
+      context.read<BusinessBloc>().searchForBusinessesByFilterAndLocation(
+            query: query,
+            skip: 0,
+            limit: 100,
+            km: km,
+            lng: _locationData.longitude,
+            lat: _locationData.latitude,
+          );
+    } else if (openNow) {
       context.read<BusinessBloc>().searchForBusinessesByFilter(
             query: query,
             skip: 0,
             limit: 100,
           );
+    } else if (nearby) {
+      context.read<BusinessBloc>().searchForBusinessesByLocation(
+            query: query,
+            skip: 0,
+            limit: 100,
+            km: km,
+            lng: _locationData.longitude,
+            lat: _locationData.latitude,
+          );
     } else {
       context.read<BusinessBloc>().searchForBusinesses(query, 0, 100);
     }
+  }
+
+  openLocationDelegate() async {
+    setState(() {
+      nearby = !nearby;
+    });
+    locationPermission();
+    if (openNow && nearby) {
+      context.read<BusinessBloc>().searchForBusinessesByFilterAndLocation(
+            query: query,
+            skip: 0,
+            limit: 100,
+            km: km,
+            lng: _locationData.longitude,
+            lat: _locationData.latitude,
+          );
+    } else if (openNow) {
+      context.read<BusinessBloc>().searchForBusinessesByFilter(
+            query: query,
+            skip: 0,
+            limit: 100,
+          );
+    } else if (nearby) {
+      context.read<BusinessBloc>().searchForBusinessesByLocation(
+            query: query,
+            skip: 0,
+            limit: 100,
+            km: km,
+            lng: _locationData.longitude,
+            lat: _locationData.latitude,
+          );
+    } else {
+      context.read<BusinessBloc>().searchForBusinesses(query, 0, 100);
+    }
+    // showSearch(
+    //   delegate: LocationSearch(buildContext: context, setQuery: setQuery),
+    //   context: context,
+    // );
+  }
+
+  nearByKmChange(double newKm) async {
+    setState(() {
+      km = newKm;
+    });
+    locationPermission();
+    if (openNow && nearby) {
+      context.read<BusinessBloc>().searchForBusinessesByFilterAndLocation(
+            query: query,
+            skip: 0,
+            limit: 100,
+            km: km,
+            lng: _locationData.longitude,
+            lat: _locationData.latitude,
+          );
+    } else if (openNow) {
+      context.read<BusinessBloc>().searchForBusinessesByFilter(
+            query: query,
+            skip: 0,
+            limit: 100,
+          );
+    } else if (nearby) {
+      context.read<BusinessBloc>().searchForBusinessesByLocation(
+            query: query,
+            skip: 0,
+            limit: 100,
+            km: km,
+            lng: _locationData.longitude,
+            lat: _locationData.latitude,
+          );
+    } else {
+      context.read<BusinessBloc>().searchForBusinesses(query, 0, 100);
+    }
+    // showSearch(
+    //   delegate: LocationSearch(buildContext: context, setQuery: setQuery),
+    //   context: context,
+    // );
   }
 
   @override
@@ -49,55 +187,54 @@ class _SearchPageState extends State<SearchPage> {
       listener: (navCtx, state) {
         if (state is NavigatedToSearchDelegate) {
           showSearch(
-            delegate: BusinessSearch(buildContext: context, setQuery: setQuery),
+            delegate: BusinessSearch(
+                buildContext: context,
+                setQuery: setQuery,
+                clearFilter: clearFilter),
             context: context,
           );
         }
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text(
-            "Search",
-            style: TextStyle(color: Colors.black),
-          ),
-          iconTheme: IconThemeData(color: Colors.black),
+          title: Text("Search"),
           actions: [
             IconButton(
               onPressed: () {
                 showSearch(
-                  delegate:
-                      BusinessSearch(buildContext: context, setQuery: setQuery),
+                  delegate: BusinessSearch(
+                      buildContext: context,
+                      setQuery: setQuery,
+                      clearFilter: clearFilter),
                   context: context,
                 );
               },
               iconSize: 30,
-              icon: Icon(
-                Icons.search,
-                color: Colors.black,
-              ),
+              icon: Icon(Icons.search),
             )
           ],
         ),
         body: BlocConsumer<BusinessBloc, BusinessState>(
           builder: (bizCtx, bizState) {
             if (bizState is BusinessLoadSuccess) {
-              if (bizState.business.isNotEmpty) {
-                return body(context, bizState.business);
-              }
-              return Center(child: Text("No business found "));
+              return body(context, bizState.business);
             } else if (bizState is BusinessLoading) {
               return shimmer(context);
             } else if (bizState is BusinessOperationFailure) {
-              return Center(child: Text(bizState.message));
+              return Center(child: Text("Error happened!"));
             } else {
-              return Center(child: Text("Show Some thing"));
+              return Center(
+                  child: Text(
+                      "Please press the search icon above to get started."));
             }
           },
           listener: (bizCtx, bizState) {
             if (bizState is BusinessUnknown) {
               showSearch(
-                delegate:
-                    BusinessSearch(buildContext: context, setQuery: setQuery),
+                delegate: BusinessSearch(
+                    buildContext: context,
+                    setQuery: setQuery,
+                    clearFilter: clearFilter),
                 context: context,
               );
             }
@@ -110,7 +247,13 @@ class _SearchPageState extends State<SearchPage> {
   Widget body(BuildContext context, List<Business> businesses) {
     return ListView(
       children: [
-        SearchFilter(openNow: openNow, setFilterState: setFilterState),
+        SearchFilter(
+          openNow: openNow,
+          setFilterState: setFilterState,
+          query: query,
+          nearby: nearby,
+          openSearchDelegate: openLocationDelegate,
+        ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15),
           child: Divider(
@@ -120,33 +263,53 @@ class _SearchPageState extends State<SearchPage> {
         SizedBox(
           height: 10,
         ),
-        Padding(
-          padding: const EdgeInsets.only(left: 15, bottom: 10),
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              'All Result',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        if (nearby)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: Text("${km.floor()} KM"),
+          ),
+        if (nearby)
+          Slider(
+            value: km,
+            onChanged: (newKm) {
+              nearByKmChange(newKm);
+            },
+            min: 5,
+            max: 20,
+            divisions: 5,
+            label: "$km",
+          ),
+        if (businesses.length > 0)
+          Padding(
+            padding: const EdgeInsets.only(left: 15, bottom: 10),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Results',
+                style: TextStyle(fontWeight: FontWeight.w400, fontSize: 20),
+              ),
             ),
           ),
-        ),
-        ListView.builder(
-          itemBuilder: (context, index) {
-            return GestureDetector(
-              onTap: () {
-                Navigator.pushNamed(
-                  widget.globalNavigator,
-                  "/business_detail",
-                  arguments: [businesses[index].id],
-                );
-              },
-              child: SearchResult(business: businesses[index]),
-            );
-          },
-          itemCount: businesses.length,
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-        ),
+        if (businesses.length > 0)
+          ListView.builder(
+            padding: EdgeInsets.symmetric(horizontal: 8),
+            itemBuilder: (context, index) {
+              return GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(
+                    widget.globalNavigator,
+                    "/business_detail",
+                    arguments: [businesses[index].id],
+                  );
+                },
+                child: SearchResult(business: businesses[index]),
+              );
+            },
+            itemCount: businesses.length,
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+          ),
+        if (businesses.length == 0) Center(child: Text("No results found!"))
       ],
     );
   }
@@ -303,8 +466,9 @@ class _SearchPageState extends State<SearchPage> {
 
 class SearchResult extends StatefulWidget {
   final Business business;
+  final BuildContext globalNavigator;
 
-  SearchResult({this.business});
+  SearchResult({this.business, this.globalNavigator});
 
   @override
   _SearchResultState createState() => _SearchResultState();
@@ -313,66 +477,113 @@ class SearchResult extends StatefulWidget {
 class _SearchResultState extends State<SearchResult> {
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 10, right: 10, bottom: 5),
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(10),
-          child: Row(
-            children: [
-              Expanded(
-                child: Image.network(
-                  widget.business.pictures[0],
-                  fit: BoxFit.fill,
-                  height: 100,
+    return Card(
+      color: Colors.white,
+      elevation: 3,
+      clipBehavior: Clip.hardEdge,
+      shadowColor: Colors.white10,
+      child: Row(
+        children: [
+          Expanded(
+            child: Container(
+              height: 150,
+              child: Center(
+                child: Stack(
+                  children: [
+                    CachedNetworkImage(
+                      imageUrl: widget.business.pictures[0],
+                      imageBuilder: (context, imageProvider) {
+                        return Container(
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: imageProvider,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        );
+                      },
+                      fit: BoxFit.cover,
+                    ),
+                    BackdropFilter(
+                      child: Container(
+                        color: Colors.white10,
+                      ),
+                      filter: ImageFilter.blur(sigmaY: 2, sigmaX: 2),
+                    ),
+                    CachedNetworkImage(
+                      imageUrl: widget.business.pictures[0],
+                      imageBuilder: (context, imageProvider) {
+                        return Container(
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: imageProvider,
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                        );
+                      },
+                      fit: BoxFit.contain,
+                    ),
+                  ],
                 ),
               ),
-              Expanded(
-                flex: 2,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 20, right: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 20, right: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            widget.business.businessName,
+                      Expanded(
+                        child: Text(
+                          widget.business.businessName,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 18),
+                        ),
+                      ),
+                      if (widget.business.distance != null &&
+                          widget.business.distance != 0)
+                        Padding(
+                          padding: const EdgeInsets.only(left: 5),
+                          child: Text(
+                            "${widget.business.distance.roundToDouble()}km",
                             style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 18),
+                                fontWeight: FontWeight.w500,
+                                fontSize: 12,
+                                fontStyle: FontStyle.italic),
                           ),
-                          Icon(
-                            Icons.favorite_border_outlined,
-                            color: Colors.orange,
-                          )
-                        ],
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Text(
-                        widget.business.location,
-                        style: TextStyle(fontSize: 15),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        widget.business.phoneNumber[0],
-                        style: TextStyle(fontSize: 15),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
+                        )
                     ],
                   ),
-                ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  Text(
+                    widget.business.location,
+                    style: TextStyle(fontSize: 15),
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Text(
+                    widget.business.phoneNumber[0],
+                    style: TextStyle(fontSize: 15),
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

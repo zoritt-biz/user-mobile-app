@@ -8,21 +8,14 @@ class CategoryRepository {
 
   CategoryRepository({@required this.client}) : assert(client != null);
 
-  Future<List<Category>> getCategories() async {
+  Future<List<MainCategoryList>> getCategories() async {
     final result = await client.query(
       QueryOptions(document: gql(GET_ALL_CATEGORIES)),
     );
     if (result.hasException) {
       throw result.exception;
     }
-    final data = result.data['categoryMany'] as List;
-    return data
-        .map((e) => new Category(
-              id: e['_id'],
-              name: e['name'],
-              parent: e['parent'],
-              autocompleteTerm: e['autocompleteTerm'],
-            ))
-        .toList();
+    final data = result.data['mainCategoryListMany'] as List;
+    return data.map((e) => MainCategoryList.fromJson(e)).toList();
   }
 }

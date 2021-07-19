@@ -7,7 +7,6 @@ import 'package:zoritt_mobile_app_user/src/models/user.dart';
 import 'package:zoritt_mobile_app_user/src/repository/repository.dart';
 
 part 'auth_event.dart';
-
 part 'auth_state.dart';
 
 enum AuthenticationStatus { authenticated, unauthenticated, unknown }
@@ -41,7 +40,6 @@ class AuthenticationBloc
     }
     if (event is AuthenticationLogoutRequested) {
       await _authenticationRepository.logOut();
-
       yield AuthenticationState.unauthenticated();
     }
   }

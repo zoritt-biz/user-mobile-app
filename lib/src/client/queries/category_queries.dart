@@ -1,10 +1,9 @@
 const GET_ALL_CATEGORIES = r"""
 query{
-  categoryMany{
-    _id
+  mainCategoryListMany(sort: NAME_ASC){
     name
-    parent
-    autocompleteTerm
+    image
+    sub_categories
   }
 }
 """;

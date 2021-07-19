@@ -10,9 +10,9 @@ class CategoryState extends Equatable {
 class CategoryLoading extends CategoryState {}
 
 class CategoriesLoadSuccess extends CategoryState {
-  final List<Category> categories;
+  final List<MainCategoryList> categories;
 
-  CategoriesLoadSuccess([this.categories = const []]);
+  CategoriesLoadSuccess(this.categories);
 
   @override
   List<Object> get props => [categories];
@@ -22,4 +22,9 @@ class CategoryOperationFailure extends CategoryState {
   final String message;
 
   CategoryOperationFailure(this.message);
+
+  @override
+  List<Object> get props => [message];
 }
+
+class CategoryUnknown extends CategoryState {}

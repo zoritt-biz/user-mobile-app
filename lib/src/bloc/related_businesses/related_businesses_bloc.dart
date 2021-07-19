@@ -13,7 +13,8 @@ class RelatedBusinessesBloc extends Cubit<RelatedBusinessesState> {
   Future<void> getRelatedBusinesses({String category, String skipId}) async {
     emit(RelatedBusinessesLoading());
     try {
-      final item = await businessRepository.getRelatedBusinesses(limit: 3, query: category, skipId: skipId);
+      final item = await businessRepository.getRelatedBusinesses(
+          limit: 15, query: category, skipId: skipId);
       emit(RelatedBusinessesLoadSuccess(item));
     } catch (e) {
       emit(RelatedBusinessesOperationFailure(e.toString()));

@@ -19,4 +19,14 @@ class BusinessDetailBloc extends Cubit<BusinessDetailState> {
       emit(BusinessDetailOperationFailure(e.toString()));
     }
   }
+
+  Future<void> getBusinessesLoggedIn(String id, String userId) async {
+    emit(BusinessDetailLoading());
+    try {
+      final item = await businessRepository.getBusinessesLoggedIn(id, userId);
+      emit(BusinessDetailLoadSuccess(item));
+    } catch (e) {
+      emit(BusinessDetailOperationFailure(e.toString()));
+    }
+  }
 }

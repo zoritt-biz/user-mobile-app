@@ -9,10 +9,11 @@ import 'package:zoritt_mobile_app_user/src/repository/business/business_reposito
 class BusinessSearch extends SearchDelegate<String> {
   final BuildContext buildContext;
   final Function setQuery;
+  final Function clearFilter;
   FilteredBusinessListBloc _filteredBusinessListBloc;
   BusinessListBloc _businessListBloc;
 
-  BusinessSearch({this.buildContext, this.setQuery}) {
+  BusinessSearch({this.buildContext, this.setQuery, this.clearFilter}) {
     _businessListBloc = BusinessListBloc(
       buildContext.read<BusinessRepository>(),
     )..getBusinessList();
@@ -81,6 +82,7 @@ class BusinessSearch extends SearchDelegate<String> {
                               .read<BusinessBloc>()
                               .searchForBusinesses(query, 0, 100);
                           setQuery(query);
+                          clearFilter();
                           close(context, query);
                         },
                       );

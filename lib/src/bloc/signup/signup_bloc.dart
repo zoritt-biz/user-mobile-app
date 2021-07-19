@@ -22,7 +22,8 @@ class SignUpBloc extends Cubit<SignUpState> {
   Future<void> signUp({
     String email,
     String password,
-    String fullName,
+    String firstName,
+    String lastName,
     String phoneNumber,
   }) async {
     emit(SignUpLoading());
@@ -31,7 +32,8 @@ class SignUpBloc extends Cubit<SignUpState> {
       final newUser = await _authenticationRepository.signUp(
         email: email,
         password: password,
-        fullName: fullName,
+        firstName: firstName,
+        lastName: lastName,
         phoneNumber: phoneNumber,
       );
       emit(SignUpSuccessful(user: newUser));

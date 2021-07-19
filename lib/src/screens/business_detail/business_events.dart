@@ -27,7 +27,7 @@ class BusinessEvent extends StatelessWidget {
               ),
               events.length > 0
                   ? Container(
-                      height: 160,
+                      height: 180,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         padding: EdgeInsets.only(left: 10, right: 10),

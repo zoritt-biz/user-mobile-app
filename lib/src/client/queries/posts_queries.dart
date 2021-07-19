@@ -14,9 +14,11 @@ query(
     _id
     description
     photos
+    videos
     isLiked
     createdAt
     owner {
+        _id
         businessName
         location
         logoPics
@@ -39,14 +41,17 @@ query(
     filter: {
       _operators: {
         createdAt: { gt: $filterDate }
-      }, 
+      }
    }
   ){
     _id
     description
     photos
+    videos
+    isLiked
     createdAt
     owner {
+        _id
         businessName
         location
         logoPics

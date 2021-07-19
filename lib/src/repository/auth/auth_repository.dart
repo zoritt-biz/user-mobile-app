@@ -22,12 +22,14 @@ class AuthenticationRepository {
   Future<user_model.User> signUp({
     @required String email,
     @required String password,
-    @required String fullName,
+    @required String firstName,
+    @required String lastName,
     @required String phoneNumber,
   }) async {
     assert(email != null &&
         password != null &&
-        fullName != null &&
+        firstName != null &&
+        lastName != null &&
         phoneNumber != null);
     try {
       final userCredentials = await firebaseAuth.createUserWithEmailAndPassword(
@@ -36,7 +38,8 @@ class AuthenticationRepository {
       );
 
       final newUser = await userRepository.userCreate(user_model.User(
-        fullName: fullName,
+        firstName: firstName,
+        lastName: lastName,
         email: email,
         firebaseId: userCredentials.user.uid,
         phoneNumber: phoneNumber,

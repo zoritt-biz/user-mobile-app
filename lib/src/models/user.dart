@@ -1,66 +1,46 @@
-import 'package:equatable/equatable.dart';
-import 'package:zoritt_mobile_app_user/src/models/event.dart';
-import 'package:zoritt_mobile_app_user/src/models/post.dart';
-
-class User extends Equatable {
+class User {
   final String id;
   final String firebaseId;
-  final String fullName;
+  final String firstName;
+  final String lastName;
   final String phoneNumber;
   final String email;
   final String password;
   final String userType;
+  final String image;
   final List<String> businesses;
-  final List<Events> events;
-  final List<Post> posts;
 
   User({
     this.id,
     this.firebaseId,
-    this.fullName,
+    this.firstName,
+    this.lastName,
     this.email,
     this.password,
     this.userType,
     this.businesses,
+    this.image,
     this.phoneNumber,
-    this.events,
-    this.posts,
   });
-
-  @override
-  List<Object> get props => [
-        id,
-        firebaseId,
-        fullName,
-        email,
-        password,
-        phoneNumber,
-        userType,
-        businesses
-      ];
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
       id: json['_id'],
       firebaseId: json['firebaseId'],
-      fullName: json['fullName'],
+      firstName: json['firstName'],
+      lastName: json['lastName'],
       phoneNumber: json['phoneNumber'],
       email: json['email'],
       password: json['password'],
       userType: json['userType'],
-      businesses: json['businesses'],
+      image: json['image'],
+      businesses: (json['businesses'] as List) != null
+          ? (json['businesses'] as List).length > 0
+              ? (json['businesses'] as List)
+                  .map((e) => e['_id'].toString())
+                  .toList()
+              : []
+          : [],
     );
   }
-
-  @override
-  String toString() => '''User { 
-          id: $id, 
-          firebaseId: $firebaseId, 
-          fullName: $fullName, 
-          phoneNumber: $phoneNumber, 
-          email: $email, 
-          password: $password, 
-          userType: $userType, 
-          businesses: $businesses 
-        }''';
 }

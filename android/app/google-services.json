@@ -8,18 +8,26 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:888856675930:android:863557b7f1782adcc23a63",
+        "mobilesdk_app_id": "1:888856675930:android:9d6c2f09d12027bbc23a63",
         "android_client_info": {
-          "package_name": "com.nati.zoritt.zoritt_mobile_app_business"
+          "package_name": "com.zoritt.business"
         }
       },
       "oauth_client": [
         {
-          "client_id": "888856675930-vqgkaddgqpmh123k3s9uclok8a8oajhg.apps.googleusercontent.com",
+          "client_id": "888856675930-k76o2fc206uls9eh70t2usgh25asqse0.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.nati.zoritt.zoritt_mobile_app_business",
-            "certificate_hash": "b1235f589cbb120683688030a4c49f53f1065041"
+            "package_name": "com.zoritt.business",
+            "certificate_hash": "93863ed48d15c1469574d23ac7f3d6ee53ba6387"
+          }
+        },
+        {
+          "client_id": "888856675930-vuh1pqkdp2iindm92pr322e1chmsc80a.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.zoritt.business",
+            "certificate_hash": "b9abd0a8dd91330a0cb94701657de41f8c1a4819"
           }
         },
         {
@@ -38,6 +46,13 @@
             {
               "client_id": "888856675930-d35vri5op8cn8tulvipetotfddt5crig.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "888856675930-o4s60k8defp5eg2tt7de29a7e9rpttrn.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.nati.zoritt.zorittMobileAppBusiness"
+              }
             }
           ]
         }
@@ -45,12 +60,20 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:888856675930:android:99349945dd044e8ec23a63",
+        "mobilesdk_app_id": "1:888856675930:android:c2175eb7bead239cc23a63",
         "android_client_info": {
-          "package_name": "com.nattigy.zoritt_mobile_app_user"
+          "package_name": "com.zoritt.user_app"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "888856675930-4rr4dgr3frnspdpn7qap7dtljsq9mn5j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.zoritt.user_app",
+            "certificate_hash": "93863ed48d15c1469574d23ac7f3d6ee53ba6387"
+          }
+        },
         {
           "client_id": "888856675930-d35vri5op8cn8tulvipetotfddt5crig.apps.googleusercontent.com",
           "client_type": 3
@@ -67,6 +90,13 @@
             {
               "client_id": "888856675930-d35vri5op8cn8tulvipetotfddt5crig.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "888856675930-o4s60k8defp5eg2tt7de29a7e9rpttrn.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.nati.zoritt.zorittMobileAppBusiness"
+              }
             }
           ]
         }

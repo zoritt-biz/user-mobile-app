@@ -66,7 +66,7 @@ class FilteredBusinessListBloc extends Cubit<FilteredBusinessListState> {
     return businessList.where((element) {
       return element.autocompleteTerm
           .toLowerCase()
-          .startsWith(query.toLowerCase());
+          .contains(query.toLowerCase());
     }).toList();
   }
 

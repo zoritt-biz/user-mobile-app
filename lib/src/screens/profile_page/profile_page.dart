@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/auth/auth_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/events_like_bloc/events_like_bloc.dart';
@@ -9,6 +13,7 @@ import 'package:zoritt_mobile_app_user/src/bloc/profile_bloc/user_events_bloc/us
 import 'package:zoritt_mobile_app_user/src/bloc/profile_bloc/user_events_bloc/user_events_state.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/profile_bloc/user_posts_bloc/user_posts_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/profile_bloc/user_posts_bloc/user_posts_state.dart';
+import 'package:zoritt_mobile_app_user/src/models/user.dart';
 import 'package:zoritt_mobile_app_user/src/repository/repository.dart';
 import 'package:zoritt_mobile_app_user/src/screens/events_page/events_page.dart';
 import 'package:zoritt_mobile_app_user/src/screens/home/posts_section.dart';
@@ -30,6 +35,30 @@ class _ProfilePageState extends State<ProfilePage>
     with TickerProviderStateMixin {
   TabController _tabController;
 
+  File _image;
+  final picker = ImagePicker();
+
+  Future compressAndGetFile(String file) async {
+    int i = file.lastIndexOf('.');
+    String filePath = file.substring(0, i);
+    var result = await FlutterImageCompress.compressAndGetFile(
+      file,
+      filePath + '_compressed.jpg',
+      quality: 60,
+    );
+    File(file).delete();
+    setState(() {
+      if (result != null) {
+        _image = File(result.path);
+      }
+    });
+  }
+
+  Future<String> getImage() async {
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+    return pickedFile.path;
+  }
+
   @override
   initState() {
     super.initState();
@@ -39,44 +68,89 @@ class _ProfilePageState extends State<ProfilePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        title: Text(
-          "Profile",
-          style: TextStyle(color: Colors.black),
-        ),
+        title: Text("Profile"),
         actions: [
           TextButton(
-              onPressed: () {
-                context
-                    .read<AuthenticationBloc>()
-                    .add(AuthenticationLogoutRequested());
-              },
-              child: Text("Logout"))
+            onPressed: () {
+              context
+                  .read<AuthenticationBloc>()
+                  .add(AuthenticationLogoutRequested());
+            },
+            child: Text(
+              "Logout",
+              style: TextStyle(color: Colors.black),
+            ),
+          )
         ],
-        iconTheme: IconThemeData(color: Colors.black),
       ),
       body: BlocBuilder<ProfileBloc, ProfileState>(
         builder: (profileCtx, profileState) {
           if (profileState is ProfileLoadSuccessful) {
             return ListView(
               primary: false,
+              padding: EdgeInsets.symmetric(vertical: 15),
               children: [
-                Container(
-                  width: 100,
-                  height: 100,
-                  margin: EdgeInsets.symmetric(vertical: 10),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                      image: AssetImage("assets/images/user_image.png"),
-                      fit: BoxFit.contain,
-                    ),
-                  ),
+                GestureDetector(
+                  child: _image == null
+                      ? Container(
+                          height: 100,
+                          width: 100,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: DecorationImage(
+                              image: profileState.user.image != null &&
+                                      profileState.user.image != ""
+                                  ? NetworkImage(profileState.user.image)
+                                  : AssetImage("assets/images/user_image.png"),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          child: Center(
+                            child: IconButton(
+                              icon: Icon(Icons.add_a_photo_outlined),
+                              onPressed: () async =>
+                                  compressAndGetFile(await getImage()),
+                            ),
+                          ),
+                        )
+                      : Container(
+                          height: 100,
+                          width: 100,
+                          child: Center(
+                            child: Stack(
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    image: DecorationImage(
+                                      image: FileImage(_image),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                                Center(
+                                  child: IconButton(
+                                    icon: Icon(
+                                      Icons.add_a_photo_outlined,
+                                      color: Colors.white,
+                                    ),
+                                    onPressed: () async =>
+                                        compressAndGetFile(await getImage()),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                 ),
                 SizedBox(height: 10),
                 Center(
                   child: Text(
-                    profileState.user.fullName,
+                    profileState.user.firstName +
+                        " " +
+                        profileState.user.lastName,
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
@@ -93,23 +167,43 @@ class _ProfilePageState extends State<ProfilePage>
                         color: Colors.grey[700]),
                   ),
                 ),
+                if (_image != null) SizedBox(height: 10),
+                if (_image != null)
+                  Center(
+                    child: Container(
+                      child: ElevatedButton(
+                        style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all(
+                                Theme.of(context).accentColor)),
+                        onPressed: () {
+                          final profileBloc =
+                              BlocProvider.of<ProfileBloc>(context).state;
+                          final biz = profileBloc.props.first as User;
+
+                          if (_image != null) {
+                            context.read<ProfileBloc>().addProfileImage(_image, biz);
+                          }
+                        },
+                        child: Text(
+                          "Save",
+                          style: TextStyle(fontSize: 15, color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ),
                 SizedBox(height: 10),
                 Center(
                   child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(50),
-                      border: Border.all(
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                    child: TextButton(
+                    child: ElevatedButton(
+                      style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all(
+                              Theme.of(context).accentColor)),
                       onPressed: () async {
-                        if (await canLaunch("https://zoritt-app.web.app/"))
-                          await launch("https://zoritt-app.web.app/");
+                        await launch("https://business.zoritt.com");
                       },
                       child: Text(
                         "Add your business",
-                        style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+                        style: TextStyle(fontSize: 15, color: Colors.white),
                       ),
                     ),
                   ),
@@ -150,10 +244,14 @@ class _ProfilePageState extends State<ProfilePage>
                         child: BlocBuilder<UserPostsBloc, UserPostsState>(
                             builder: (postsCtx, postsState) {
                           if (postsState is UserPostsSuccessful) {
-                            return PostItems(
-                              buildContext: widget.globalNavigator,
-                              posts: postsState.posts,
-                              isVertical: true,
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 15, horizontal: 5),
+                              child: PostItems(
+                                buildContext: widget.globalNavigator,
+                                posts: postsState.posts,
+                                isVertical: true,
+                              ),
                             );
                           } else if (postsState is UserPostsLoading) {
                             return Center(child: CircularProgressIndicator());
@@ -167,36 +265,41 @@ class _ProfilePageState extends State<ProfilePage>
                           context.read<UserRepository>(),
                         )..getUserEvents(widget.firebaseId),
                         child: BlocBuilder<UserEventsBloc, UserEventsState>(
-                            builder: (eventsCtx, eventsState) {
-                          if (eventsState is UserEventsSuccessful) {
-                            return ListView(
-                              primary: true,
-                              children: [
-                                ListView.builder(
-                                  itemCount: eventsState.events.length,
-                                  shrinkWrap: true,
-                                  physics: NeverScrollableScrollPhysics(),
-                                  itemBuilder: (ctx, index) =>
-                                      BlocProvider<EventsLikeBloc>(
-                                    create: (context) => EventsLikeBloc(
-                                      eventRepository:
-                                          context.read<EventsRepository>(),
-                                    ),
-                                    child: EventCard(
-                                      events: eventsState.events[index],
-                                      context: context,
-                                      userId: widget.userId,
-                                    ),
+                          builder: (eventsCtx, eventsState) {
+                            if (eventsState is UserEventsSuccessful) {
+                              return ListView(
+                                primary: true,
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 15, horizontal: 5),
+                                children: [
+                                  ListView.builder(
+                                    itemCount: eventsState.events.length,
+                                    shrinkWrap: true,
+                                    physics: NeverScrollableScrollPhysics(),
+                                    itemBuilder: (ctx, index) {
+                                      return BlocProvider<EventsLikeBloc>(
+                                        create: (context) => EventsLikeBloc(
+                                          eventRepository:
+                                              context.read<EventsRepository>(),
+                                        ),
+                                        child: EventCard(
+                                          events: eventsState.events[index],
+                                          context: context,
+                                          userId: widget.userId,
+                                          globalNavigator: widget.globalNavigator,
+                                        ),
+                                      );
+                                    },
                                   ),
-                                ),
-                              ],
-                            );
-                          } else if (eventsState is UserEventsLoading) {
-                            return Center(child: CircularProgressIndicator());
-                          } else {
-                            return Center(child: Text('BookMarks'));
-                          }
-                        }),
+                                ],
+                              );
+                            } else if (eventsState is UserEventsLoading) {
+                              return Center(child: CircularProgressIndicator());
+                            } else {
+                              return Center(child: Text('BookMarks'));
+                            }
+                          },
+                        ),
                       ),
                     ],
                   ),

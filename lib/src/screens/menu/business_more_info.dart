@@ -12,12 +12,7 @@ class BusinessMoreInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Business Info',
-          style: TextStyle(color: Colors.black),
-        ),
-        iconTheme: IconThemeData(color: Colors.black),
-      ),
+      appBar: AppBar(title: Text('Business Info')),
       body: ListView(
         children: [
           SingleInfo(title: "Description", description: business.description),

@@ -14,6 +14,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   TabItem _currentTab = TabItem.home;
+  int touchCounter = 0;
   DateTime dateTime = DateTime.now().subtract(Duration(days: 8));
 
   final tabNavigatorKeys = [
@@ -40,6 +41,7 @@ class _HomePageState extends State<HomePage> {
       ),
       FavoritesNavigator(
         navigatorKey: tabNavigatorKeys[TabItem.favorites.index],
+        globalNavigator: _globalNavigatorContext,
       ),
       ProfileNavigator(
         navigatorKey: tabNavigatorKeys[TabItem.profile.index],
@@ -63,32 +65,49 @@ class _HomePageState extends State<HomePage> {
       BottomNavigationData(
         onPressed: () {
           setCurrentIndex(TabItem.home);
+          setState(() {
+            touchCounter++;
+          });
+          if (touchCounter > 1) {
+            Navigator.pushNamedAndRemoveUntil(
+                _globalNavigatorContext, "/", (route) => false);
+            setState(() {
+              touchCounter = 0;
+            });
+          }
         },
-        icon: Icons.home,
+        icon: _currentTab == TabItem.home ? Icons.home : Icons.home_outlined,
         color: _currentTab == TabItem.home
-            ? Theme.of(context).primaryColor
-            : Colors.grey[600],
+            ? Theme.of(context).accentColor
+            : Theme.of(context).primaryColor,
+        label: "Home",
       ),
       BottomNavigationData(
         onPressed: () {
           setCurrentIndex(TabItem.search);
-          if(context.read<NavigationBloc>().state is NavigationUnknown){
+          if (context.read<NavigationBloc>().state is NavigationUnknown) {
             context.read<NavigationBloc>().navigateToSearchDelegate();
           }
         },
-        icon: Icons.search,
+        icon: _currentTab == TabItem.search
+            ? Icons.search
+            : Icons.search_outlined,
         color: _currentTab == TabItem.search
-            ? Theme.of(context).primaryColor
-            : Colors.grey[600],
+            ? Theme.of(context).accentColor
+            : Theme.of(context).primaryColor,
+        label: "Search",
       ),
       BottomNavigationData(
         onPressed: () {
           setCurrentIndex(TabItem.favorites);
         },
-        icon: Icons.favorite,
+        icon: _currentTab == TabItem.favorites
+            ? Icons.favorite
+            : Icons.favorite_border_rounded,
         color: _currentTab == TabItem.favorites
-            ? Theme.of(context).primaryColor
-            : Colors.grey[600],
+            ? Theme.of(context).accentColor
+            : Theme.of(context).primaryColor,
+        label: "Favorites",
       ),
       // BottomNavigationData(
       //     onPressed: () {
@@ -102,128 +121,147 @@ class _HomePageState extends State<HomePage> {
         onPressed: () {
           setCurrentIndex(TabItem.profile);
         },
-        icon: Icons.account_circle,
+        icon: _currentTab == TabItem.profile
+            ? Icons.account_circle
+            : Icons.account_circle_outlined,
         color: _currentTab == TabItem.profile
-            ? Theme.of(context).primaryColor
-            : Colors.grey[600],
+            ? Theme.of(context).accentColor
+            : Theme.of(context).primaryColor,
+        label: "Profile",
       ),
     ];
 
     return BlocListener<NavigationBloc, NavigationState>(
-        listener: (context, state) {
-          if (state is NavigatedToSearchDelegate ||
-              state is NavigatedToSearch) {
-            setCurrentIndex(TabItem.search);
+      listener: (context, state) {
+        if (state is NavigatedToSearchDelegate || state is NavigatedToSearch) {
+          setCurrentIndex(TabItem.search);
+        }
+      },
+      child: WillPopScope(
+        onWillPop: () async {
+          final mayPop =
+              await tabNavigatorKeys[_currentTab.index].currentState.maybePop();
+          if (mayPop) {
+            return false;
+          } else if (!mayPop && _currentTab != TabItem.home) {
+            setCurrentIndex(TabItem.home);
+            return false;
           }
+          return true;
         },
-        child: WillPopScope(
-          onWillPop: () async {
-            final mayPop = await tabNavigatorKeys[_currentTab.index]
-                .currentState
-                .maybePop();
-            if (mayPop) {
-              return false;
-            } else if (!mayPop && _currentTab != TabItem.home) {
-              setCurrentIndex(TabItem.home);
-              return false;
-            }
-            return true;
-          },
-          child: Scaffold(
-            body: IndexedStack(
-              index: _currentTab.index,
-              children: [
-                BlocBuilder<AuthenticationBloc, AuthenticationState>(
-                  builder: (authBloc, authState) {
-                    if (authState.status ==
-                        AuthenticationStatus.authenticated) {
-                      BlocProvider.of<UserBloc>(context)
-                          .add(UserLoad(authState.user.firebaseId));
+        child: Scaffold(
+          resizeToAvoidBottomInset: true,
+          body: IndexedStack(
+            index: _currentTab.index,
+            children: [
+              BlocBuilder<AuthenticationBloc, AuthenticationState>(
+                builder: (authBloc, authState) {
+                  if (authState.status == AuthenticationStatus.authenticated) {
+                    BlocProvider.of<UserBloc>(context)
+                        .add(UserLoad(authState.user.firebaseId));
 
-                      return BlocBuilder<UserBloc, UserState>(
-                        builder: (userCtx, userState) {
-                          if (userState is UserLoadSuccess) {
-                            return MultiBlocProvider(
-                              providers: [
-                                BlocProvider<EventsBloc>(
-                                  create: (context) => EventsBloc(
-                                    eventRepository:
-                                        context.read<EventsRepository>(),
-                                  )..getEvents(10, "CREATEDAT_DESC"),
-                                ),
-                                BlocProvider<PostBloc>(
-                                  create: (context) => PostBloc(
-                                    postRepository:
-                                        context.read<PostRepository>(),
-                                  )..getPostLoggedIn(
-                                      limit: 20,
-                                      sort: "desc",
-                                      userId: userState.user.id,
-                                    ),
-                                ),
-                                BlocProvider<SponsoredBloc>(
-                                  create: (context) => SponsoredBloc(
-                                    businessRepository:
-                                        context.read<BusinessRepository>(),
-                                  )..getSponsored(5),
-                                ),
+                    return BlocBuilder<UserBloc, UserState>(
+                      builder: (userCtx, userState) {
+                        if (userState is UserLoadSuccess) {
+                          return MultiBlocProvider(
+                            providers: [
+                              BlocProvider<EventsBloc>(
+                                create: (context) => EventsBloc(
+                                  eventRepository:
+                                      context.read<EventsRepository>(),
+                                )..getEvents(10, "CREATEDAT_DESC",
+                                    "${dateTime.year}/${dateTime.month}/${dateTime.day}"),
+                              ),
+                              BlocProvider<PostBloc>(
+                                create: (context) => PostBloc(
+                                  postRepository:
+                                      context.read<PostRepository>(),
+                                )..getPostLoggedIn(
+                                    limit: 10,
+                                    sort: "desc",
+                                    userId: userState.user.id,
+                                  ),
+                              ),
+                              BlocProvider<SponsoredBloc>(
+                                create: (context) => SponsoredBloc(
+                                  businessRepository:
+                                      context.read<BusinessRepository>(),
+                                )..getSponsored(5),
+                              ),
+                            ],
+                            child: _buildOffstageNavigator(TabItem.home, true),
+                          );
+                        } else if (userState is UserLoading) {
+                          return Center(child: CircularProgressIndicator());
+                        } else {
+                          return Center(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text("Connection error. Please"),
+                                TextButton(
+                                  child: Text("Retry!"),
+                                  onPressed: () {
+                                    BlocProvider.of<UserBloc>(context).add(
+                                        UserLoad(authState.user.firebaseId));
+                                  },
+                                )
                               ],
-                              child: _buildOffstageNavigator(TabItem.home),
-                            );
-                          } else {
-                            return Center(child: CircularProgressIndicator());
-                          }
-                        },
-                      );
-                    }
-                    return MultiBlocProvider(
-                      providers: [
-                        BlocProvider<EventsBloc>(
-                          create: (context) => EventsBloc(
-                            eventRepository: context.read<EventsRepository>(),
-                          )..getEvents(10, "CREATEDAT_DESC"),
-                        ),
-                        BlocProvider<PostBloc>(
-                          create: (context) => PostBloc(
-                            postRepository: context.read<PostRepository>(),
-                          )..getPosts(
-                              10,
-                              "CREATEDAT_DESC",
-                              "${dateTime.year}/${dateTime.month}/${dateTime.day}",
-                              0,
                             ),
-                        ),
-                        BlocProvider<SponsoredBloc>(
-                          create: (context) => SponsoredBloc(
-                            businessRepository:
-                                context.read<BusinessRepository>(),
-                          )..getSponsored(5),
-                        ),
-                      ],
-                      child: _buildOffstageNavigator(TabItem.home),
+                          );
+                        }
+                      },
                     );
-                  },
-                ),
-                _buildOffstageNavigator(TabItem.search),
-                _buildOffstageNavigator(TabItem.favorites),
-                _buildOffstageNavigator(TabItem.profile),
-              ],
-            ),
-            bottomNavigationBar: BottomNavigation(
-              bottomNavigationListData: bottomNavigationData,
-              currentTab: _currentTab,
-              colorScheme: colorScheme,
-              textTheme: textTheme,
-            ),
-            resizeToAvoidBottomInset: false,
+                  }
+                  return MultiBlocProvider(
+                    providers: [
+                      BlocProvider<EventsBloc>(
+                        create: (context) => EventsBloc(
+                          eventRepository: context.read<EventsRepository>(),
+                        )..getEvents(10, "CREATEDAT_DESC",
+                            "${dateTime.year}/${dateTime.month}/${dateTime.day}"),
+                      ),
+                      BlocProvider<PostBloc>(
+                        create: (context) => PostBloc(
+                          postRepository: context.read<PostRepository>(),
+                        )..getPosts(
+                            10,
+                            "CREATEDAT_DESC",
+                            "${dateTime.year}/${dateTime.month}/${dateTime.day}",
+                            0,
+                          ),
+                      ),
+                      BlocProvider<SponsoredBloc>(
+                        create: (context) => SponsoredBloc(
+                          businessRepository:
+                              context.read<BusinessRepository>(),
+                        )..getSponsored(5),
+                      ),
+                    ],
+                    child: _buildOffstageNavigator(TabItem.home, true),
+                  );
+                },
+              ),
+              _buildOffstageNavigator(TabItem.search, true),
+              _buildOffstageNavigator(TabItem.favorites, false),
+              _buildOffstageNavigator(TabItem.profile, true),
+            ],
           ),
-        ));
+          bottomNavigationBar: BottomNavigation(
+            bottomNavigationListData: bottomNavigationData,
+            currentTab: _currentTab,
+            colorScheme: colorScheme,
+            textTheme: textTheme,
+          ),
+        ),
+      ),
+    );
   }
 
-  Widget _buildOffstageNavigator(TabItem item) {
+  Widget _buildOffstageNavigator(TabItem item, bool maintainState) {
     return Visibility(
       visible: _currentTab == item,
-      maintainState: true,
+      maintainState: maintainState,
       child: tabNavigators[item.index],
     );
   }

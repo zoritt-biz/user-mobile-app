@@ -10,6 +10,10 @@ class Business extends Equatable {
   final String businessName;
   final List<String> phoneNumber;
   final String location;
+  final String locationDescription;
+  final double lat;
+  final double lng;
+  final double distance;
   final List<String> emails;
   final String website;
   final String logoPic;
@@ -21,16 +25,22 @@ class Business extends Equatable {
   final String history;
   final String establishedIn;
   final String subscription;
+  final String state;
   final List<OpenHours> openHours;
   final List<Events> events;
   final List<Post> posts;
   final List<Category> categories;
+  bool isLiked;
 
   Business({
     this.id,
     this.businessName,
     this.phoneNumber,
     this.location,
+    this.locationDescription,
+    this.lat,
+    this.lng,
+    this.distance,
     this.emails,
     this.website,
     this.logoPic,
@@ -46,6 +56,8 @@ class Business extends Equatable {
     this.events,
     this.posts,
     this.categories,
+    this.isLiked,
+    this.state,
   });
 
   @override
@@ -56,98 +68,70 @@ class Business extends Equatable {
     return Business(
       id: data['_id'],
       businessName: data['businessName'],
-      phoneNumber:
-          (data['phoneNumber'] as List).map((e) => e.toString()).toList(),
+      phoneNumber: (data['phoneNumber'] as List) != null
+          ? (data['phoneNumber'] as List).map((e) => e.toString()).toList()
+          : [],
       location: data['location'],
+      locationDescription: data['locationDescription'] != null
+          ? data['locationDescription']
+          : data['location'],
+      lat: data['lat'],
+      lng: data['lng'],
+      distance: data['distance'],
       emails: (data['emails'] as List) != null
-          ? (data['emails'] as List).length > 0
-              ? (data['emails'] as List).map((e) => e.toString()).toList()
-              : []
+          ? (data['emails'] as List).map((e) => e.toString()).toList()
           : [],
       website: data['website'],
       logoPic: data['logoPics'],
       slogan: data['slogan'],
       description: data['description'],
       specialization: data['specialization'],
-      searchIndex: (data['searchIndex'] as List) != null
-          ? (data['searchIndex'] as List).length > 0
-              ? (data['searchIndex'] as List).map((e) => e.toString()).toList()
-              : []
-          : [],
       history: data['history'],
       establishedIn: data['establishedIn'],
       subscription: data['subscription'],
-      pictures: (data['pictures'] as List).map((e) => e.toString()).toList(),
+      state: data['state'],
+      isLiked: data['isLiked'] != null ? data["isLiked"] : false,
+      pictures: (data['pictures'] as List) != null
+          ? (data['pictures'] as List).map((e) => e.toString()).toList()
+          : [""],
       openHours: (data['openHours'] as List) != null
-          ? (data['openHours'] as List).length > 0
-              ? (data['openHours'] as List)
-                  .map((e) => OpenHours(
-                      closes: e['closes'], day: e['day'], opens: e['opens']))
-                  .toList()
-              : []
+          ? (data['openHours'] as List)
+              .map((e) => OpenHours(
+                  closes: e['closes'],
+                  day: e['day'],
+                  opens: e['opens'],
+                  isOpen: e['isOpen']))
+              .toList()
           : [],
       posts: (data['posts'] as List) != null
-          ? (data['posts'] as List).length > 0
-              ? (data['posts'] as List)
-                  .map((e) => Post(
-                        id: e['_id'],
-                        description: e['description'],
-                        video: (e['videos'] as List)
-                            .map((e) => e.toString())
-                            .toList(),
-                        photos: (e['photos'] as List)
-                            .map((e) => e.toString())
-                            .toList(),
-                        businessLogo: data['logoPics'],
-                        businessName: data['businessName'],
-                      ))
-                  .toList()
-              : []
+          ? (data['posts'] as List).map((e) => Post.fromJson(e)).toList()
           : [],
       events: (data['events'] as List) != null
-          ? (data['events'] as List).length > 0
-              ? (data['events'] as List)
-                  .map((e) => Events(
-                        id: e['_id'],
-                        description: e['description'],
-                        title: e['title'],
-                        link: e['link'],
-                        location: e['location'],
-                        video: (e['videos'] as List)
-                            .map((e) => e.toString())
-                            .toList(),
-                        photos: (e['photos'] as List)
-                            .map((e) => e.toString())
-                            .toList(),
-                      ))
-                  .toList()
-              : []
+          ? (data['events'] as List).map((e) => Events.fromJson(e)).toList()
           : [],
       categories: (data['categories'] as List) != null
-          ? (data['categories'] as List).length > 0
-              ? (data['categories'] as List)
-                  .map((e) => Category(
-                        id: e['_id'],
-                        autocompleteTerm: e['autocompleteTerm'],
-                        name: e['name'],
-                        parent: e['parent'],
-                      ))
-                  .toList()
-              : []
+          ? (data['categories'] as List)
+              .map((e) => Category(
+                    id: e['_id'],
+                    autocompleteTerm: e['autocompleteTerm'],
+                    name: e['name'],
+                    parent: e['parent'],
+                  ))
+              .toList()
           : [],
     );
   }
 
   @override
-  String toString() =>
-      'Business { id: $id, businessName: $businessName, description: $description, phoneNumber: $phoneNumber, location: $location }';
+  String toString() => 'Business { id: $id, businessName: $businessName';
 }
 
 @immutable
 class OpenHours {
   final String day;
+  final bool isOpen;
   final String opens;
   final String closes;
 
-  OpenHours({this.day, this.opens, this.closes});
+  OpenHours({this.day, this.opens, this.closes, this.isOpen});
 }

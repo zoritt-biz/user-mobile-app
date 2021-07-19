@@ -19,9 +19,12 @@ class SponsoredPostsOverview extends StatelessWidget {
           if (sponsoredState.sponsored.isEmpty) {
             return SliverToBoxAdapter(
               child: SizedBox(
-                height: 15,
+                height: 100,
                 child: Center(
-                  child: Text("Here"),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    child: Text("No sponsored posts!"),
+                  ),
                 ),
               ),
             );
@@ -138,8 +141,8 @@ class _SponsorItemState extends State<SponsorItem> {
                     padding: const EdgeInsets.only(top: 13, bottom: 10),
                     child: Text(
                       widget.business.businessName,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 20),
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                     ),
                   ),
                   Row(

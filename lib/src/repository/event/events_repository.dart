@@ -9,13 +9,16 @@ class EventsRepository {
 
   EventsRepository({@required this.client});
 
-  Future<List<Events>> getEvents(int limit, String sort) async {
+  Future<List<Events>> getEvents(
+      int limit, String sort, String filterDate) async {
+    String dateTime = DateTime.now().toString();
     final result = await client.query(
       QueryOptions(
         document: gql(GET_ALL_EVENTS),
         variables: {
           "limit": limit,
-          "sort": sort,
+          "filterDate": filterDate,
+          "now": dateTime.split(" ")[0],
         },
       ),
     );
@@ -28,6 +31,11 @@ class EventsRepository {
 
   Future<List<Events>> getEventsLoggedIn(
       {String userId, int limit, String sort}) async {
+    print(userId);
+    print(DateTime.now()
+        .subtract(new Duration(days: 5))
+        .toString()
+        .split(" ")[0]);
     final result = await client.query(
       QueryOptions(
         document: gql(GET_ALL_EVENTS_LOGGED_IN),
@@ -35,11 +43,15 @@ class EventsRepository {
           "limit": limit,
           "sort": sort,
           "user_id": userId,
-          "fromDate": "2021-05-03"
+          "fromDate": DateTime.now()
+              .subtract(new Duration(days: 50))
+              .toString()
+              .split(" ")[0]
         },
       ),
     );
     if (result.hasException) {
+      print(result.exception);
       throw result.exception;
     }
     final data = result.data['getEventsLoggedIn'] as List;

@@ -11,12 +11,7 @@ class MenuDisplay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Explore Our Menu',
-          style: TextStyle(color: Colors.black),
-        ),
-        iconTheme: IconThemeData(color: Colors.black),
-      ),
+      appBar: AppBar(title: Text('Explore Our Menu')),
       body:
           // MenuItem(
           //   name: "dfgjdskfg",

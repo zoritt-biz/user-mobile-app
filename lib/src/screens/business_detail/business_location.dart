@@ -1,17 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-class BusinessLocation extends StatelessWidget {
-  final String address1;
-  final String address2;
-  final String address3;
-  final String imageLink;
+class BusinessLocation extends StatefulWidget {
+  final String locationDescription;
+  final LatLng latLng;
 
   BusinessLocation({
-    this.address1,
-    this.address2,
-    this.address3,
-    this.imageLink,
+    this.locationDescription,
+    this.latLng,
   });
+
+  @override
+  _BusinessLocationState createState() => _BusinessLocationState();
+}
+
+class _BusinessLocationState extends State<BusinessLocation> {
+  CameraPosition _initialCameraPosition;
+  GoogleMapController _googleMapController;
+  Marker _origin;
+
+  void _onMapCreated(GoogleMapController controller) {
+    _googleMapController = controller;
+  }
+
+  void initState() {
+    super.initState();
+    _origin = Marker(
+      markerId: const MarkerId('origin'),
+      infoWindow: const InfoWindow(title: 'Origin'),
+      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
+      position: widget.latLng,
+      draggable: false,
+    );
+    _initialCameraPosition = CameraPosition(
+      target: widget.latLng,
+      zoom: 16,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,10 +46,23 @@ class BusinessLocation extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Image.network(
-              imageLink,
-              height: 150,
-              fit: BoxFit.fill,
+            SizedBox(height: 15),
+            SizedBox(
+              width: double.infinity,
+              height: 250,
+              child: GoogleMap(
+                myLocationButtonEnabled: false,
+                myLocationEnabled: false,
+                zoomControlsEnabled: false,
+                zoomGesturesEnabled: false,
+                rotateGesturesEnabled: false,
+                scrollGesturesEnabled: false,
+                initialCameraPosition: _initialCameraPosition,
+                onMapCreated: _onMapCreated,
+                markers: {
+                  _origin,
+                },
+              ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
@@ -35,7 +73,13 @@ class BusinessLocation extends StatelessWidget {
                     'Get Directions',
                     style: TextStyle(fontSize: 16),
                   ),
-                  Icon(Icons.location_pin)
+                  IconButton(
+                    icon: Icon(Icons.location_pin),
+                    onPressed: () {
+                      Navigator.pushNamed(context, "/location_page",
+                          arguments: [widget.latLng]);
+                    },
+                  )
                 ],
               ),
             ),
@@ -43,24 +87,10 @@ class BusinessLocation extends StatelessWidget {
               color: Colors.grey,
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 15, bottom: 10, top: 10),
+              padding: const EdgeInsets.only(left: 15, bottom: 30, top: 10),
               child: Text(
-                address1,
-                style: TextStyle(fontSize: 15),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 15),
-              child: Text(
-                address2,
-                style: TextStyle(fontSize: 15),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 15, top: 10, bottom: 25),
-              child: Text(
-                address3,
-                style: TextStyle(fontSize: 15),
+                widget.locationDescription,
+                style: TextStyle(fontSize: 18),
               ),
             ),
           ],

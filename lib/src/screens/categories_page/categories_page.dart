@@ -1,34 +1,47 @@
 import 'package:flutter/material.dart';
-
-import 'category_list.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/bloc.dart';
 
 class CategoriesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Categories",
-          style: TextStyle(color: Colors.black),
-        ),
-        iconTheme: IconThemeData(color: Colors.black),
-      ),
-      body: GridView.count(
-        padding: EdgeInsets.symmetric(horizontal: 25, vertical: 15),
-        crossAxisCount:
-            MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 3,
-        crossAxisSpacing: 30.0,
-        mainAxisSpacing: 25.0,
-        // shrinkWrap: true,
-        children: List.generate(
-          CATEGORY_LIST.length,
-          (index) {
-            return GridItem(
-              CATEGORY_LIST[index]["name"],
-              CATEGORY_LIST[index]["icon"],
-              CATEGORY_LIST[index]["sub_categories"],
+      appBar: AppBar(title: Text("Categories")),
+      body: BlocBuilder<CategoryBloc, CategoryState>(
+        builder: (catCtx, catState) {
+          if (catState is CategoriesLoadSuccess) {
+            return GridView.count(
+              padding: EdgeInsets.symmetric(horizontal: 25, vertical: 15),
+              crossAxisCount:
+                  MediaQuery.of(context).orientation == Orientation.portrait
+                      ? 2
+                      : 3,
+              crossAxisSpacing: 30.0,
+              mainAxisSpacing: 25.0,
+              children: List.generate(
+                catState.categories.length,
+                (index) {
+                  return GridItem(
+                    catState.categories[index].name,
+                    catState.categories[index].image,
+                    catState.categories[index].subCategories,
+                  );
+                },
+              ),
             );
-          },
-        ),
+          } else if (catState is CategoryOperationFailure) {
+            return Center(
+              child: TextButton(
+                child: Text("Retry!"),
+                onPressed: () {
+                  context.read<CategoryBloc>().getCategories();
+                },
+              ),
+            );
+          } else {
+            return Center(child: CircularProgressIndicator());
+          }
+        },
       ),
     );
   }
@@ -36,10 +49,10 @@ class CategoriesPage extends StatelessWidget {
 
 class GridItem extends StatelessWidget {
   final String title;
-  final IconData icon;
-  final List<dynamic> subCategories;
+  final String image;
+  final List<String> subCategories;
 
-  GridItem(this.title, this.icon, this.subCategories);
+  GridItem(this.title, this.image, this.subCategories);
 
   @override
   Widget build(BuildContext context) {
@@ -62,18 +75,27 @@ class GridItem extends StatelessWidget {
         child: InkWell(
           splashColor: Colors.grey[300],
           onTap: () {
+            print(subCategories);
             Navigator.pushNamed(context, "/subcategories",
                 arguments: [subCategories]);
           },
           borderRadius: BorderRadius.circular(20),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            // crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, size: 50),
-              SizedBox(
-                height: 20,
+              // Icon(icon, size: 50),
+              Container(
+                height: 60.0,
+                width: 60.0,
+                margin: EdgeInsets.only(bottom: 20),
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: NetworkImage(image),
+                    fit: BoxFit.fitHeight,
+                  ),
+                  // shape: BoxShape.circle,
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 5),

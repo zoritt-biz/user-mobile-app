@@ -21,19 +21,33 @@ class BottomNavigation extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<Widget> bottomNavigationList = bottomNavigationListData
         .map(
-          (e) => IconButton(
-            icon: Icon(e.icon),
-            onPressed: e.onPressed ?? () {},
-            color: e.color,
-            iconSize: 30,
+          (e) => Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              IconButton(
+                padding: EdgeInsets.zero,
+                icon: Icon(e.icon),
+                onPressed: e.onPressed ?? () {},
+                color: e.color,
+                iconSize: 25,
+              ),
+              Text(
+                e.label,
+                style: TextStyle(fontSize: 13, color: e.color),
+              )
+            ],
           ),
         )
         .toList();
 
     return BottomAppBar(
+      color: Colors.white,
+      elevation: 5,
       shape: CircularNotchedRectangle(),
       child: Padding(
-        padding: const EdgeInsets.only(top: 5, bottom: 5),
+        padding: const EdgeInsets.only(bottom: 5),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: bottomNavigationList,
@@ -47,6 +61,8 @@ class BottomNavigationData {
   final IconData icon;
   final VoidCallback onPressed;
   final Color color;
+  final String label;
 
-  BottomNavigationData({@required this.icon, this.onPressed, this.color});
+  BottomNavigationData(
+      {@required this.icon, this.onPressed, this.color, this.label});
 }

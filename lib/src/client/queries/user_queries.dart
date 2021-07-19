@@ -2,11 +2,14 @@ const GET_USER = r"""
 query($firebaseId: String){
   userOne(filter: {firebaseId: $firebaseId}){
     _id
-    fullName
+    firstName
+    middleName
+    lastName
     email
     phoneNumber
     firebaseId
     password
+    image
     userType
     businesses {
       _id
@@ -19,8 +22,11 @@ const GET_USER_PROFILE = r"""
 query($firebaseId: String){
   userOne(filter: {firebaseId: $firebaseId}){
     _id
-    fullName
+    firstName
+    middleName
+    lastName
     email
+    image
     phoneNumber
     firebaseId
     userType
@@ -40,11 +46,17 @@ query($firebaseId: String){
       link
       photos
       isInterested
+      startDate
+      endDate
+      startTime
+      endTime
+      videos
       owner {
-        businessName
-        location
-        logoPics
-      }
+          _id
+          businessName
+          location
+          logoPics
+       }
     }
   }
 }
@@ -56,11 +68,13 @@ query($firebaseId: String){
     _id
     likedPosts{
       _id
-      description
-      photos
-      isLiked
-      createdAt
-      owner {
+    description
+    photos
+    videos
+    isLiked
+    createdAt
+    owner {
+        _id
         businessName
         location
         logoPics

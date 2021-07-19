@@ -7,11 +7,16 @@ class Events {
   final String description;
   final String location;
   final String link;
-  final bool isInterested;
-  final List<String> video;
+  final List<String> videos;
   final List<String> photos;
-  final String logoPics;
+  final String startDate;
+  final String endDate;
+  final String startTime;
+  final String endTime;
+  final String owner;
   final String businessName;
+  final String businessLogo;
+  bool isInterested;
 
   Events({
     this.id,
@@ -19,28 +24,43 @@ class Events {
     this.description,
     this.location,
     this.link,
-    this.video,
+    this.videos,
     this.photos,
-    this.logoPics,
-    this.isInterested,
+    this.startDate,
+    this.endDate,
+    this.startTime,
+    this.endTime,
+    this.owner,
     this.businessName,
+    this.businessLogo,
+    this.isInterested,
   });
 
   factory Events.fromJson(Map<String, dynamic> data) {
     return Events(
-      title: data["title"],
-      description: data["description"],
-      location: data["location"],
-      link: data["link"],
-      id: data["_id"],
-      isInterested: data["isInterested"],
-      logoPics: data["owner"] != null
-          ? data["owner"]["logoPics"] != null
-              ? data["owner"]["logoPics"]
+      id: data['_id'],
+      location: data['location'],
+      description: data['description'],
+      title: data['title'],
+      link: data['link'],
+      endDate: data['endDate'],
+      startDate: data['startDate'],
+      startTime: data['startTime'],
+      endTime: data['endTime'],
+      videos: (data['videos'] as List) != null
+          ? (data['videos'] as List).map((e) => e.toString()).toList()
+          : [],
+      photos: (data['photos'] as List) != null
+          ? (data['photos'] as List).map((e) => e.toString()).toList()
+          : [],
+      owner: data["owner"] != null ? data["owner"]['_id'] : "",
+      businessName: data["owner"] != null ? data["owner"]['businessName'] : "",
+      businessLogo: data["owner"] != null
+          ? data["owner"]['logoPics'] != null
+              ? data["owner"]['logoPics']
               : ""
           : "",
-      photos: (data['photos'] as List).map((e) => e.toString()).toList(),
-      businessName: data["owner"] != null ? data["owner"]["businessName"] : "",
+      isInterested: data["isInterested"] != null ? data["isInterested"] : false,
     );
   }
 }

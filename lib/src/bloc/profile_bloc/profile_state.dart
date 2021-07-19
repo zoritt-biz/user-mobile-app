@@ -13,10 +13,19 @@ class ProfileLoading extends ProfileState {}
 class ProfileLoadSuccessful extends ProfileState {
   final User user;
 
-  ProfileLoadSuccessful({this.user});
+  ProfileLoadSuccessful(this.user);
 
   @override
   List<Object> get props => [user];
+}
+
+class ProfileUpdating extends ProfileState {
+  final double progress;
+
+  ProfileUpdating({this.progress = 2});
+
+  @override
+  List<Object> get props => [progress];
 }
 
 class ProfileFailure extends ProfileState {

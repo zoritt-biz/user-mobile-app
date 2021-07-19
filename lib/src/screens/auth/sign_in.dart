@@ -51,12 +51,8 @@ class _SignInState extends State<SignIn> {
     return BlocConsumer<LoginBloc, LoginState>(
       builder: (loginCtx, loginState) {
         return Scaffold(
-          appBar: AppBar(
-            title: Text("Sign in",
-              style: TextStyle(color: Colors.black),
-            ),
-            iconTheme: IconThemeData(color: Colors.black),
-          ),
+          backgroundColor: Colors.white,
+          appBar: AppBar(title: Text("Sign in")),
           body: loginState is LoginLoading || loginState is LoginSuccessful
               ? Center(child: CircularProgressIndicator())
               : body(context),
@@ -79,7 +75,7 @@ class _SignInState extends State<SignIn> {
     return Form(
       key: _formKey,
       child: ListView(
-        padding: const EdgeInsets.only(right: 20, left: 20),
+        padding: const EdgeInsets.only(right: 20, left: 20, bottom: 0),
         children: [
           SizedBox(
             height: 40.0,

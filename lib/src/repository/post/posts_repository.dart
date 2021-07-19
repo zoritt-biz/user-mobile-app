@@ -22,7 +22,7 @@ class PostRepository {
           "skip": skip,
           "limit": limit,
           "sort": sort,
-          "filterDate": filterDate
+          "filterDate": filterDate.split(" ")[0]
         },
         fetchPolicy: FetchPolicy.networkOnly,
       ),
@@ -43,12 +43,16 @@ class PostRepository {
           "limit": limit,
           "sort": sort,
           "user_id": userId,
-          "fromDate": "2021-05-03"
+          "fromDate": DateTime.now()
+              .subtract(new Duration(days: 5))
+              .toString()
+              .split(" ")[0]
         },
         fetchPolicy: FetchPolicy.networkOnly,
       ),
     );
     if (result.hasException) {
+      print(result.exception);
       throw result.exception;
     }
     final data = result.data['getPostLoggedIn'] as List;
@@ -64,6 +68,7 @@ class PostRepository {
       ),
     );
     if (result.hasException) {
+      print(result.exception);
       throw result.exception;
     }
     return true;
@@ -77,6 +82,7 @@ class PostRepository {
           fetchPolicy: FetchPolicy.networkOnly),
     );
     if (result.hasException) {
+      print(result.exception);
       throw result.exception;
     }
     return true;

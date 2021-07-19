@@ -5,6 +5,7 @@ const CATEGORY_LIST = [
   {
     "name": "Arts, Media & Entertainment",
     "icon": Icons.movie,
+    "image": "assets/images/category/arts_and_media.png",
     "sub_categories": [
       {"name": "TV / Radio"},
       {"name": "Promotion & Advertising"},
@@ -16,6 +17,7 @@ const CATEGORY_LIST = [
   {
     "name": "Food & Catering",
     "icon": Icons.restaurant_menu_rounded,
+    "image": "assets/images/category/food.png",
     "sub_categories": [
       {"name": "Restaurant"},
       {"name": "Cafe"},
@@ -31,6 +33,7 @@ const CATEGORY_LIST = [
   {
     "name": "Beauty & Spa",
     "icon": Icons.spa_rounded,
+    "image": "assets/images/category/beauty.png",
     "sub_categories": [
       {"name": "Beauty Salon"},
       {"name": "Barber Shop"},
@@ -38,8 +41,18 @@ const CATEGORY_LIST = [
     ]
   },
   {
+    "name": "Computers and Technology",
+    "icon": Icons.computer_rounded,
+    "image": "assets/images/category/computer.png",
+    "sub_categories": [
+      {"name": "Computer maintenance"},
+      {"name": "Software products"},
+    ]
+  },
+  {
     "name": "Hotel , Hospitality  & Cleaning",
     "icon": Icons.hotel,
+    "image": "assets/images/category/hotel.png",
     "sub_categories": [
       {"name": "Hotel"},
       {"name": "Gust House"},
@@ -51,6 +64,7 @@ const CATEGORY_LIST = [
   {
     "name": "Shopping / Household & Furniture",
     "icon": Icons.shopping_basket_rounded,
+    "image": "assets/images/category/shoping.png",
     "sub_categories": [
       {"name": "Mall"},
       {"name": "Household"},
@@ -66,6 +80,7 @@ const CATEGORY_LIST = [
   {
     "name": "Financial service",
     "icon": Icons.money,
+    "image": "assets/images/category/finance.png",
     "sub_categories": [
       {"name": "Bank"},
       {"name": "Insurance"},
@@ -75,6 +90,7 @@ const CATEGORY_LIST = [
   {
     "name": "Tour , Travel & Transport",
     "icon": Icons.car_rental,
+    "image": "assets/images/category/tour_and_travel.png",
     "sub_categories": [
       {"name": "Tour & Travel Agent"},
       {"name": "Ticket Office"},
@@ -88,6 +104,7 @@ const CATEGORY_LIST = [
   {
     "name": "Night Life & liquor Store",
     "icon": Icons.local_bar,
+    "image": "assets/images/category/night_life.png",
     "sub_categories": [
       {"name": "Club"},
       {"name": "Bars & Lounges"},
@@ -98,6 +115,7 @@ const CATEGORY_LIST = [
   {
     "name": "Construction",
     "icon": Icons.business,
+    "image": "assets/images/category/construction.png",
     "sub_categories": [
       {"name": "Real Estate"},
       {"name": "Contractor"},
@@ -109,6 +127,7 @@ const CATEGORY_LIST = [
   {
     "name": "Education & Training",
     "icon": FontAwesomeIcons.graduationCap,
+    "image": "assets/images/category/education.png",
     "sub_categories": [
       {"name": "University"},
       {"name": "School"},
@@ -119,6 +138,7 @@ const CATEGORY_LIST = [
   {
     "name": "Event Organizers",
     "icon": Icons.event,
+    "image": "assets/images/category/event_organizer.png",
     "sub_categories": [
       {"name": "Celebration Organizer"},
       {"name": "Weeding Planer"},
@@ -130,6 +150,7 @@ const CATEGORY_LIST = [
   {
     "name": "Import / Export & Manufacturing",
     "icon": Icons.compare_arrows_rounded,
+    "image": "assets/images/category/import_export.png",
     "sub_categories": [
       {"name": "Import"},
       {"name": "Export"},
@@ -139,6 +160,7 @@ const CATEGORY_LIST = [
   {
     "name": "Religious Organizations",
     "icon": FontAwesomeIcons.placeOfWorship,
+    "image": "assets/images/category/worship_place.png",
     "sub_categories": [
       {"name": "Orthodox"},
       {"name": "Catholic"},
@@ -149,6 +171,7 @@ const CATEGORY_LIST = [
   {
     "name": "Automotive & Gas Stations",
     "icon": Icons.local_gas_station_rounded,
+    "image": "assets/images/category/automotive_and_gas.png",
     "sub_categories": [
       {"name": "Gas Station"},
       {"name": "Car Wash"},
@@ -158,8 +181,9 @@ const CATEGORY_LIST = [
     ]
   },
   {
-    "name": "Sport & leather",
+    "name": "Sport & leisure",
     "icon": Icons.sports_baseball_rounded,
+    "image": "assets/images/category/sport.png",
     "sub_categories": [
       {"name": "Gym"},
       {"name": "Sport Equipment"},
@@ -172,6 +196,7 @@ const CATEGORY_LIST = [
   {
     "name": "Government Offices",
     "icon": Icons.account_balance_rounded,
+    "image": "assets/images/category/government.png",
     "sub_categories": [
       {"name": "Government Office"},
     ]
@@ -179,6 +204,7 @@ const CATEGORY_LIST = [
   {
     "name": "Farm & Agriculture",
     "icon": Icons.agriculture_rounded,
+    "image": "assets/images/category/agriculture.png",
     "sub_categories": [
       {"name": "Farm & diary"},
       {"name": "Agro Industry"},
@@ -188,6 +214,7 @@ const CATEGORY_LIST = [
   {
     "name": "Health",
     "icon": Icons.local_hospital_rounded,
+    "image": "assets/images/category/health.png",
     "sub_categories": [
       {"name": "Hospital"},
       {"name": "Clinic"},
@@ -201,6 +228,7 @@ const CATEGORY_LIST = [
   {
     "name": "Humanitarian & Emergency Numbers",
     "icon": FontAwesomeIcons.universalAccess,
+    "image": "assets/images/category/humanitarian.png",
     "sub_categories": [
       {"name": "Emergency Numbers"},
       {"name": "NGO"},
@@ -211,6 +239,7 @@ const CATEGORY_LIST = [
   {
     "name": "Local Services",
     "icon": Icons.construction_rounded,
+    "image": "assets/images/category/local_services.png",
     "sub_categories": [
       {"name": "Local Service"},
     ]

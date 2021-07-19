@@ -27,17 +27,20 @@ class BusinessMedia extends StatelessWidget {
                   ? Container(
                       height: 160,
                       padding:
-                          EdgeInsets.symmetric(vertical: 15, horizontal: 5),
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 5),
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         padding: EdgeInsets.only(left: 10, right: 10),
                         itemCount: pictures.length,
                         itemBuilder: (context, index) {
-                          return ClipRRect(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(5),
+                          return Container(
+                            margin: EdgeInsets.only(right: 8),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(5),
+                              ),
+                              child: Image.network(pictures[index]),
                             ),
-                            child: Image.network(pictures[index]),
                           );
                         },
                       ),

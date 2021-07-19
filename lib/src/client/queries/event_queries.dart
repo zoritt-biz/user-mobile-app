@@ -18,7 +18,13 @@ query(
     link
     photos
     isInterested
+    startDate
+    endDate
+    startTime
+    endTime
+    videos
     owner {
+      _id
       businessName
       location
       logoPics
@@ -29,10 +35,18 @@ query(
 
 const GET_ALL_EVENTS = r"""
 query(
-  $limit: Int, 
-  $sort: SortFindManyEventInput
+  $limit: Int,
+  $filterDate: Date,
+  $now: Date
 ){
-  eventMany(limit: $limit, sort: $sort){
+  eventMany(limit: $limit, sort: STARTDATE_DESC,
+  filter: {
+      _operators: {
+        createdAt: { gte: $filterDate },
+        endDate: { gte: $now }
+      }
+  },
+  ){
     _id
     title
     description
@@ -40,7 +54,13 @@ query(
     link
     photos
     isInterested
+    startDate
+    endDate
+    startTime
+    endTime
+    videos
     owner {
+        _id
         businessName
         location
         logoPics

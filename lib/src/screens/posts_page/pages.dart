@@ -13,8 +13,9 @@ import 'package:zoritt_mobile_app_user/src/repository/post/posts_repository.dart
 
 class Story extends StatefulWidget {
   final Post post;
+  final BuildContext globalNavigator;
 
-  const Story({@required this.post});
+  const Story({@required this.post, @required this.globalNavigator});
 
   @override
   _StoryState createState() => _StoryState();
@@ -56,6 +57,19 @@ class _StoryState extends State<Story> with SingleTickerProviderStateMixin {
     super.dispose();
   }
 
+  void goToBusinessDetail(String businessId) {
+    _animController.stop();
+    _animController.reset();
+    context.read<StoryBloc>().emitStoryFinished();
+    // _pageController.dispose();
+    _animController.dispose();
+    Navigator.pushNamed(
+      widget.globalNavigator,
+      "/business_detail",
+      arguments: [widget.post.owner],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final String image = widget.post.photos[_currentIndex];
@@ -66,45 +80,40 @@ class _StoryState extends State<Story> with SingleTickerProviderStateMixin {
         child: Stack(
           children: <Widget>[
             PageView.builder(
-                controller: _pageController,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: widget.post.photos.length,
-                itemBuilder: (context, i) {
-                  // return Image.asset(
-                  //   widget.images[i],
-                  //   fit: BoxFit.cover,
-                  //   width: double.infinity,
-                  //   height: double.infinity,
-                  // );
-                  return CachedNetworkImage(
-                    imageUrl: widget.post.photos[i],
-                    placeholder: (context, url) {
-                      return Container(
-                        color: Colors.black,
-                        child: Center(child: CircularProgressIndicator()),
-                      );
-                    },
-                    imageBuilder: (context, imageProvider) {
-                      Future.delayed(Duration(milliseconds: 600)).then(
-                        (value) {
-                          _animController?.forward();
-                        },
-                      );
+              controller: _pageController,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: widget.post.photos.length,
+              itemBuilder: (context, i) {
+                return CachedNetworkImage(
+                  imageUrl: widget.post.photos[i],
+                  placeholder: (context, url) {
+                    return Container(
+                      color: Colors.black,
+                      child: Center(child: CircularProgressIndicator()),
+                    );
+                  },
+                  imageBuilder: (context, imageProvider) {
+                    Future.delayed(Duration(milliseconds: 600)).then(
+                      (value) {
+                        _animController?.forward();
+                      },
+                    );
 
-                      return Container(
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: imageProvider,
-                            fit: BoxFit.fitWidth,
-                          ),
+                    return Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: imageProvider,
+                          fit: BoxFit.fitWidth,
                         ),
-                      );
-                    },
-                    fit: BoxFit.fitWidth,
-                    width: double.infinity,
-                    height: double.infinity,
-                  );
-                }),
+                      ),
+                    );
+                  },
+                  fit: BoxFit.fitWidth,
+                  width: double.infinity,
+                  height: double.infinity,
+                );
+              },
+            ),
             Positioned(
               top: 40.0,
               left: 10.0,
@@ -112,16 +121,18 @@ class _StoryState extends State<Story> with SingleTickerProviderStateMixin {
               child: Row(
                 children: widget.post.photos
                     .asMap()
-                    .map((i, e) {
-                      return MapEntry(
-                        i,
-                        AnimatedBar(
-                          animController: _animController,
-                          position: i,
-                          currentIndex: _currentIndex,
-                        ),
-                      );
-                    })
+                    .map(
+                      (i, e) {
+                        return MapEntry(
+                          i,
+                          AnimatedBar(
+                            animController: _animController,
+                            position: i,
+                            currentIndex: _currentIndex,
+                          ),
+                        );
+                      },
+                    )
                     .values
                     .toList(),
               ),
@@ -166,6 +177,7 @@ class _StoryState extends State<Story> with SingleTickerProviderStateMixin {
                   ),
                   child: BusinessInfo(
                     post: widget.post,
+                    goToBusinessDetail: goToBusinessDetail,
                   ),
                 ),
               ),
@@ -277,10 +289,12 @@ class AnimatedBar extends StatelessWidget {
 
 class BusinessInfo extends StatefulWidget {
   final Post post;
+  final Function goToBusinessDetail;
 
   const BusinessInfo({
     Key key,
     @required this.post,
+    @required this.goToBusinessDetail,
   }) : super(key: key);
 
   @override
@@ -291,12 +305,7 @@ class _BusinessInfoState extends State<BusinessInfo> {
   bool localChange = false;
   bool value = false;
 
-  // Setting to true will force the tab to never be disposed. This could be dangerous.
-  // @override
-  // bool get wantKeepAlive => true;
-
   void share(BuildContext context, Post post) {
-    // final RenderBox renderBox=context.findRenderObject();
     String subject =
         "${post.businessName} \n ${post.description} \n ${post.photos[0]} ";
     Share.share(subject, subject: post.description);
@@ -341,31 +350,36 @@ class _BusinessInfoState extends State<BusinessInfo> {
                   widget.post.businessLogo != null &&
                           widget.post.businessLogo != ""
                       ? widget.post.businessLogo
-                      : "https://images.unsplash.com/photo-1614823498916-a28a7d67182c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80",
+                      : "https://firebasestorage.googleapis.com/v0/b/zoritt-app.appspot.com/o/ic_launcher.jpg?alt=media&token=37ef2fe4-bf31-43e4-87ca-9bab1b724483",
                   scale: 1,
                 ),
               ),
               const SizedBox(width: 10.0),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.post.businessName ?? "",
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.bold,
+                child: GestureDetector(
+                  onTap: () {
+                    widget.goToBusinessDetail(widget.post.owner);
+                  },
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.post.businessName ?? "",
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    Text(
-                      widget.post.description ?? "",
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 12.0,
+                      Text(
+                        widget.post.description ?? "",
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12.0,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
                 flex: 2,
               ),

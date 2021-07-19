@@ -19,6 +19,7 @@ class SponsoredBloc extends Cubit<SponsoredState> {
     try {
       List<Business> businesses =
           await businessRepository.getSponsoredBusinesses(limit);
+      businesses.shuffle();
       emit(SponsoredLoadSuccess(businesses));
     } catch (e) {
       emit(SponsoredOperationFailure(e.toString()));

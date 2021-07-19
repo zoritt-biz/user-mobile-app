@@ -14,7 +14,8 @@ class SignUp extends StatefulWidget {
 class _SignUpState extends State<SignUp> {
   String username = "";
   String password = "";
-  TextEditingController nameController = TextEditingController();
+  TextEditingController firstNameController = TextEditingController();
+  TextEditingController lastNameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
@@ -51,7 +52,8 @@ class _SignUpState extends State<SignUp> {
 
   @override
   void dispose() {
-    nameController.dispose();
+    firstNameController.dispose();
+    lastNameController.dispose();
     emailController.dispose();
     passwordController.dispose();
     confirmPasswordController.dispose();
@@ -64,12 +66,9 @@ class _SignUpState extends State<SignUp> {
     return BlocConsumer<SignUpBloc, SignUpState>(
       builder: (signUpCtx, signUpState) {
         return Scaffold(
-          appBar: AppBar(
-            title: Text("Sign up",
-              style: TextStyle(color: Colors.black),
-            ),
-            iconTheme: IconThemeData(color: Colors.black),
-          ),
+          // backgroundColor: Colors.white,
+          resizeToAvoidBottomInset: true,
+          appBar: AppBar(title: Text("Sign up")),
           body: signUpState is SignUpLoading || signUpState is SignUpSuccessful
               ? Center(child: CircularProgressIndicator())
               : body(context),
@@ -94,7 +93,7 @@ class _SignUpState extends State<SignUp> {
       child: Container(
         decoration: BoxDecoration(color: Colors.white),
         child: ListView(
-          padding: const EdgeInsets.only(right: 20, left: 20),
+          padding: const EdgeInsets.only(right: 20, left: 20, bottom: 0),
           children: [
             SizedBox(
               height: 40.0,
@@ -113,10 +112,25 @@ class _SignUpState extends State<SignUp> {
               height: 20.0,
             ),
             InputController(
-              hintText: "full Name",
+              hintText: "First Name",
               labelText: null,
               icon: Icons.account_circle,
-              controller: nameController,
+              controller: firstNameController,
+              obscureElement: false,
+              validator: _usernameValidator,
+              keyboardType: TextInputType.text,
+            ),
+            SizedBox(
+              height: 10.0,
+            ),
+            SizedBox(
+              height: 10.0,
+            ),
+            InputController(
+              hintText: "Last Name",
+              labelText: null,
+              icon: Icons.account_circle,
+              controller: lastNameController,
               obscureElement: false,
               validator: _usernameValidator,
               keyboardType: TextInputType.text,
@@ -132,6 +146,9 @@ class _SignUpState extends State<SignUp> {
               controller: emailController,
               obscureElement: false,
               keyboardType: TextInputType.emailAddress,
+            ),
+            SizedBox(
+              height: 10.0,
             ),
             InputController(
               hintText: "Phone Number",
@@ -176,7 +193,8 @@ class _SignUpState extends State<SignUp> {
                   context.read<SignUpBloc>().signUp(
                         email: emailController.text.trim(),
                         password: passwordController.text,
-                        fullName: nameController.text,
+                        firstName: firstNameController.text,
+                        lastName: lastNameController.text,
                         phoneNumber: phoneNumberController.text,
                       );
                 }

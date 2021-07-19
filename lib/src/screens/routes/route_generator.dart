@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/bloc.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/business_like_bloc/business_like_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/models/models.dart';
 import 'package:zoritt_mobile_app_user/src/repository/repository.dart';
 
@@ -37,6 +38,8 @@ class RouteGenerator {
         );
       case ResetPassword.pathName:
         return MaterialPageRoute(builder: (_) => ResetPassword());
+      case LocationPage.pathName:
+        return MaterialPageRoute(builder: (_) => LocationPage(arguments[0]));
       case MenuDisplay.pathName:
         return MaterialPageRoute(builder: (_) => MenuDisplay());
       case BusinessMoreInfo.pathName:
@@ -47,18 +50,23 @@ class RouteGenerator {
           builder: (_) => BlocProvider<BusinessDetailBloc>(
             create: (context) => BusinessDetailBloc(
               businessRepository: context.read<BusinessRepository>(),
-            )..getBusinessDetail(arguments[0]),
-            child: BusinessDetail(),
+            ),
+            child: BlocProvider<BusinessLikeBloc>(
+                create: (ctx) => BusinessLikeBloc(
+                      businessRepository: ctx.read<BusinessRepository>(),
+                    ),
+                child: BusinessDetail(id: arguments[0])),
           ),
         );
       case PostsPage.pathName:
         return MaterialPageRoute(
-          builder: (_) => BlocProvider<StoryBloc>(
-            create: (context) =>
-                StoryBloc(postRepository: context.read<PostRepository>()),
+          builder: (context) => BlocProvider<StoryBloc>(
+            create: (ctx) =>
+                StoryBloc(postRepository: ctx.read<PostRepository>()),
             child: PostsPage(
               posts: arguments[0] as List<Post>,
               selectedPost: arguments[1] as int,
+              globalNavigator: context,
             ),
           ),
         );

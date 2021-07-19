@@ -1,3 +1,6 @@
+import 'dart:ui';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/related_businesses/related_businesses_bloc.dart';
@@ -27,7 +30,7 @@ class RelatedBusiness extends StatelessWidget {
                     ),
                     Column(
                       children: List.generate(
-                        3,
+                        bizState.businesses.length,
                         (index) => SingleBusinessItem(
                           imageLink: bizState.businesses[index].pictures[0],
                           name: bizState.businesses[index].businessName,
@@ -78,16 +81,56 @@ class SingleBusinessItem extends StatelessWidget {
         );
       },
       child: Card(
-        elevation: 1,
+        color: Colors.white,
+        elevation: 3,
+        clipBehavior: Clip.hardEdge,
+        shadowColor: Colors.black26,
         margin: EdgeInsets.only(left: 18, right: 18, bottom: 18),
-        clipBehavior: Clip.antiAlias,
         child: Row(
           children: [
             Expanded(
-              child: Image.network(
-                imageLink,
-                fit: BoxFit.cover,
-                height: 100,
+              child: Container(
+                height: 130,
+                child: Center(
+                  child: Stack(
+                    children: [
+                      CachedNetworkImage(
+                        imageUrl: imageLink,
+                        imageBuilder: (context, imageProvider) {
+                          return Container(
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: imageProvider,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          );
+                        },
+                        fit: BoxFit.cover,
+                      ),
+                      BackdropFilter(
+                        child: Container(
+                          color: Colors.white10,
+                        ),
+                        filter: ImageFilter.blur(sigmaY: 2, sigmaX: 2),
+                      ),
+                      CachedNetworkImage(
+                        imageUrl: imageLink,
+                        imageBuilder: (context, imageProvider) {
+                          return Container(
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: imageProvider,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                          );
+                        },
+                        fit: BoxFit.contain,
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
             Expanded(
@@ -100,8 +143,8 @@ class SingleBusinessItem extends StatelessWidget {
                   children: [
                     Text(
                       name,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 18),
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                     ),
                     SizedBox(
                       height: 20,
