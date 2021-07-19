@@ -55,7 +55,7 @@ const CATEGORY_LIST = [
     "image": "assets/images/category/hotel.png",
     "sub_categories": [
       {"name": "Hotel"},
-      {"name": "Gust House"},
+      {"name": "Guest House"},
       {"name": "Resort & Lodge"},
       {"name": "Laundry"},
       {"name": "Cleaning"},
@@ -119,7 +119,7 @@ const CATEGORY_LIST = [
     "sub_categories": [
       {"name": "Real Estate"},
       {"name": "Contractor"},
-      {"name": "Construction Material  Rental & Sail"},
+      {"name": "Construction Material  Rental & Sale"},
       {"name": "Finishing"},
       {"name": "Interior Designer"},
     ]
@@ -141,7 +141,7 @@ const CATEGORY_LIST = [
     "image": "assets/images/category/event_organizer.png",
     "sub_categories": [
       {"name": "Celebration Organizer"},
-      {"name": "Weeding Planer"},
+      {"name": "Wedding Planner"},
       {"name": "Concert Organizer"},
       {"name": "Meeting & Gathering Organizer"},
       {"name": "Funeral Service"},
@@ -176,8 +176,8 @@ const CATEGORY_LIST = [
       {"name": "Gas Station"},
       {"name": "Car Wash"},
       {"name": "Garage"},
-      {"name": "Spear Part"},
-      {"name": "Car Rental / Sail"},
+      {"name": "Spare Part"},
+      {"name": "Car Rental / Sale"},
     ]
   },
   {
@@ -190,7 +190,7 @@ const CATEGORY_LIST = [
       {"name": "Stadium"},
       {"name": "Sport Club"},
       {"name": "Martial Art Center"},
-      {"name": "Swimming pool & Balling Allie"},
+      {"name": "Swimming pool & Bowling alley"},
     ]
   },
   {
@@ -206,7 +206,7 @@ const CATEGORY_LIST = [
     "icon": Icons.agriculture_rounded,
     "image": "assets/images/category/agriculture.png",
     "sub_categories": [
-      {"name": "Farm & diary"},
+      {"name": "Farm & dairy"},
       {"name": "Agro Industry"},
       {"name": "Agricultural Equipment"},
     ]
