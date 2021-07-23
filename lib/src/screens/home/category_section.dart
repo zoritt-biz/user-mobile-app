@@ -32,10 +32,9 @@ class CategorySection extends StatelessWidget {
                   if (index == 7) {
                     Navigator.pushNamed(context, "/categories");
                   } else {
-                    context.read<BusinessBloc>().searchForBusinesses(
+                    context.read<BusinessBloc>().searchForBusinessesByCategory(
                           HOME_CATEGORY_LIST[index]["name"]
-                              .toString()
-                              .toLowerCase(),
+                              .toString(),
                           0,
                           50,
                         );

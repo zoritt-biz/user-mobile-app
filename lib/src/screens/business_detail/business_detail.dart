@@ -352,7 +352,7 @@ class _BusinessDetailState extends State<BusinessDetail> {
               create: (ctx) => RelatedBusinessesBloc(
                 businessRepository: context.read<BusinessRepository>(),
               )..getRelatedBusinesses(
-                  category: business.categories[0].parent, skipId: business.id),
+                  category: [business.categories[0].parent, business.categories[0].name], skipId: business.id),
               child: RelatedBusiness(),
             )
           ],

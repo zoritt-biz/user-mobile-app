@@ -18,8 +18,8 @@ class Subcategory extends StatelessWidget {
         itemBuilder: (context, index) {
           return ListTile(
             onTap: () {
-              context.read<BusinessBloc>().searchForBusinesses(
-                    subCategories[index].toLowerCase(),
+              context.read<BusinessBloc>().searchForBusinessesByCategory(
+                    subCategories[index],
                     0,
                     50,
                   );

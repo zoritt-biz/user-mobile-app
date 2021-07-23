@@ -82,7 +82,6 @@ class BusinessRepository {
       QueryOptions(document: gql(GET_BUSINESS_LIST_MANY)),
     );
     if (results.hasException) {
-      print(results.exception);
       throw results.exception;
     }
     final data = results.data['businessListMany'] as List;
@@ -136,25 +135,19 @@ class BusinessRepository {
     return data.map((e) => Business.fromJson(e)).toList();
   }
 
-  Future<List<Business>> getRelatedBusinesses({
+  Future<List<Business>> getBusinessesByCategory(
     String query,
-    String skipId,
+    int skip,
     int limit,
-  }) async {
-    List<String> businessName = [
-      ...query
-          .replaceAll(new RegExp(r'(?:_|[^\w\s])+'), ' ')
-          .replaceAll('&', ' ')
-          .replaceAll('.', ' ')
-          .split(" ")
-          .map((e) => e.toLowerCase())
-    ];
-    businessName.removeWhere((element) => element == "");
+  ) async {
 
     final results = await client.query(
       QueryOptions(
-        document: gql(GET_BUSINESS_RELATED_MANY),
-        variables: {"searchArray": businessName, "limit": limit, "id": skipId},
+        document: gql(GET_BUSINESS_MANY),
+        variables: {
+          "searchArray": [query, query.toLowerCase()],
+          "limit": limit,
+        },
         fetchPolicy: FetchPolicy.networkOnly,
       ),
     );
@@ -162,6 +155,26 @@ class BusinessRepository {
       throw results.exception;
     }
     final data = results.data['businessMany'] as List;
+    return data.map((e) => Business.fromJson(e)).toList();
+  }
+
+  Future<List<Business>> getRelatedBusinesses({
+    List<String> query,
+    String skipId,
+    int limit,
+  }) async {
+    final results = await client.query(
+      QueryOptions(
+        document: gql(GET_BUSINESS_RELATED_MANY),
+        variables: {"category": [...query, ...query.map((e) => e.toLowerCase())], "limit": limit, "id": skipId},
+        fetchPolicy: FetchPolicy.networkOnly,
+      ),
+    );
+    if (results.hasException) {
+      throw results.exception;
+    }
+    final data = results.data['businessMany'] as List;
+    print(data);
     return data.map((e) => Business.fromJson(e)).toList();
   }
 

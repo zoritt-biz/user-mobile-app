@@ -23,6 +23,16 @@ class BusinessBloc extends Cubit<BusinessState> {
     }
   }
 
+  void searchForBusinessesByCategory(String query, int skip, int limit) async {
+    emit(BusinessLoading());
+    try {
+      final item = await businessRepository.getBusinessesByCategory(query, skip, limit);
+      emit(BusinessLoadSuccess(item));
+    } catch (e) {
+      emit(BusinessOperationFailure(e.toString()));
+    }
+  }
+
   void searchForBusinessesByFilter({
     String query,
     int skip,

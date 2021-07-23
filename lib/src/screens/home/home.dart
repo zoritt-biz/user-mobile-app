@@ -112,22 +112,22 @@ class _HomeState extends State<Home> {
                             color: Colors.black.withOpacity(0.3),
                           ),
                         ),
-                        Align(
-                          alignment: Alignment.bottomLeft,
-                          child: Container(
-                            padding: EdgeInsets.only(
-                                left: 20, right: 20, bottom: 80),
-                            child: Text(
-                              "You can find anything on Zoritt",
-                              style: GoogleFonts.montserrat(
-                                textStyle: headline3,
-                                color: Colors.grey[200],
-                                fontWeight: FontWeight.w900,
-                                fontSize: 40,
-                              ),
-                            ),
-                          ),
-                        ),
+                        // Align(
+                        //   alignment: Alignment.bottomLeft,
+                        //   child: Container(
+                        //     padding: EdgeInsets.only(
+                        //         left: 20, right: 20, bottom: 80),
+                        //     child: Text(
+                        //       "You can find anything on Zoritt",
+                        //       style: GoogleFonts.montserrat(
+                        //         textStyle: headline3,
+                        //         color: Colors.grey[200],
+                        //         fontWeight: FontWeight.w900,
+                        //         fontSize: 40,
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
                       ],
                     ),
                     titlePadding: EdgeInsets.all(15),

@@ -143,12 +143,12 @@ query ($user_id: String, $business_id: String){
 const GET_BUSINESS_MANY = r"""
 query($searchArray: [String], $limit: Int){
   businessMany(
-        filter: {
+    filter: {
       state: ACTIVE,
       _operators: {
         searchIndex: {in: $searchArray}
       }
-        },
+    },
     limit: $limit,
     sort: SUBSCRIPTION_DESC
   ){
@@ -171,13 +171,15 @@ query($searchArray: [String], $limit: Int){
 """;
 
 const GET_BUSINESS_RELATED_MANY = r"""
-query($searchArray: [String], $limit: Int, $id: MongoID){
+query($category: [String], $limit: Int, $id: MongoID){
   businessMany(
     filter: {
       state: ACTIVE,
       _operators: {
-        searchIndex: {in: $searchArray}
-        _id: {ne: $id}
+         _id: {ne: $id},
+        searchIndex: {
+          in: $category
+        }
       }
     }
     limit: $limit,
