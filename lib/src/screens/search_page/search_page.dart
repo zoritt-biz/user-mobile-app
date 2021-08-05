@@ -245,6 +245,21 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Widget body(BuildContext context, List<Business> businesses) {
+    List<Business> newBusinesses = businesses.map((e) => e).toList();
+    if(query != "" && query != null){
+      var index;
+      for (int i = 0; i < newBusinesses.length; i++){
+        if (newBusinesses[i].businessName.toLowerCase() == query){
+          index = i;
+          break;
+        }
+      }
+      if(index != null){
+        Business temp = newBusinesses[index];
+        newBusinesses.removeAt(index);
+        newBusinesses.insert(0, temp);
+      }
+    }
     return ListView(
       children: [
         SearchFilter(
@@ -279,7 +294,7 @@ class _SearchPageState extends State<SearchPage> {
             divisions: 5,
             label: "$km",
           ),
-        if (businesses.length > 0)
+        if (newBusinesses.length > 0)
           Padding(
             padding: const EdgeInsets.only(left: 15, bottom: 10),
             child: Align(
@@ -290,7 +305,7 @@ class _SearchPageState extends State<SearchPage> {
               ),
             ),
           ),
-        if (businesses.length > 0)
+        if (newBusinesses.length > 0)
           ListView.builder(
             padding: EdgeInsets.symmetric(horizontal: 8),
             itemBuilder: (context, index) {
@@ -299,17 +314,17 @@ class _SearchPageState extends State<SearchPage> {
                   Navigator.pushNamed(
                     widget.globalNavigator,
                     "/business_detail",
-                    arguments: [businesses[index].id],
+                    arguments: [newBusinesses[index].id],
                   );
                 },
-                child: SearchResult(business: businesses[index]),
+                child: SearchResult(business: newBusinesses[index]),
               );
             },
-            itemCount: businesses.length,
+            itemCount: newBusinesses.length,
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
           ),
-        if (businesses.length == 0) Center(child: Text("No results found!"))
+        if (newBusinesses.length == 0) Center(child: Text("No results found!"))
       ],
     );
   }

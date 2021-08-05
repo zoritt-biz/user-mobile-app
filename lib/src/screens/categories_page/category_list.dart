@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-const CATEGORY_LIST = [
+const CATEGORY_LISTT = [
   {
     "name": "Arts, Media & Entertainment",
     "icon": Icons.movie,
