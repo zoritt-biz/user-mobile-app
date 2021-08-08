@@ -145,7 +145,7 @@ class BusinessRepository {
       QueryOptions(
         document: gql(GET_BUSINESS_MANY),
         variables: {
-          "searchArray": [query, query.toLowerCase()],
+          "searchArray": [query],
           "limit": limit,
         },
         fetchPolicy: FetchPolicy.networkOnly,
