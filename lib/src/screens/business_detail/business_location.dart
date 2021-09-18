@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:zoritt_mobile_app_user/src/models/business.dart';
 
 class BusinessLocation extends StatefulWidget {
   final String locationDescription;
   final LatLng latLng;
+  final List<Branch> branches;
 
   BusinessLocation({
     this.locationDescription,
     this.latLng,
+    this.branches,
   });
 
   @override
@@ -40,61 +43,91 @@ class _BusinessLocationState extends State<BusinessLocation> {
 
   @override
   Widget build(BuildContext context) {
-    return SliverToBoxAdapter(
-      child: Card(
-        elevation: 0,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            SizedBox(height: 15),
-            SizedBox(
-              width: double.infinity,
-              height: 250,
-              child: GoogleMap(
-                myLocationButtonEnabled: false,
-                myLocationEnabled: false,
-                zoomControlsEnabled: false,
-                zoomGesturesEnabled: false,
-                rotateGesturesEnabled: false,
-                scrollGesturesEnabled: false,
-                initialCameraPosition: _initialCameraPosition,
-                onMapCreated: _onMapCreated,
-                markers: {
-                  _origin,
-                },
-              ),
+    return Card(
+      elevation: 0,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SizedBox(height: 15),
+          SizedBox(
+            width: double.infinity,
+            height: 250,
+            child: GoogleMap(
+              myLocationButtonEnabled: false,
+              myLocationEnabled: false,
+              zoomControlsEnabled: false,
+              zoomGesturesEnabled: false,
+              rotateGesturesEnabled: false,
+              scrollGesturesEnabled: false,
+              initialCameraPosition: _initialCameraPosition,
+              onMapCreated: _onMapCreated,
+              markers: {
+                _origin,
+              },
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Get Directions',
-                    style: TextStyle(fontSize: 16),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, "/location_page",
+                        arguments: [widget.latLng]);
+                  },
+                  style: ButtonStyle(
+                    padding: MaterialStateProperty.all(EdgeInsets.zero),
                   ),
-                  IconButton(
-                    icon: Icon(Icons.location_pin),
-                    onPressed: () {
-                      Navigator.pushNamed(context, "/location_page",
-                          arguments: [widget.latLng]);
-                    },
-                  )
-                ],
-              ),
+                  child: Text(
+                    'Get Directions',
+                    style: TextStyle(fontSize: 16, color: Colors.black),
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(Icons.location_pin),
+                  onPressed: () {
+                    Navigator.pushNamed(context, "/location_page",
+                        arguments: [widget.latLng]);
+                  },
+                )
+              ],
             ),
-            Divider(
-              color: Colors.grey,
+          ),
+          Divider(
+            color: Colors.grey,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 15, bottom: 30, top: 10),
+            child: Text(
+              widget.locationDescription,
+              style: TextStyle(fontSize: 18),
             ),
+          ),
+          if (widget.branches.length > 1)
+          Divider(
+            color: Colors.grey,
+          ),
+          if (widget.branches.length > 1)
             Padding(
               padding: const EdgeInsets.only(left: 15, bottom: 30, top: 10),
-              child: Text(
-                widget.locationDescription,
-                style: TextStyle(fontSize: 18),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, "/business_detail/branches",
+                      arguments: [widget.branches]);
+                },
+                child: Row(
+                  children: [
+                    Text(
+                      "See branches ",
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    Icon(Icons.arrow_forward_ios_rounded, size: 14)
+                  ],
+                ),
               ),
             ),
-          ],
-        ),
+        ],
       ),
     );
   }

@@ -32,9 +32,12 @@ class SponsoredPostsOverview extends StatelessWidget {
           return SliverList(
             delegate: SliverChildBuilderDelegate(
               (BuildContext context, int index) {
-                return SponsorItem(
-                  business: sponsoredState.sponsored[index],
-                  globalNavigator: globalNavigator,
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: SponsorItem(
+                    business: sponsoredState.sponsored[index],
+                    globalNavigator: globalNavigator,
+                  ),
                 );
               },
               childCount: sponsoredState.sponsored.length,
@@ -127,7 +130,11 @@ class _SponsorItemState extends State<SponsorItem> {
                 topLeft: Radius.circular(5),
                 topRight: Radius.circular(5),
               ),
-              child: Image.network(widget.business.pictures[0]),
+              child: Image.network(
+                widget.business.pictures[0],
+                fit: BoxFit.contain,
+                width: double.infinity,
+              ),
             ),
             Padding(
               padding:
@@ -179,21 +186,6 @@ class _SponsorItemState extends State<SponsorItem> {
                           )
                         ],
                       ),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.language_outlined,
-                            color: Colors.grey[600],
-                          ),
-                          SizedBox(
-                            width: 15,
-                          ),
-                          Text(
-                            widget.business.website,
-                            style: TextStyle(color: Colors.grey[600]),
-                          )
-                        ],
-                      )
                     ],
                   ),
                 ],

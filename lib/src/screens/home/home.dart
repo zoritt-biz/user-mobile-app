@@ -196,41 +196,41 @@ class _HomeState extends State<Home> {
                   ),
                 ),
                 SponsoredPostsOverview(globalNavigator: widget.globalNavigator),
-                BlocBuilder<SponsoredBloc, SponsoredState>(
-                  builder: (sponsoredCtx, sponsoredState) {
-                    if (sponsoredState is SponsoredLoadSuccess) {
-                      if (sponsoredState.sponsored.isNotEmpty) {
-                        return SliverToBoxAdapter(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 20),
-                            child: Center(
-                              child: TextButton(
-                                style: ButtonStyle(
-                                  padding: MaterialStateProperty.all<
-                                      EdgeInsetsGeometry>(
-                                    EdgeInsets.all(10),
-                                  ),
-                                ),
-                                onPressed: () {
-                                  Navigator.pushNamed(
-                                      context, "/sponsored_posts");
-                                },
-                                child: Text(
-                                  "See More",
-                                  style: TextStyle(fontSize: 16),
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      } else {
-                        return SliverToBoxAdapter(child: Container());
-                      }
-                    } else {
-                      return SliverToBoxAdapter(child: Container());
-                    }
-                  },
-                ),
+                // BlocBuilder<SponsoredBloc, SponsoredState>(
+                //   builder: (sponsoredCtx, sponsoredState) {
+                //     if (sponsoredState is SponsoredLoadSuccess) {
+                //       if (sponsoredState.sponsored.isNotEmpty) {
+                //         return SliverToBoxAdapter(
+                //           child: Padding(
+                //             padding: const EdgeInsets.symmetric(vertical: 20),
+                //             child: Center(
+                //               child: TextButton(
+                //                 style: ButtonStyle(
+                //                   padding: MaterialStateProperty.all<
+                //                       EdgeInsetsGeometry>(
+                //                     EdgeInsets.all(10),
+                //                   ),
+                //                 ),
+                //                 onPressed: () {
+                //                   Navigator.pushNamed(
+                //                       context, "/sponsored_posts");
+                //                 },
+                //                 child: Text(
+                //                   "See More",
+                //                   style: TextStyle(fontSize: 16),
+                //                 ),
+                //               ),
+                //             ),
+                //           ),
+                //         );
+                //       } else {
+                //         return SliverToBoxAdapter(child: Container());
+                //       }
+                //     } else {
+                //       return SliverToBoxAdapter(child: Container());
+                //     }
+                //   },
+                // ),
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 20),

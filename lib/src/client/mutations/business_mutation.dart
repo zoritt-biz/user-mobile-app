@@ -20,6 +20,16 @@ const record = """
     updatedAt
     createdAt
     pictures
+    branches{
+      phoneNumber
+      emails
+      location
+      lat
+      lng
+      distance
+      locationDescription
+      pictures
+    }
     owner {
       fullName
       email

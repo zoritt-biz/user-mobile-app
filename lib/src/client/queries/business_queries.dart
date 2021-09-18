@@ -38,6 +38,16 @@ query ($id: MongoID!){
       closes
       isOpen
     }
+    branches{
+      phoneNumber
+      emails
+      location
+      lat
+      lng
+      distance
+      locationDescription
+      pictures
+    }
     posts {
       _id
       description
@@ -115,6 +125,16 @@ query ($user_id: String, $business_id: String){
       photos
       createdAt
       isLiked
+    }
+    branches{
+      phoneNumber
+      emails
+      location
+      lat
+      lng
+      distance
+      locationDescription
+      pictures
     }
     events {
       _id

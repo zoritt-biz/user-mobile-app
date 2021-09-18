@@ -64,6 +64,52 @@ class _BusinessDetailState extends State<BusinessDetail> {
       context.read<BusinessDetailBloc>().getBusinessDetail(widget.id);
     }
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showModalBottomSheet(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+        ),
+        // isDismissible: false,
+        barrierColor: Colors.transparent,
+        backgroundColor: Colors.transparent,
+        context: context,
+        builder: (ctx) => Padding(
+          padding: EdgeInsets.all(10),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Align(
+                alignment: Alignment.centerRight,
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(Colors.white),
+                    padding: MaterialStateProperty.all(EdgeInsets.zero),
+                    shape: MaterialStateProperty.all(CircleBorder()),
+                  ),
+                  child: Icon(Icons.close, color: Colors.black),
+                  onPressed: (){
+                    Navigator.of(context).pop();
+                  },
+                )
+              ),
+              Card(
+                elevation: 3,
+                clipBehavior: Clip.hardEdge,
+                shadowColor: Colors.white24,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Image.asset("assets/images/images.jfif"),
+              ),
+            ],
+          ),
+        ),
+      );
+    });
   }
 
   @override
@@ -315,9 +361,12 @@ class _BusinessDetailState extends State<BusinessDetail> {
                 height: 5,
               ),
             ),
-            BusinessLocation(
-              latLng: LatLng(business.lat, business.lng),
-              locationDescription: business.location,
+            SliverToBoxAdapter(
+              child: BusinessLocation(
+                latLng: LatLng(business.lat, business.lng),
+                locationDescription: business.location,
+                branches: business.branches,
+              ),
             ),
             SliverToBoxAdapter(
               child: SizedBox(

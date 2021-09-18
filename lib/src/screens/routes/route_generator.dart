@@ -4,6 +4,7 @@ import 'package:zoritt_mobile_app_user/src/bloc/bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/business_like_bloc/business_like_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/models/models.dart';
 import 'package:zoritt_mobile_app_user/src/repository/repository.dart';
+import 'package:zoritt_mobile_app_user/src/screens/business_detail/business_branch.dart';
 
 import '../screens.dart';
 
@@ -40,6 +41,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => ResetPassword());
       case LocationPage.pathName:
         return MaterialPageRoute(builder: (_) => LocationPage(arguments[0]));
+        case BusinessBranch.pathName:
+        return MaterialPageRoute(builder: (_) => BusinessBranch(arguments[0]));
       case MenuDisplay.pathName:
         return MaterialPageRoute(builder: (_) => MenuDisplay());
       case BusinessMoreInfo.pathName:

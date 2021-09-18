@@ -27,6 +27,7 @@ class Business extends Equatable {
   final String subscription;
   final String state;
   final List<OpenHours> openHours;
+  final List<Branch> branches;
   final List<Events> events;
   final List<Post> posts;
   final List<Category> categories;
@@ -53,6 +54,7 @@ class Business extends Equatable {
     this.establishedIn,
     this.subscription,
     this.openHours,
+    this.branches,
     this.events,
     this.posts,
     this.categories,
@@ -103,6 +105,26 @@ class Business extends Equatable {
                   isOpen: e['isOpen']))
               .toList()
           : [],
+      branches: (data['branches'] as List) != null
+          ? (data['branches'] as List)
+              .map((e) => Branch(
+                    phoneNumber: (e['phoneNumber'] as List) != null
+                        ? (e['phoneNumber'] as List).map((e) => e.toString()).toList()
+                        : [],
+                    location: e['location'],
+                    lng: double.parse(e['lng'].toString()),
+                    lat: double.parse(e['lat'].toString()),
+                    locationDescription: e['locationDescription'],
+                    distance: e['distance'],
+                    emails:  (e['emails'] as List) != null
+                        ? (e['emails'] as List).map((e) => e.toString()).toList()
+                        : [],
+                    pictures:  (e['pictures'] as List) != null
+                        ? (e['pictures'] as List).map((e) => e.toString()).toList()
+                        : [],
+                  ))
+              .toList()
+          : [],
       posts: (data['posts'] as List) != null
           ? (data['posts'] as List).map((e) => Post.fromJson(e)).toList()
           : [],
@@ -134,4 +156,26 @@ class OpenHours {
   final String closes;
 
   OpenHours({this.day, this.opens, this.closes, this.isOpen});
+}
+
+@immutable
+class Branch {
+  final List<String> phoneNumber;
+  final String location;
+  final String locationDescription;
+  final double lat;
+  final double lng;
+  final int distance;
+  final List<String> emails;
+  final List<String> pictures;
+
+  Branch(
+      {this.phoneNumber,
+      this.location,
+      this.locationDescription,
+      this.distance,
+      this.lat,
+      this.lng,
+      this.emails,
+      this.pictures});
 }
