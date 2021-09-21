@@ -1,7 +1,7 @@
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 final HttpLink _httpLink =
-    HttpLink('https://zoritt-back-end-api.herokuapp.com/');
+HttpLink('https://zoritt-back-end-api.herokuapp.com/');
 
 final _link = Link.from([_httpLink]);
 
