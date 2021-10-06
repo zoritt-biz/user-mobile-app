@@ -34,31 +34,6 @@ class PostRepository {
     return data.map((e) => Post.fromJson(e)).toList();
   }
 
-  Future<List<Post>> getPostLoggedIn(
-      {String userId, int limit, String sort}) async {
-    final result = await client.query(
-      QueryOptions(
-        document: gql(GET_POSTS_LOGGED_IN),
-        variables: {
-          "limit": limit,
-          "sort": sort,
-          "user_id": userId,
-          "fromDate": DateTime.now()
-              .subtract(new Duration(days: 5))
-              .toString()
-              .split(" ")[0]
-        },
-        fetchPolicy: FetchPolicy.networkOnly,
-      ),
-    );
-    if (result.hasException) {
-      print(result.exception);
-      throw result.exception;
-    }
-    final data = result.data['getPostLoggedIn'] as List;
-    return data.map((e) => Post.fromJson(e)).toList();
-  }
-
   Future<bool> likePost(String userId, String postId) async {
     final result = await client.query(
       QueryOptions(

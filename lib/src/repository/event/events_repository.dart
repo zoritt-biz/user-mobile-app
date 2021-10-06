@@ -29,35 +29,6 @@ class EventsRepository {
     return data.map((e) => Events.fromJson(e)).toList();
   }
 
-  Future<List<Events>> getEventsLoggedIn(
-      {String userId, int limit, String sort}) async {
-    print(userId);
-    print(DateTime.now()
-        .subtract(new Duration(days: 5))
-        .toString()
-        .split(" ")[0]);
-    final result = await client.query(
-      QueryOptions(
-        document: gql(GET_ALL_EVENTS_LOGGED_IN),
-        variables: {
-          "limit": limit,
-          "sort": sort,
-          "user_id": userId,
-          "fromDate": DateTime.now()
-              .subtract(new Duration(days: 50))
-              .toString()
-              .split(" ")[0]
-        },
-      ),
-    );
-    if (result.hasException) {
-      print(result.exception);
-      throw result.exception;
-    }
-    final data = result.data['getEventsLoggedIn'] as List;
-    return data.map((e) => Events.fromJson(e)).toList();
-  }
-
   Future<bool> likeEvent(String userId, String eventId) async {
     final result = await client.query(
       QueryOptions(

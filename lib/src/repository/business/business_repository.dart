@@ -45,21 +45,6 @@ class BusinessRepository {
     return new Business.fromJson(data);
   }
 
-  Future<Business> getBusinessesLoggedIn(String id, String userId) async {
-    final result = await client.query(
-      QueryOptions(
-        document: gql(GET_BUSINESS_DETAIL_LOGGED_IN),
-        variables: {"business_id": id, "user_id": userId},
-        fetchPolicy: FetchPolicy.networkOnly,
-      ),
-    );
-    if (result.hasException) {
-      throw result.exception;
-    }
-    final data = result.data["businessByIdLoggedIn"];
-    return new Business.fromJson(data);
-  }
-
   Future<List<Business>> getSponsoredBusinesses(int limit) async {
     final result = await client.query(
       QueryOptions(
@@ -140,7 +125,6 @@ class BusinessRepository {
     int skip,
     int limit,
   ) async {
-
     final results = await client.query(
       QueryOptions(
         document: gql(GET_BUSINESS_MANY),
@@ -166,7 +150,11 @@ class BusinessRepository {
     final results = await client.query(
       QueryOptions(
         document: gql(GET_BUSINESS_RELATED_MANY),
-        variables: {"category": [...query, ...query.map((e) => e.toLowerCase())], "limit": limit, "id": skipId},
+        variables: {
+          "category": [...query, ...query.map((e) => e.toLowerCase())],
+          "limit": limit,
+          "id": skipId
+        },
         fetchPolicy: FetchPolicy.networkOnly,
       ),
     );

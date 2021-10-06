@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/bloc.dart';
-import 'package:zoritt_mobile_app_user/src/bloc/business_like_bloc/business_like_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/models/models.dart';
 import 'package:zoritt_mobile_app_user/src/repository/repository.dart';
-import 'package:zoritt_mobile_app_user/src/screens/business_detail/business_branch.dart';
+import 'package:zoritt_mobile_app_user/src/screens/components/business-detail/branch.dart';
+import 'package:zoritt_mobile_app_user/src/screens/components/business-detail/location-page.dart';
+import 'package:zoritt_mobile_app_user/src/screens/components/menu/business_more_info.dart';
+import 'package:zoritt_mobile_app_user/src/screens/components/menu/menu_info.dart';
+import 'package:zoritt_mobile_app_user/src/screens/pages/auth/reset.dart';
+import 'package:zoritt_mobile_app_user/src/screens/pages/auth/sign_in.dart';
+import 'package:zoritt_mobile_app_user/src/screens/pages/auth/sign_up.dart';
+import 'package:zoritt_mobile_app_user/src/screens/pages/business-detail/business-detail.dart';
+import 'package:zoritt_mobile_app_user/src/screens/pages/posts/posts_page.dart';
 
 import '../screens.dart';
 
@@ -41,7 +48,7 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => ResetPassword());
       case LocationPage.pathName:
         return MaterialPageRoute(builder: (_) => LocationPage(arguments[0]));
-        case BusinessBranch.pathName:
+      case BusinessBranch.pathName:
         return MaterialPageRoute(builder: (_) => BusinessBranch(arguments[0]));
       case MenuDisplay.pathName:
         return MaterialPageRoute(builder: (_) => MenuDisplay());

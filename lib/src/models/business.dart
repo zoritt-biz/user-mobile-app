@@ -109,18 +109,24 @@ class Business extends Equatable {
           ? (data['branches'] as List)
               .map((e) => Branch(
                     phoneNumber: (e['phoneNumber'] as List) != null
-                        ? (e['phoneNumber'] as List).map((e) => e.toString()).toList()
+                        ? (e['phoneNumber'] as List)
+                            .map((e) => e.toString())
+                            .toList()
                         : [],
                     location: e['location'],
                     lng: double.parse(e['lng'].toString()),
                     lat: double.parse(e['lat'].toString()),
                     locationDescription: e['locationDescription'],
                     distance: e['distance'],
-                    emails:  (e['emails'] as List) != null
-                        ? (e['emails'] as List).map((e) => e.toString()).toList()
+                    emails: (e['emails'] as List) != null
+                        ? (e['emails'] as List)
+                            .map((e) => e.toString())
+                            .toList()
                         : [],
-                    pictures:  (e['pictures'] as List) != null
-                        ? (e['pictures'] as List).map((e) => e.toString()).toList()
+                    pictures: (e['pictures'] as List) != null
+                        ? (e['pictures'] as List)
+                            .map((e) => e.toString())
+                            .toList()
                         : [],
                   ))
               .toList()
