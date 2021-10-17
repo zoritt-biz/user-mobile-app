@@ -10,27 +10,21 @@ class PostRepository {
   PostRepository({@required this.client});
 
   Future<List<Post>> getPosts(
-    int limit,
-    String sort,
+    int page,
+    int perPage,
     String filterDate,
-    int skip,
   ) async {
     final result = await client.query(
       QueryOptions(
-        document: gql(GET_ALL_POSTS),
-        variables: {
-          "skip": skip,
-          "limit": limit,
-          "sort": sort,
-          "filterDate": filterDate.split(" ")[0]
-        },
+        document: gql(GET_POSTS),
+        variables: {"page": page, "perPage": perPage, "filterDate": filterDate},
         fetchPolicy: FetchPolicy.networkOnly,
       ),
     );
     if (result.hasException) {
       throw result.exception;
     }
-    final data = result.data['postMany'] as List;
+    final data = result.data['postPagination']['items'] as List;
     return data.map((e) => Post.fromJson(e)).toList();
   }
 

@@ -5,12 +5,10 @@ import 'package:zoritt_mobile_app_user/src/models/business.dart';
 class BusinessLocation extends StatefulWidget {
   final String locationDescription;
   final LatLng latLng;
-  final List<Branch> branches;
 
   BusinessLocation({
     this.locationDescription,
     this.latLng,
-    this.branches,
   });
 
   @override
@@ -104,29 +102,6 @@ class _BusinessLocationState extends State<BusinessLocation> {
               style: TextStyle(fontSize: 18),
             ),
           ),
-          if (widget.branches.length > 1)
-            Divider(
-              color: Colors.grey,
-            ),
-          if (widget.branches.length > 1)
-            Padding(
-              padding: const EdgeInsets.only(left: 15, bottom: 30, top: 10),
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.pushNamed(context, "/business_detail/branches",
-                      arguments: [widget.branches]);
-                },
-                child: Row(
-                  children: [
-                    Text(
-                      "See branches ",
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    Icon(Icons.arrow_forward_ios_rounded, size: 14)
-                  ],
-                ),
-              ),
-            ),
         ],
       ),
     );

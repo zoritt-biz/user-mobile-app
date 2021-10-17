@@ -8,7 +8,7 @@ import 'package:zoritt_mobile_app_user/src/models/post.dart';
 class Business extends Equatable {
   final String id;
   final String businessName;
-  final List<String> phoneNumber;
+  final List<String> phoneNumbers;
   final String location;
   final String locationDescription;
   final double lat;
@@ -27,7 +27,6 @@ class Business extends Equatable {
   final String subscription;
   final String state;
   final List<OpenHours> openHours;
-  final List<Branch> branches;
   final List<Events> events;
   final List<Post> posts;
   final List<Category> categories;
@@ -36,7 +35,7 @@ class Business extends Equatable {
   Business({
     this.id,
     this.businessName,
-    this.phoneNumber,
+    this.phoneNumbers,
     this.location,
     this.locationDescription,
     this.lat,
@@ -54,7 +53,6 @@ class Business extends Equatable {
     this.establishedIn,
     this.subscription,
     this.openHours,
-    this.branches,
     this.events,
     this.posts,
     this.categories,
@@ -64,21 +62,19 @@ class Business extends Equatable {
 
   @override
   List<Object> get props =>
-      [id, businessName, description, phoneNumber, location];
+      [id, businessName, description, phoneNumbers, location];
 
   factory Business.fromJson(Map<String, dynamic> data) {
     return Business(
       id: data['_id'],
       businessName: data['businessName'],
-      phoneNumber: (data['phoneNumber'] as List) != null
-          ? (data['phoneNumber'] as List).map((e) => e.toString()).toList()
+      phoneNumbers: (data['phoneNumbers'] as List) != null
+          ? (data['phoneNumbers'] as List).map((e) => e.toString()).toList()
           : [],
       location: data['location'],
       locationDescription: data['locationDescription'] != null
           ? data['locationDescription']
           : data['location'],
-      lat: data['lat'],
-      lng: data['lng'],
       distance: data['distance'],
       emails: (data['emails'] as List) != null
           ? (data['emails'] as List).map((e) => e.toString()).toList()
@@ -86,6 +82,8 @@ class Business extends Equatable {
       website: data['website'],
       logoPic: data['logoPics'],
       slogan: data['slogan'],
+      lat: data['lngLat']['coordinates'][1],
+      lng: data['lngLat']['coordinates'][0],
       description: data['description'],
       specialization: data['specialization'],
       history: data['history'],
@@ -103,32 +101,6 @@ class Business extends Equatable {
                   day: e['day'],
                   opens: e['opens'],
                   isOpen: e['isOpen']))
-              .toList()
-          : [],
-      branches: (data['branches'] as List) != null
-          ? (data['branches'] as List)
-              .map((e) => Branch(
-                    phoneNumber: (e['phoneNumber'] as List) != null
-                        ? (e['phoneNumber'] as List)
-                            .map((e) => e.toString())
-                            .toList()
-                        : [],
-                    location: e['location'],
-                    lng: double.parse(e['lng'].toString()),
-                    lat: double.parse(e['lat'].toString()),
-                    locationDescription: e['locationDescription'],
-                    distance: e['distance'],
-                    emails: (e['emails'] as List) != null
-                        ? (e['emails'] as List)
-                            .map((e) => e.toString())
-                            .toList()
-                        : [],
-                    pictures: (e['pictures'] as List) != null
-                        ? (e['pictures'] as List)
-                            .map((e) => e.toString())
-                            .toList()
-                        : [],
-                  ))
               .toList()
           : [],
       posts: (data['posts'] as List) != null
@@ -151,7 +123,7 @@ class Business extends Equatable {
   }
 
   @override
-  String toString() => 'Business { id: $id, businessName: $businessName';
+  String toString() => 'Business { id: $id, businessName: $businessName}';
 }
 
 @immutable
@@ -164,24 +136,3 @@ class OpenHours {
   OpenHours({this.day, this.opens, this.closes, this.isOpen});
 }
 
-@immutable
-class Branch {
-  final List<String> phoneNumber;
-  final String location;
-  final String locationDescription;
-  final double lat;
-  final double lng;
-  final int distance;
-  final List<String> emails;
-  final List<String> pictures;
-
-  Branch(
-      {this.phoneNumber,
-      this.location,
-      this.locationDescription,
-      this.distance,
-      this.lat,
-      this.lng,
-      this.emails,
-      this.pictures});
-}

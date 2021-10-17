@@ -97,6 +97,13 @@ flutter:
      - assets/images/category/local_services.png
      - assets/images/category/computer.png
      - assets/images/images.jfif
+     - assets/images/home-category/beauty_spa.png
+     - assets/images/home-category/fashion_cloth.png
+     - assets/images/home-category/food.png
+     - assets/images/home-category/hospitality.png
+     - assets/images/home-category/delivery.png
+     - assets/images/home-category/night_life.png
+     - assets/images/home-category/shopping.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

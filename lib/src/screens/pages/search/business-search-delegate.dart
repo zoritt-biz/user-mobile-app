@@ -3,16 +3,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/business-list/bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/business-list/filtered-businesses/bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/business/bloc.dart';
+import 'package:zoritt_mobile_app_user/src/models/filter.dart';
 import 'package:zoritt_mobile_app_user/src/repository/business/business_repository.dart';
 
-class BusinessSearch extends SearchDelegate<String> {
+class BusinessSearchDelegate extends SearchDelegate<String> {
   final BuildContext buildContext;
-  final Function setQuery;
-  final Function clearFilter;
+  final Function setFilter;
   FilteredBusinessListBloc _filteredBusinessListBloc;
   BusinessListBloc _businessListBloc;
 
-  BusinessSearch({this.buildContext, this.setQuery, this.clearFilter}) {
+  BusinessSearchDelegate({this.buildContext, this.setFilter}) {
     _businessListBloc = BusinessListBloc(
       buildContext.read<BusinessRepository>(),
     )..getBusinessList();
@@ -47,7 +47,11 @@ class BusinessSearch extends SearchDelegate<String> {
 
   @override
   void showResults(BuildContext context) {
-    buildContext.read<BusinessBloc>().searchBusinesses(query, 0, 50);
+    buildContext.read<BusinessBloc>().filterBusinesses(
+          new Filter(query: query),
+          1,
+          100,
+        );
     close(context, query);
     super.showResults(context);
   }
@@ -78,11 +82,7 @@ class BusinessSearch extends SearchDelegate<String> {
                       ),
                       onTap: () {
                         query = state.businessList[index].autocompleteTerm;
-                        buildContext
-                            .read<BusinessBloc>()
-                            .searchBusinesses(query, 0, 100);
-                        setQuery(query);
-                        clearFilter();
+                        setFilter(new Filter(query: query), 1, 100);
                         close(context, query);
                       },
                     );

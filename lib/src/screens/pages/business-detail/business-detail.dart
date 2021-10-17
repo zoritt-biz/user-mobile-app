@@ -1,18 +1,25 @@
 import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/auth/auth_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/business-detail/bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/business-like/bloc.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/pop-up/bloc.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/pop-up/state.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/user/user_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/models/business.dart';
 import 'package:zoritt_mobile_app_user/src/models/user.dart';
 import 'package:zoritt_mobile_app_user/src/screens/components/business-detail/detail.dart';
 import 'package:zoritt_mobile_app_user/src/screens/components/error-message/error-message.dart';
 import 'package:zoritt_mobile_app_user/src/screens/components/loading/loading.dart';
+
+import '../../../bloc/related_businesses/related_businesses_bloc.dart';
+import '../../../models/filter.dart';
+import '../../../repository/business/business_repository.dart';
 
 class BusinessDetail extends StatefulWidget {
   static const String pathName = "/business_detail";
@@ -51,52 +58,6 @@ class _BusinessDetailState extends State<BusinessDetail> {
     context.read<BusinessDetailBloc>().getBusinessDetail(widget.id);
 
     super.initState();
-
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   showModalBottomSheet(
-    //     shape: RoundedRectangleBorder(
-    //       borderRadius: BorderRadius.only(
-    //         topLeft: Radius.circular(20),
-    //         topRight: Radius.circular(20),
-    //       ),
-    //     ),
-    //     // isDismissible: false,
-    //     barrierColor: Colors.transparent,
-    //     backgroundColor: Colors.transparent,
-    //     context: context,
-    //     builder: (ctx) => Padding(
-    //       padding: EdgeInsets.all(10),
-    //       child: Column(
-    //         mainAxisAlignment: MainAxisAlignment.end,
-    //         mainAxisSize: MainAxisSize.min,
-    //         children: [
-    //           Align(
-    //               alignment: Alignment.centerRight,
-    //               child: ElevatedButton(
-    //                 style: ButtonStyle(
-    //                   backgroundColor: MaterialStateProperty.all(Colors.white),
-    //                   padding: MaterialStateProperty.all(EdgeInsets.zero),
-    //                   shape: MaterialStateProperty.all(CircleBorder()),
-    //                 ),
-    //                 child: Icon(Icons.close, color: Colors.black),
-    //                 onPressed: () {
-    //                   Navigator.of(context).pop();
-    //                 },
-    //               )),
-    //           Card(
-    //             elevation: 3,
-    //             clipBehavior: Clip.hardEdge,
-    //             shadowColor: Colors.white24,
-    //             shape: RoundedRectangleBorder(
-    //               borderRadius: BorderRadius.circular(12),
-    //             ),
-    //             child: Image.asset("assets/images/images.jfif"),
-    //           ),
-    //         ],
-    //       ),
-    //     ),
-    //   );
-    // });
   }
 
   @override
@@ -107,20 +68,87 @@ class _BusinessDetailState extends State<BusinessDetail> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<BusinessDetailBloc, BusinessDetailState>(
-      builder: (bizCtx, bizState) {
-        if (bizState is BusinessDetailLoadSuccess) {
-          return body(context, bizState.business);
-        } else if (bizState is BusinessDetailLoading) {
-          return Loading();
-        } else {
-          return ErrorMessage(
-            onPressed: () => {
-              context.read<BusinessDetailBloc>().getBusinessDetail(widget.id)
-            },
-          );
+    return BlocListener<PopUpBloc, PopUpState>(
+      listener: (popUpCtx, popUpState){
+        if(popUpState is PopUpLoadSuccess){
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            showModalBottomSheet(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
+                ),
+              ),
+              barrierColor: Colors.transparent,
+              backgroundColor: Colors.transparent,
+              context: context,
+              builder: (ctx) => Padding(
+                padding: EdgeInsets.all(10),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Align(
+                        alignment: Alignment.centerRight,
+                        child: ElevatedButton(
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all(Colors.white),
+                            padding: MaterialStateProperty.all(EdgeInsets.zero),
+                            shape: MaterialStateProperty.all(CircleBorder()),
+                          ),
+                          child: Icon(Icons.close, color: Colors.black),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),),
+                    Card(
+                      elevation: 3,
+                      clipBehavior: Clip.hardEdge,
+                      shadowColor: Colors.white24,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: SizedBox(
+                        height: 130,
+                        width: double.infinity,
+                        child: CachedNetworkImage(
+                          imageUrl: popUpState.popUp.image,
+                          imageBuilder: (context, imageProvider) {
+                            return Container(
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: imageProvider,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            );
+                          },
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          });
         }
       },
+      child: BlocBuilder<BusinessDetailBloc, BusinessDetailState>(
+        builder: (bizCtx, bizState) {
+          if (bizState is BusinessDetailLoadSuccess) {
+            return body(context, bizState.business);
+          } else if (bizState is BusinessDetailLoading) {
+            return Loading();
+          } else {
+            return ErrorMessage(
+              onPressed: () => {
+                context.read<BusinessDetailBloc>().getBusinessDetail(widget.id)
+              },
+            );
+          }
+        },
+      ),
     );
   }
 
@@ -233,45 +261,59 @@ class _BusinessDetailState extends State<BusinessDetail> {
                 background: Stack(
                   children: [
                     Container(
-                      child: Center(
-                        child: Stack(
-                          children: [
-                            CachedNetworkImage(
-                              imageUrl: business.pictures[0],
-                              imageBuilder: (context, imageProvider) {
-                                return Container(
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                      image: imageProvider,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                );
-                              },
-                              fit: BoxFit.cover,
-                            ),
-                            BackdropFilter(
-                              child: Container(
-                                color: Colors.white10,
-                              ),
-                              filter: ImageFilter.blur(sigmaY: 2, sigmaX: 2),
-                            ),
-                            CachedNetworkImage(
-                              imageUrl: business.pictures[0],
-                              imageBuilder: (context, imageProvider) {
-                                return Container(
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                      image: imageProvider,
-                                      fit: BoxFit.contain,
-                                    ),
-                                  ),
-                                );
-                              },
-                              fit: BoxFit.contain,
-                            ),
-                          ],
+                      child: CarouselSlider(
+                        options: CarouselOptions(
+                          autoPlayInterval: Duration(seconds: 10),
+                          autoPlay: business.pictures.length > 1 ? true : false,
+                          viewportFraction: 1,
+                          height: double.infinity,
                         ),
+                        items: business.pictures
+                            .map(
+                              (item) => ClipRRect(
+                                child: Center(
+                                  child: Stack(
+                                    children: [
+                                      CachedNetworkImage(
+                                        imageUrl: business.pictures[0],
+                                        imageBuilder: (context, imageProvider) {
+                                          return Container(
+                                            decoration: BoxDecoration(
+                                              image: DecorationImage(
+                                                image: imageProvider,
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        fit: BoxFit.cover,
+                                      ),
+                                      BackdropFilter(
+                                        child: Container(
+                                          color: Colors.white10,
+                                        ),
+                                        filter: ImageFilter.blur(sigmaY: 2, sigmaX: 2),
+                                      ),
+                                      CachedNetworkImage(
+                                        imageUrl: business.pictures[0],
+                                        imageBuilder: (context, imageProvider) {
+                                          return Container(
+                                            decoration: BoxDecoration(
+                                              image: DecorationImage(
+                                                image: imageProvider,
+                                                fit: BoxFit.contain,
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        fit: BoxFit.contain,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            )
+                            .toList(),
                       ),
                     ),
                     Container(
@@ -299,7 +341,7 @@ class _BusinessDetailState extends State<BusinessDetail> {
               businessName: business.businessName,
               slogan: business.slogan,
               time: business.openHours,
-              phoneNumber: business.phoneNumber[0],
+              phoneNumber: business.phoneNumbers[0],
               website: business.website,
               location: business.location,
               latLng: LatLng(
@@ -312,7 +354,6 @@ class _BusinessDetailState extends State<BusinessDetail> {
               child: BusinessLocation(
                 latLng: LatLng(business.lat, business.lng),
                 locationDescription: business.location,
-                branches: business.branches,
               ),
             ),
             SliverToBoxAdapter(child: SizedBox(height: 5)),
@@ -324,13 +365,17 @@ class _BusinessDetailState extends State<BusinessDetail> {
             SliverToBoxAdapter(child: SizedBox(height: 5)),
             BusinessMedia(pictures: business.pictures),
             SliverToBoxAdapter(child: SizedBox(height: 5)),
-            // BlocProvider<RelatedBusinessesBloc>(
-            //   create: (ctx) => RelatedBusinessesBloc(
-            //     businessRepository: context.read<BusinessRepository>(),
-            //   )..getRelatedBusinesses(
-            //       category: [business.categories[0].name], skipId: business.id),
-            //   child: RelatedBusiness(),
-            // )
+            BlocProvider<RelatedBusinessesBloc>(
+              create: (ctx) => RelatedBusinessesBloc(
+                businessRepository: context.read<BusinessRepository>(),
+              )..getRelatedBusinesses(
+                  new Filter(category: [business.categories[0].name]),
+                  1,
+                  15,
+                  business.businessName,
+                ),
+              child: RelatedBusiness(business.businessName),
+            )
           ],
         ),
       ),

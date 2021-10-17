@@ -72,18 +72,18 @@ class BusinessInfo extends StatelessWidget {
                 height: 20,
               ),
               ...List.generate(
-                  business.phoneNumber.length,
+                  business.phoneNumbers.length,
                   (index) => Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            business.phoneNumber[index],
+                            business.phoneNumbers[index],
                             style: TextStyle(fontSize: 15),
                           ),
                           IconButton(
                             onPressed: () async {
                               await launch(
-                                  "tel:${business.phoneNumber[index]}");
+                                  "tel:${business.phoneNumbers[index]}");
                             },
                             icon: Icon(Icons.phone_outlined),
                           ),

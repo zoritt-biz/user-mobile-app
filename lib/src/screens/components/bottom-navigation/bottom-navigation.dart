@@ -45,7 +45,7 @@ class BottomNavigation extends StatelessWidget {
         onPressed: () {
           setCurrentIndex(TabItem.search);
           if (context.read<NavigationBloc>().state is NavigationUnknown) {
-            context.read<NavigationBloc>().navigateToSearchDelegate();
+            context.read<NavigationBloc>().navigateToSearchDelegate("");
           }
         },
         icon:

@@ -1,32 +1,37 @@
-import 'package:flutter/material.dart';
-
 const HOME_CATEGORY_LIST = [
   {
     "name": "Restaurant",
-    "icon": Icons.restaurant,
+    // "icon": Icons.restaurant,
+    "icon": "assets/images/home-category/food.png",
   },
   {
-    "name": "Cafe",
-    "icon": Icons.local_cafe,
+    "name": "Boutiques",
+    // "icon": Icons.local_cafe,
+    "icon": "assets/images/home-category/fashion_cloth.png",
   },
   {
-    "name": "Beauty & Spa",
-    "icon": Icons.spa_rounded,
+    "name": "Women Salon",
+    // "icon": Icons.spa_rounded,
+    "icon": "assets/images/home-category/beauty_spa.png",
   },
   {
-    "name": "Bars & Lounges",
-    "icon": Icons.sports_bar,
+    "name": "Clubs",
+    // "icon": Icons.sports_bar,
+    "icon": "assets/images/home-category/night_life.png",
   },
   {
-    "name": "Supermarkets",
-    "icon": Icons.shopping_basket_rounded,
+    "name": "Supermarket",
+    // "icon": Icons.shopping_basket_rounded,
+    "icon": "assets/images/home-category/shopping.png",
   },
   {
     "name": "Delivery",
-    "icon": Icons.delivery_dining,
+    // "icon": Icons.delivery_dining,
+    "icon": "assets/images/home-category/delivery.png",
   },
   {
-    "name": "Banks",
-    "icon": Icons.business,
+    "name": "Hotel",
+    // "icon": Icons.business,
+    "icon": "assets/images/home-category/hospitality.png",
   },
 ];

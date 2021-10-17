@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/bloc.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/pop-up/bloc.dart';
 import 'package:zoritt_mobile_app_user/src/models/models.dart';
 import 'package:zoritt_mobile_app_user/src/repository/repository.dart';
-import 'package:zoritt_mobile_app_user/src/screens/components/business-detail/branch.dart';
 import 'package:zoritt_mobile_app_user/src/screens/components/business-detail/location-page.dart';
 import 'package:zoritt_mobile_app_user/src/screens/components/menu/business_more_info.dart';
 import 'package:zoritt_mobile_app_user/src/screens/components/menu/menu_info.dart';
@@ -48,8 +48,6 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => ResetPassword());
       case LocationPage.pathName:
         return MaterialPageRoute(builder: (_) => LocationPage(arguments[0]));
-      case BusinessBranch.pathName:
-        return MaterialPageRoute(builder: (_) => BusinessBranch(arguments[0]));
       case MenuDisplay.pathName:
         return MaterialPageRoute(builder: (_) => MenuDisplay());
       case BusinessMoreInfo.pathName:
@@ -57,16 +55,23 @@ class RouteGenerator {
             builder: (_) => BusinessMoreInfo(business: arguments[0]));
       case BusinessDetail.pathName:
         return MaterialPageRoute(
-          builder: (_) => BlocProvider<BusinessDetailBloc>(
-            create: (context) => BusinessDetailBloc(
-              businessRepository: context.read<BusinessRepository>(),
+          builder: (_) => MultiBlocProvider(providers: [
+            BlocProvider<BusinessDetailBloc>(
+              create: (context) => BusinessDetailBloc(
+                businessRepository: context.read<BusinessRepository>(),
+              ),
             ),
-            child: BlocProvider<BusinessLikeBloc>(
-                create: (ctx) => BusinessLikeBloc(
-                      businessRepository: ctx.read<BusinessRepository>(),
-                    ),
-                child: BusinessDetail(id: arguments[0])),
-          ),
+            BlocProvider<BusinessLikeBloc>(
+              create: (ctx) => BusinessLikeBloc(
+                businessRepository: ctx.read<BusinessRepository>(),
+              ),
+            ),
+            BlocProvider<PopUpBloc>(
+              create: (ctx) => PopUpBloc(
+                businessRepository: ctx.read<BusinessRepository>(),
+              )..getPopUp(arguments[1]),
+            )
+          ], child: BusinessDetail(id: arguments[0])),
         );
       case PostsPage.pathName:
         return MaterialPageRoute(

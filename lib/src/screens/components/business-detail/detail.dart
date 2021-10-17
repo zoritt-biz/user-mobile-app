@@ -1,5 +1,4 @@
 export 'address.dart';
-export 'branch.dart';
 export 'events.dart';
 export 'info.dart';
 export 'location-page.dart';

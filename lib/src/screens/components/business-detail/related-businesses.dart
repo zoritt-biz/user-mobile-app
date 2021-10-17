@@ -7,6 +7,10 @@ import 'package:zoritt_mobile_app_user/src/bloc/related_businesses/related_busin
 import 'package:zoritt_mobile_app_user/src/bloc/related_businesses/related_businesses_state.dart';
 
 class RelatedBusiness extends StatelessWidget {
+  final String businessName;
+
+  const RelatedBusiness(this.businessName) : super();
+
   @override
   Widget build(BuildContext context) {
     return SliverToBoxAdapter(
@@ -31,14 +35,20 @@ class RelatedBusiness extends StatelessWidget {
                     Column(
                       children: List.generate(
                         bizState.businesses.length,
-                        (index) => SingleBusinessItem(
-                          imageLink: bizState.businesses[index].pictures[0],
-                          name: bizState.businesses[index].businessName,
-                          address: bizState.businesses[index].location,
-                          phoneNumber:
-                              bizState.businesses[index].phoneNumber[0],
-                          id: bizState.businesses[index].id,
-                        ),
+                        (index) => bizState.businesses[index].businessName !=
+                                businessName
+                            ? SingleBusinessItem(
+                                imageLink:
+                                    bizState.businesses[index].pictures[0],
+                                name: bizState.businesses[index].businessName,
+                                address: bizState.businesses[index].location,
+                                phoneNumber:
+                                    bizState.businesses[index].phoneNumbers[0],
+                                id: bizState.businesses[index].id,
+                                category: bizState
+                                    .businesses[index].categories[0].name,
+                              )
+                            : Container(),
                       ),
                     ),
                   ],
@@ -60,6 +70,7 @@ class SingleBusinessItem extends StatelessWidget {
   final String phoneNumber;
   final bool isFirst;
   final String id;
+  final String category;
 
   SingleBusinessItem({
     this.imageLink,
@@ -68,6 +79,7 @@ class SingleBusinessItem extends StatelessWidget {
     this.phoneNumber,
     this.address,
     this.id,
+    this.category,
   });
 
   @override
@@ -77,7 +89,7 @@ class SingleBusinessItem extends StatelessWidget {
         Navigator.pushNamed(
           context,
           "/business_detail",
-          arguments: [id],
+          arguments: [id, category],
         );
       },
       child: Card(

@@ -18,6 +18,7 @@ class EventsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverToBoxAdapter(
       child: Container(
+        padding: EdgeInsets.only(bottom: 10),
         decoration: BoxDecoration(color: Colors.white),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -89,9 +90,10 @@ class EventsSection extends StatelessWidget {
       itemCount: events.length,
       itemBuilder: (context, index) {
         return EventItem(
-            buildContext: context,
-            event: events[index],
-            globalNavigator: globalNavigator);
+          buildContext: context,
+          event: events[index],
+          globalNavigator: globalNavigator,
+        );
       },
     );
   }

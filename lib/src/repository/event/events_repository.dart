@@ -9,23 +9,22 @@ class EventsRepository {
 
   EventsRepository({@required this.client});
 
-  Future<List<Events>> getEvents(
-      int limit, String sort, String filterDate) async {
-    String dateTime = DateTime.now().toString();
+  Future<List<Events>> getEvents(int page, int perPage) async {
+    String today = DateTime.now().toString();
     final result = await client.query(
       QueryOptions(
-        document: gql(GET_ALL_EVENTS),
+        document: gql(GET_EVENTS),
         variables: {
-          "limit": limit,
-          "filterDate": filterDate,
-          "now": dateTime.split(" ")[0],
+          "page": page,
+          "perPage": perPage,
+          "today": today.split(" ")[0],
         },
       ),
     );
     if (result.hasException) {
       throw result.exception;
     }
-    final data = result.data['eventMany'] as List;
+    final data = result.data['eventPagination']["items"] as List;
     return data.map((e) => Events.fromJson(e)).toList();
   }
 

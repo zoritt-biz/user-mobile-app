@@ -61,10 +61,10 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> load() async {
-    context.read<EventsBloc>().getEvents(10, "CREATEDAT_DESC",
-        "${dateTime.year}-${dateTime.month}-${dateTime.day}");
-    context.read<PostBloc>().getPosts(10, "CREATEDAT_DESC",
-        "${dateTime.year}-${dateTime.month}-${dateTime.day}", 0);
+    context.read<EventsBloc>().getEvents(1, 10);
+    context
+        .read<PostBloc>()
+        .getPosts(1, 10, "${dateTime.year}-${dateTime.month}-${dateTime.day}");
     context.read<SponsoredBloc>().getSponsored(5);
     context.read<HomeBloc>().getImages();
   }

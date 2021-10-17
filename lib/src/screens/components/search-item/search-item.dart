@@ -102,23 +102,39 @@ class _SearchItemState extends State<SearchItem> {
                         )
                     ],
                   ),
-                  SizedBox(
-                    height: 15,
-                  ),
+                  SizedBox(height: 15),
                   Text(
                     widget.business.location,
                     style: TextStyle(fontSize: 15),
                   ),
-                  SizedBox(
-                    height: 5,
-                  ),
+                  SizedBox(height: 5),
                   Text(
-                    widget.business.phoneNumber[0],
+                    widget.business.phoneNumbers[0],
                     style: TextStyle(fontSize: 15),
                   ),
-                  SizedBox(
-                    height: 5,
-                  ),
+                  SizedBox(height: 5),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            "More",
+                            style: TextStyle(color: Colors.black),
+                          ),
+                          Icon(Icons.arrow_right, color: Colors.black, size: 20)
+                        ],
+                      ),
+                      onPressed: () {
+                        Navigator.pushNamed(
+                          widget.globalNavigator,
+                          "/business_detail",
+                          arguments: [widget.business.id],
+                        );
+                      },
+                    ),
+                  )
                 ],
               ),
             ),

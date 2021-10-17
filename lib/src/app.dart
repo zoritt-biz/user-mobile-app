@@ -26,7 +26,7 @@ class _ZorittAppState extends State<ZorittApp> {
   PermissionStatus _permissionGranted;
 
   final UserRepository userRepository = UserRepository(
-    client: client(),
+    client: Client().connect,
     firebaseStorage: FirebaseStorage.instance,
   );
 
@@ -34,23 +34,29 @@ class _ZorittAppState extends State<ZorittApp> {
       AuthenticationRepository(
     firebaseAuth: FirebaseAuth.instance,
     userRepository: UserRepository(
-      client: client(),
+      client: Client().connect,
       firebaseStorage: FirebaseStorage.instance,
     ),
   );
 
-  final EventsRepository eventsRepository = EventsRepository(client: client());
+  final EventsRepository eventsRepository = EventsRepository(
+    client: Client().connect,
+  );
 
-  final HomeRepository homeRepository = HomeRepository(client: client());
+  final HomeRepository homeRepository = HomeRepository(
+    client: Client().connect,
+  );
 
-  final PostRepository postRepository = PostRepository(client: client());
+  final PostRepository postRepository = PostRepository(
+    client: Client().connect,
+  );
 
   final CategoryRepository categoryRepository = CategoryRepository(
-    client: client(),
+    client: Client().connect,
   );
 
   final BusinessRepository businessRepository = BusinessRepository(
-    client: client(),
+    client: Client().connect,
   );
 
   @override
@@ -103,14 +109,11 @@ class _ZorittAppState extends State<ZorittApp> {
             lazy: false,
           ),
           BlocProvider<BusinessBloc>(
-            create: (context) => BusinessBloc(
-              businessRepository: businessRepository,
-            ),
+            create: (context) =>
+                BusinessBloc(businessRepository: businessRepository),
           ),
           BlocProvider<UserBloc>(
-            create: (context) => UserBloc(
-              userRepository: userRepository,
-            ),
+            create: (context) => UserBloc(userRepository: userRepository),
           ),
         ],
         child: AppTheme(),

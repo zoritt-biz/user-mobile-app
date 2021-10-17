@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/business/bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/navigation/bloc.dart';
+import 'package:zoritt_mobile_app_user/src/models/filter.dart';
 
 class Subcategory extends StatelessWidget {
   static const String pathName = "/subcategories";
@@ -18,12 +19,14 @@ class Subcategory extends StatelessWidget {
         itemBuilder: (context, index) {
           return ListTile(
             onTap: () {
-              context.read<BusinessBloc>().searchBusinessesByCategory(
-                    subCategories[index],
-                    0,
-                    50,
+              context.read<BusinessBloc>().filterBusinesses(
+                    new Filter(category: [subCategories[index]]),
+                    1,
+                    100,
                   );
-              context.read<NavigationBloc>().navigateToSearch();
+              context
+                  .read<NavigationBloc>()
+                  .navigateToSearch(subCategories[index]);
             },
             title: Text(
               subCategories[index],

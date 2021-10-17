@@ -23,9 +23,9 @@ class EventItem extends StatelessWidget {
           showEventDialog(context);
         },
         child: Card(
-          elevation: 3,
+          elevation: 5,
           clipBehavior: Clip.hardEdge,
-          shadowColor: Colors.white24,
+          shadowColor: Colors.white30,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),

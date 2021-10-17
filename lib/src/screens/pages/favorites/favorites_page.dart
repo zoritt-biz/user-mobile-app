@@ -137,7 +137,7 @@ class _FavoriteSearchResultSearchResultState
                         height: 5,
                       ),
                       Text(
-                        widget.business.phoneNumber[0],
+                        widget.business.phoneNumbers[0],
                         style: TextStyle(fontSize: 15),
                       ),
                       SizedBox(

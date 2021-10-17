@@ -33,10 +33,11 @@ class HomeSliverAppBar extends StatelessWidget {
                       ClipRRect(child: Image.network(item, fit: BoxFit.fill)))
                   .toList(),
               options: CarouselOptions(
-                  autoPlayInterval: Duration(seconds: 10),
-                  autoPlay: images.length > 0 ? true : false,
-                  viewportFraction: 1,
-                  height: double.infinity),
+                autoPlayInterval: Duration(seconds: 10),
+                autoPlay: images.length > 0 ? true : false,
+                viewportFraction: 1,
+                height: double.infinity,
+              ),
             ),
             Container(
               decoration: BoxDecoration(
@@ -59,7 +60,9 @@ class HomeSliverAppBar extends StatelessWidget {
             autofocus: false,
             readOnly: true,
             onTap: () {
-              globalNavigator.read<NavigationBloc>().navigateToSearchDelegate();
+              globalNavigator
+                  .read<NavigationBloc>()
+                  .navigateToSearchDelegate("");
             },
             decoration: InputDecoration(
               contentPadding: EdgeInsets.zero,

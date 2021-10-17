@@ -15,6 +15,7 @@ class PostsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverToBoxAdapter(
       child: Container(
+        padding: EdgeInsets.only(bottom: 10),
         decoration: BoxDecoration(color: Colors.white),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -57,6 +58,7 @@ class PostsSection extends StatelessWidget {
                       );
                     }
                   } else {
+                    print(state);
                     return Padding(
                       padding: EdgeInsets.only(left: 10, right: 10),
                       child: Row(

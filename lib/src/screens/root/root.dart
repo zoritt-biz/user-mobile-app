@@ -74,6 +74,8 @@ class _HomePageState extends State<HomePage> {
       listener: (context, state) {
         if (state is NavigatedToSearchDelegate || state is NavigatedToSearch) {
           setCurrentIndex(TabItem.search);
+          Navigator.pushNamed(
+              tabNavigatorKeys[TabItem.search.index].currentContext, "/");
         }
       },
       child: WillPopScope(

@@ -29,14 +29,19 @@ class HomeNavigator extends TabNavigator {
 
   HomeNavigator({this.navigatorKey, this.globalNavigator});
 
-  DateTime dateTime = DateTime.now().subtract(Duration(days: 8));
+  DateTime dateTime = DateTime.now().subtract(Duration(days: 5));
 
   Map<String, CustomWidgetBuilder> _routeBuilder(BuildContext context) {
     return {
       HomeNavigatorRoutes.root: (ctx, _) => Home(
             globalNavigator: globalNavigator,
           ),
-      HomeNavigatorRoutes.categories: (ctx, _) => CategoriesPage(),
+      HomeNavigatorRoutes.categories: (ctx, _) => BlocProvider<CategoryBloc>(
+            create: (context) => CategoryBloc(
+              categoryRepository: context.read<CategoryRepository>(),
+            )..getCategories(),
+            child: CategoriesPage(),
+          ),
       HomeNavigatorRoutes.subcategories: (ctx, setting) {
         List<dynamic> arguments = setting.arguments as List;
         return Subcategory(arguments[0]);
@@ -64,26 +69,15 @@ class HomeNavigator extends TabNavigator {
                 create: (context) =>
                     HomeBloc(context.read<HomeRepository>())..getImages(),
               ),
-              BlocProvider<CategoryBloc>(
-                create: (context) => CategoryBloc(
-                  categoryRepository: context.read<CategoryRepository>(),
-                )..getCategories(),
-              ),
               BlocProvider<EventsBloc>(
                 create: (context) => EventsBloc(
                   eventRepository: context.read<EventsRepository>(),
-                )..getEvents(10, "CREATEDAT_DESC",
-                    "${dateTime.year}/${dateTime.month}/${dateTime.day}"),
+                )..getEvents(1, 10),
               ),
               BlocProvider<PostBloc>(
                 create: (context) => PostBloc(
                   postRepository: context.read<PostRepository>(),
-                )..getPosts(
-                    10,
-                    "CREATEDAT_DESC",
-                    "${dateTime.year}/${dateTime.month}/${dateTime.day}",
-                    0,
-                  ),
+                )..getPosts(1, 10, dateTime.toIso8601String()),
               ),
               BlocProvider<SponsoredBloc>(
                 create: (context) => SponsoredBloc(

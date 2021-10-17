@@ -7,6 +7,7 @@ import 'package:zoritt_mobile_app_user/src/models/user.dart';
 import 'package:zoritt_mobile_app_user/src/repository/repository.dart';
 
 part 'auth_event.dart';
+
 part 'auth_state.dart';
 
 enum AuthenticationStatus { authenticated, unauthenticated, unknown }

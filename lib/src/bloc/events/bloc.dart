@@ -9,11 +9,10 @@ class EventsBloc extends Cubit<EventsState> {
 
   EventsBloc({@required this.eventRepository}) : super(EventsUnknown());
 
-  Future<void> getEvents(int limit, String sort, String filterDate) async {
+  Future<void> getEvents(int page, int perPage) async {
     emit(EventsLoading());
     try {
-      List<Events> events =
-          await eventRepository.getEvents(limit, sort, filterDate);
+      List<Events> events = await eventRepository.getEvents(page, perPage);
       emit(EventsLoadSuccessful(events: events));
     } catch (e) {
       emit(EventsLoadFailure(e.toString()));

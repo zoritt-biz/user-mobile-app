@@ -4,19 +4,25 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:location/location.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/navigation/bloc.dart';
+import 'package:zoritt_mobile_app_user/src/models/filter.dart';
 import 'package:zoritt_mobile_app_user/src/models/models.dart';
+import 'package:zoritt_mobile_app_user/src/screens/components/loading/shimmers.dart';
+import 'package:zoritt_mobile_app_user/src/screens/components/search-filter/search-filter.dart';
 import 'package:zoritt_mobile_app_user/src/screens/components/search-item/search-item.dart';
 
-import 'business-search.dart';
-import 'search-filter.dart';
+import 'business-search-delegate.dart';
 
 class SearchPage extends StatefulWidget {
   final BuildContext globalNavigator;
+  final BuildContext localBuildContext;
 
-  const SearchPage({Key key, this.globalNavigator}) : super(key: key);
+  const SearchPage({
+    Key key,
+    this.globalNavigator,
+    this.localBuildContext,
+  }) : super(key: key);
 
   @override
   _SearchPageState createState() => _SearchPageState();
@@ -24,26 +30,12 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   String query = "";
-  bool openNow = false;
-  bool nearby = false;
-  double km = 5;
 
   Location location = new Location();
 
   bool _serviceEnabled;
   PermissionStatus _permissionGranted;
   LocationData _locationData;
-
-  setQuery(String q) {
-    setState(() {
-      query = q;
-    });
-  }
-
-  clearFilter() {
-    openNow = false;
-    nearby = false;
-  }
 
   @override
   void initState() {
@@ -59,7 +51,6 @@ class _SearchPageState extends State<SearchPage> {
         return;
       }
     }
-
     _permissionGranted = await location.hasPermission();
     if (_permissionGranted == PermissionStatus.denied) {
       _permissionGranted = await location.requestPermission();
@@ -67,118 +58,12 @@ class _SearchPageState extends State<SearchPage> {
         return;
       }
     }
-
     _locationData = await location.getLocation();
   }
 
-  setFilterState() async {
-    setState(() {
-      openNow = !openNow;
-    });
+  setFilter(Filter filter) async {
     locationPermission();
-    if (openNow && nearby) {
-      context.read<BusinessBloc>().searchBusinessesByFilterAndLocation(
-            query: query,
-            skip: 0,
-            limit: 100,
-            km: km,
-            lng: _locationData.longitude,
-            lat: _locationData.latitude,
-          );
-    } else if (openNow) {
-      context.read<BusinessBloc>().searchBusinessesByFilter(
-            query: query,
-            skip: 0,
-            limit: 100,
-          );
-    } else if (nearby) {
-      context.read<BusinessBloc>().searchBusinessesByLocation(
-            query: query,
-            skip: 0,
-            limit: 100,
-            km: km,
-            lng: _locationData.longitude,
-            lat: _locationData.latitude,
-          );
-    } else {
-      context.read<BusinessBloc>().searchBusinesses(query, 0, 100);
-    }
-  }
-
-  openLocationDelegate() async {
-    setState(() {
-      nearby = !nearby;
-    });
-    locationPermission();
-    if (openNow && nearby) {
-      context.read<BusinessBloc>().searchBusinessesByFilterAndLocation(
-            query: query,
-            skip: 0,
-            limit: 100,
-            km: km,
-            lng: _locationData.longitude,
-            lat: _locationData.latitude,
-          );
-    } else if (openNow) {
-      context.read<BusinessBloc>().searchBusinessesByFilter(
-            query: query,
-            skip: 0,
-            limit: 100,
-          );
-    } else if (nearby) {
-      context.read<BusinessBloc>().searchBusinessesByLocation(
-            query: query,
-            skip: 0,
-            limit: 100,
-            km: km,
-            lng: _locationData.longitude,
-            lat: _locationData.latitude,
-          );
-    } else {
-      context.read<BusinessBloc>().searchBusinesses(query, 0, 100);
-    }
-    // showSearch(
-    //   delegate: LocationSearch(buildContext: context, setQuery: setQuery),
-    //   context: context,
-    // );
-  }
-
-  nearByKmChange(double newKm) async {
-    setState(() {
-      km = newKm;
-    });
-    locationPermission();
-    if (openNow && nearby) {
-      context.read<BusinessBloc>().searchBusinessesByFilterAndLocation(
-            query: query,
-            skip: 0,
-            limit: 100,
-            km: km,
-            lng: _locationData.longitude,
-            lat: _locationData.latitude,
-          );
-    } else if (openNow) {
-      context.read<BusinessBloc>().searchBusinessesByFilter(
-            query: query,
-            skip: 0,
-            limit: 100,
-          );
-    } else if (nearby) {
-      context.read<BusinessBloc>().searchBusinessesByLocation(
-            query: query,
-            skip: 0,
-            limit: 100,
-            km: km,
-            lng: _locationData.longitude,
-            lat: _locationData.latitude,
-          );
-    } else {
-      context.read<BusinessBloc>().searchBusinesses(query, 0, 100);
-    }
-    // showSearch(
-    //   delegate: LocationSearch(buildContext: context, setQuery: setQuery),
-    //   context: context,
-    // );
+    context.read<BusinessBloc>().filterBusinesses(filter, 1, 100);
   }
 
   @override
@@ -187,13 +72,17 @@ class _SearchPageState extends State<SearchPage> {
       listener: (navCtx, state) {
         if (state is NavigatedToSearchDelegate) {
           showSearch(
-            delegate: BusinessSearch(
+            delegate: BusinessSearchDelegate(
               buildContext: context,
-              setQuery: setQuery,
-              clearFilter: clearFilter,
+              setFilter: setFilter,
             ),
             context: context,
           );
+        }
+        if (state is NavigationSuccess) {
+          setState(() {
+            query = state.query;
+          });
         }
       },
       child: Scaffold(
@@ -203,10 +92,9 @@ class _SearchPageState extends State<SearchPage> {
             IconButton(
               onPressed: () {
                 showSearch(
-                  delegate: BusinessSearch(
+                  delegate: BusinessSearchDelegate(
                     buildContext: context,
-                    setQuery: setQuery,
-                    clearFilter: clearFilter,
+                    setFilter: setFilter,
                   ),
                   context: context,
                 );
@@ -221,7 +109,7 @@ class _SearchPageState extends State<SearchPage> {
             if (bizState is BusinessLoadSuccess) {
               return body(context, bizState.business);
             } else if (bizState is BusinessLoading) {
-              return shimmer(context);
+              return SearchShimmer();
             } else if (bizState is BusinessOperationFailure) {
               return Center(child: Text("Error happened!"));
             } else {
@@ -235,10 +123,9 @@ class _SearchPageState extends State<SearchPage> {
           listener: (bizCtx, bizState) {
             if (bizState is BusinessUnknown) {
               showSearch(
-                delegate: BusinessSearch(
+                delegate: BusinessSearchDelegate(
                   buildContext: context,
-                  setQuery: setQuery,
-                  clearFilter: clearFilter,
+                  setFilter: setFilter,
                 ),
                 context: context,
               );
@@ -265,51 +152,87 @@ class _SearchPageState extends State<SearchPage> {
         newBusinesses.insert(0, temp);
       }
     }
+
     return ListView(
       children: [
-        SearchFilter(
-          openNow: openNow,
-          setFilterState: setFilterState,
-          query: query,
-          nearby: nearby,
-          openSearchDelegate: openLocationDelegate,
+        Container(
+          padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pushNamed(
+                    context,
+                    "/categories",
+                  );
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      "Categories",
+                      style: TextStyle(color: Colors.black, fontSize: 20),
+                    ),
+                    Icon(
+                      Icons.arrow_right_rounded,
+                      size: 30,
+                      color: Colors.black,
+                    ),
+                  ],
+                ),
+              ),
+              IconButton(
+                icon: Icon(Icons.filter_list_rounded, size: 40),
+                onPressed: () async {
+                  await showDialog(
+                    useSafeArea: true,
+                    context: context,
+                    barrierColor: Colors.black.withOpacity(0.8),
+                    barrierDismissible: true,
+                    builder: (BuildContext context) => SearchFilterDialog(
+                        setFilter: setFilter,
+                        query: query,
+                        locationData: _locationData),
+                  );
+                },
+              )
+            ],
+          ),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: Divider(
-            color: Colors.grey,
-          ),
+          child: Divider(color: Colors.grey),
         ),
-        SizedBox(
-          height: 10,
-        ),
-        if (nearby)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: Text("${km.floor()} KM"),
-          ),
-        if (nearby)
-          Slider(
-            value: km,
-            onChanged: (newKm) {
-              nearByKmChange(newKm);
-            },
-            min: 5,
-            max: 20,
-            divisions: 5,
-            label: "$km",
-          ),
+        SizedBox(height: 10),
         if (newBusinesses.length > 0)
           Padding(
-            padding: const EdgeInsets.only(left: 15, bottom: 10),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Results',
-                style: TextStyle(fontWeight: FontWeight.w400, fontSize: 20),
-              ),
+            padding: const EdgeInsets.only(left: 15),
+            child: Row(
+              children: [
+                Text(
+                  "Results",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 25,
+                  ),
+                ),
+                SizedBox(width: 20),
+                Text(
+                  query,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontStyle: FontStyle.italic,
+                    fontSize: 16,
+                  ),
+                )
+              ],
             ),
           ),
+        SizedBox(height: 10),
         if (newBusinesses.length > 0)
           ListView.builder(
             padding: EdgeInsets.symmetric(horizontal: 8),
@@ -319,10 +242,16 @@ class _SearchPageState extends State<SearchPage> {
                   Navigator.pushNamed(
                     widget.globalNavigator,
                     "/business_detail",
-                    arguments: [newBusinesses[index].id],
+                    arguments: [
+                      newBusinesses[index].id,
+                      newBusinesses[index].categories[0].name,
+                    ],
                   );
                 },
-                child: SearchItem(business: newBusinesses[index]),
+                child: SearchItem(
+                  business: newBusinesses[index],
+                  globalNavigator: widget.globalNavigator,
+                ),
               );
             },
             itemCount: newBusinesses.length,
@@ -331,155 +260,6 @@ class _SearchPageState extends State<SearchPage> {
           ),
         if (newBusinesses.length == 0) Center(child: Text("No results found!"))
       ],
-    );
-  }
-
-  Widget shimmer(BuildContext context) {
-    return ListView(
-      children: [
-        searchFilterShimmer(),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: Divider(
-            color: Colors.grey,
-          ),
-        ),
-        SizedBox(
-          height: 10,
-        ),
-        searchResultShimmer(),
-        searchResultShimmer()
-      ],
-    );
-  }
-
-  Widget searchFilterShimmer() {
-    return Padding(
-      padding: const EdgeInsets.all(10),
-      child: Shimmer.fromColors(
-        baseColor: Colors.grey[300],
-        highlightColor: Colors.white,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Container(
-              padding: EdgeInsets.all(8),
-              child: Icon(
-                Icons.sort_outlined,
-              ),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: Colors.grey),
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.all(8),
-              height: 40,
-              width: 40,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(50),
-                border: Border.all(color: Colors.grey),
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.all(5),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(50),
-                border: Border.all(color: Colors.grey),
-              ),
-              width: 40,
-              height: 40,
-            ),
-            Container(
-              padding: EdgeInsets.all(8),
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(50),
-                border: Border.all(color: Colors.grey),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget searchResultShimmer() {
-    return Container(
-      height: 150,
-      padding: const EdgeInsets.only(left: 10, right: 10, bottom: 5),
-      child: Shimmer.fromColors(
-        baseColor: Colors.grey[200],
-        highlightColor: Colors.grey[100],
-        child: Padding(
-          padding: const EdgeInsets.all(10),
-          child: Row(
-            children: [
-              Expanded(
-                child: Container(
-                  height: 150,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: Colors.grey[300],
-                  ),
-                ),
-              ),
-              Expanded(
-                flex: 2,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 20, right: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-                                color: Colors.grey[300],
-                              ),
-                              width: 70,
-                              height: 25,
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: Colors.grey[300],
-                          ),
-                          height: 20,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      // Expanded(child:
-                      Padding(
-                        padding: EdgeInsets.only(right: 50),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: Colors.grey[300],
-                          ),
-                          height: 20,
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

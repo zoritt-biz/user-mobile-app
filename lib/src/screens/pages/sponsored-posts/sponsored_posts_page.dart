@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/sponsored_business/sponsored_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/screens/components/home-sliver/sponsored-posts-section.dart';
+import 'package:zoritt_mobile_app_user/src/screens/components/sponsor-item/sponsor-item.dart';
 
 class SponsoredPostsPage extends StatelessWidget {
   final BuildContext globalNavigator;

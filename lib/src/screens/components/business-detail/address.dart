@@ -36,14 +36,17 @@ class BusinessAddress extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                businessName,
-                style: TextStyle(
-                    // color: isShrink ? Colors.black : Colors.white,
-                    fontSize: 28,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: "Helvetica"),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 15),
+                child: Text(
+                  businessName,
+                  style: TextStyle(
+                      // color: isShrink ? Colors.black : Colors.white,
+                      fontSize: 25,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: "Helvetica"),
+                ),
               ),
               if (slogan != "" && slogan != null)
                 Padding(
