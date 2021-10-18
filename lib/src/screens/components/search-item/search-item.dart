@@ -95,9 +95,10 @@ class _SearchItemState extends State<SearchItem> {
                           child: Text(
                             "${widget.business.distance.roundToDouble()}km",
                             style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 12,
-                                fontStyle: FontStyle.italic),
+                              fontWeight: FontWeight.w400,
+                              fontSize: 12,
+                              fontStyle: FontStyle.italic,
+                            ),
                           ),
                         )
                     ],
@@ -130,7 +131,10 @@ class _SearchItemState extends State<SearchItem> {
                         Navigator.pushNamed(
                           widget.globalNavigator,
                           "/business_detail",
-                          arguments: [widget.business.id],
+                          arguments: [
+                            widget.business.id,
+                            widget.business.categories[0].name,
+                          ],
                         );
                       },
                     ),

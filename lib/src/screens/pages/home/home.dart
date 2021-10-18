@@ -30,7 +30,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  DateTime dateTime = DateTime.now().subtract(Duration(days: 8));
+  DateTime dateTime = DateTime.now().subtract(Duration(days: 5));
   ScrollController _scrollController;
   bool lastStatus = true;
 
@@ -64,7 +64,7 @@ class _HomeState extends State<Home> {
     context.read<EventsBloc>().getEvents(1, 10);
     context
         .read<PostBloc>()
-        .getPosts(1, 10, "${dateTime.year}-${dateTime.month}-${dateTime.day}");
+        .getPosts(1, 10, dateTime.toIso8601String());
     context.read<SponsoredBloc>().getSponsored(5);
     context.read<HomeBloc>().getImages();
   }

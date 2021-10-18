@@ -101,7 +101,7 @@ class BusinessRepository {
           "page": page,
           "perPage": perPage
         },
-        fetchPolicy: FetchPolicy.networkOnly,
+        fetchPolicy: FetchPolicy.cacheAndNetwork,
       ),
     );
     if (results.hasException) {

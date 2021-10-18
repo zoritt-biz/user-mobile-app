@@ -1,8 +1,8 @@
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 final HttpLink _httpLink = HttpLink(
-  'http://192.168.1.107:8080/',
-  // 'https://zoritt-new-api.herokuapp.com/',
+  // 'http://192.168.1.107:8080',
+  'https://zoritt-new-api.herokuapp.com',
 );
 
 final AuthLink authLink = AuthLink(

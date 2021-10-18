@@ -20,8 +20,8 @@ class _HomePageState extends State<HomePage> {
   final tabNavigatorKeys = [
     GlobalKey<NavigatorState>(),
     GlobalKey<NavigatorState>(),
-    GlobalKey<NavigatorState>(),
-    GlobalKey<NavigatorState>(),
+    // GlobalKey<NavigatorState>(),
+    // GlobalKey<NavigatorState>(),
   ];
 
   List<TabNavigator> tabNavigators;
@@ -39,14 +39,14 @@ class _HomePageState extends State<HomePage> {
         navigatorKey: tabNavigatorKeys[TabItem.search.index],
         globalNavigator: _globalNavigatorContext,
       ),
-      FavoritesNavigator(
-        navigatorKey: tabNavigatorKeys[TabItem.favorites.index],
-        globalNavigator: _globalNavigatorContext,
-      ),
-      ProfileNavigator(
-        navigatorKey: tabNavigatorKeys[TabItem.profile.index],
-        globalNavigator: _globalNavigatorContext,
-      ),
+      // FavoritesNavigator(
+      //   navigatorKey: tabNavigatorKeys[TabItem.favorites.index],
+      //   globalNavigator: _globalNavigatorContext,
+      // ),
+      // ProfileNavigator(
+      //   navigatorKey: tabNavigatorKeys[TabItem.profile.index],
+      //   globalNavigator: _globalNavigatorContext,
+      // ),
     ];
     super.initState();
   }
@@ -74,8 +74,6 @@ class _HomePageState extends State<HomePage> {
       listener: (context, state) {
         if (state is NavigatedToSearchDelegate || state is NavigatedToSearch) {
           setCurrentIndex(TabItem.search);
-          Navigator.pushNamed(
-              tabNavigatorKeys[TabItem.search.index].currentContext, "/");
         }
       },
       child: WillPopScope(
@@ -98,8 +96,8 @@ class _HomePageState extends State<HomePage> {
             children: [
               _buildOffstageNavigator(TabItem.home, true),
               _buildOffstageNavigator(TabItem.search, true),
-              _buildOffstageNavigator(TabItem.favorites, false),
-              _buildOffstageNavigator(TabItem.profile, true),
+              // _buildOffstageNavigator(TabItem.favorites, false),
+              // _buildOffstageNavigator(TabItem.profile, true),
             ],
           ),
           bottomNavigationBar: BottomNavigation(

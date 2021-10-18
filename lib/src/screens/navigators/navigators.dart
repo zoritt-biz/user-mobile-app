@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-export 'favorites.dart';
 export 'home.dart';
-export 'profile.dart';
 export 'search.dart';
+// export 'favorites.dart';
+// export 'profile.dart';
 
 abstract class TabNavigator extends StatelessWidget {}
 

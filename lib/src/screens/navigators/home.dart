@@ -44,7 +44,7 @@ class HomeNavigator extends TabNavigator {
           ),
       HomeNavigatorRoutes.subcategories: (ctx, setting) {
         List<dynamic> arguments = setting.arguments as List;
-        return Subcategory(arguments[0]);
+        return Subcategory(arguments[0], navigatorKey.currentContext);
       },
       HomeNavigatorRoutes.events: (ctx, _) =>
           EventsPage(globalNavigator: globalNavigator),

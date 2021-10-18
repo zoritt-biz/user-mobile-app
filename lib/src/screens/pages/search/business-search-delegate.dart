@@ -9,10 +9,15 @@ import 'package:zoritt_mobile_app_user/src/repository/business/business_reposito
 class BusinessSearchDelegate extends SearchDelegate<String> {
   final BuildContext buildContext;
   final Function setFilter;
+  final Function setQuery;
   FilteredBusinessListBloc _filteredBusinessListBloc;
   BusinessListBloc _businessListBloc;
 
-  BusinessSearchDelegate({this.buildContext, this.setFilter}) {
+  BusinessSearchDelegate({
+    this.buildContext,
+    this.setFilter,
+    this.setQuery,
+  }) {
     _businessListBloc = BusinessListBloc(
       buildContext.read<BusinessRepository>(),
     )..getBusinessList();
@@ -29,7 +34,6 @@ class BusinessSearchDelegate extends SearchDelegate<String> {
         icon: Icon(Icons.clear),
         onPressed: () {
           close(context, query);
-          query = "";
         },
       )
     ];
@@ -68,13 +72,13 @@ class BusinessSearchDelegate extends SearchDelegate<String> {
     return BlocProvider<FilteredBusinessListBloc>.value(
       value: _filteredBusinessListBloc,
       child: BlocBuilder<FilteredBusinessListBloc, FilteredBusinessListState>(
-        builder: (context, state) {
+        builder: (filterCtx, state) {
           if (state is FilteredBusinessListSuccessful) {
             if (state.businessList != null && state.businessList.isNotEmpty) {
               return Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 child: ListView.separated(
-                  itemBuilder: (context, index) {
+                  itemBuilder: (ctx, index) {
                     return ListTile(
                       title: Text(
                         state.businessList[index].autocompleteTerm,
@@ -82,12 +86,13 @@ class BusinessSearchDelegate extends SearchDelegate<String> {
                       ),
                       onTap: () {
                         query = state.businessList[index].autocompleteTerm;
-                        setFilter(new Filter(query: query), 1, 100);
+                        setFilter(new Filter(query: query));
+                        setQuery(query);
                         close(context, query);
                       },
                     );
                   },
-                  separatorBuilder: (context, _) {
+                  separatorBuilder: (ctx, _) {
                     return Divider(
                       thickness: 1,
                     );

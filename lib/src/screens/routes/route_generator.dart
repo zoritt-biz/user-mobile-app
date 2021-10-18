@@ -7,9 +7,9 @@ import 'package:zoritt_mobile_app_user/src/repository/repository.dart';
 import 'package:zoritt_mobile_app_user/src/screens/components/business-detail/location-page.dart';
 import 'package:zoritt_mobile_app_user/src/screens/components/menu/business_more_info.dart';
 import 'package:zoritt_mobile_app_user/src/screens/components/menu/menu_info.dart';
-import 'package:zoritt_mobile_app_user/src/screens/pages/auth/reset.dart';
-import 'package:zoritt_mobile_app_user/src/screens/pages/auth/sign_in.dart';
-import 'package:zoritt_mobile_app_user/src/screens/pages/auth/sign_up.dart';
+// import 'package:zoritt_mobile_app_user/src/screens/pages/auth/reset.dart';
+// import 'package:zoritt_mobile_app_user/src/screens/pages/auth/sign_in.dart';
+// import 'package:zoritt_mobile_app_user/src/screens/pages/auth/sign_up.dart';
 import 'package:zoritt_mobile_app_user/src/screens/pages/business-detail/business-detail.dart';
 import 'package:zoritt_mobile_app_user/src/screens/pages/posts/posts_page.dart';
 
@@ -22,30 +22,30 @@ class RouteGenerator {
     switch (settings.name) {
       case HomePage.pathName:
         return MaterialPageRoute(builder: (_) => HomePage());
-      case SignIn.pathName:
-        return MaterialPageRoute(
-          builder: (_) => BlocProvider<LoginBloc>(
-            create: (context) => LoginBloc(
-              authenticationRepository:
-                  context.read<AuthenticationRepository>(),
-              authenticationBloc: context.read<AuthenticationBloc>(),
-            ),
-            child: SignIn(),
-          ),
-        );
-      case SignUp.pathName:
-        return MaterialPageRoute(
-          builder: (_) => BlocProvider<SignUpBloc>(
-            create: (context) => SignUpBloc(
-              authenticationRepository:
-                  context.read<AuthenticationRepository>(),
-              authenticationBloc: context.read<AuthenticationBloc>(),
-            ),
-            child: SignUp(),
-          ),
-        );
-      case ResetPassword.pathName:
-        return MaterialPageRoute(builder: (_) => ResetPassword());
+      // case SignIn.pathName:
+      //   return MaterialPageRoute(
+      //     builder: (_) => BlocProvider<LoginBloc>(
+      //       create: (context) => LoginBloc(
+      //         authenticationRepository:
+      //             context.read<AuthenticationRepository>(),
+      //         authenticationBloc: context.read<AuthenticationBloc>(),
+      //       ),
+      //       child: SignIn(),
+      //     ),
+      //   );
+      // case SignUp.pathName:
+      //   return MaterialPageRoute(
+      //     builder: (_) => BlocProvider<SignUpBloc>(
+      //       create: (context) => SignUpBloc(
+      //         authenticationRepository:
+      //             context.read<AuthenticationRepository>(),
+      //         authenticationBloc: context.read<AuthenticationBloc>(),
+      //       ),
+      //       child: SignUp(),
+      //     ),
+      //   );
+      // case ResetPassword.pathName:
+      //   return MaterialPageRoute(builder: (_) => ResetPassword());
       case LocationPage.pathName:
         return MaterialPageRoute(builder: (_) => LocationPage(arguments[0]));
       case MenuDisplay.pathName:
@@ -71,7 +71,7 @@ class RouteGenerator {
                 businessRepository: ctx.read<BusinessRepository>(),
               )..getPopUp(arguments[1]),
             )
-          ], child: BusinessDetail(id: arguments[0])),
+          ], child: BusinessDetail(id: arguments[0]),),
         );
       case PostsPage.pathName:
         return MaterialPageRoute(

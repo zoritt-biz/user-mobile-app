@@ -37,14 +37,14 @@ class CategorySection extends StatelessWidget {
                     context.read<BusinessBloc>().filterBusinesses(
                           new Filter(
                             category: [
-                              HOME_CATEGORY_LIST[index]["name"].toString()
+                              HOME_CATEGORY_LIST[index]["search"].toString()
                             ],
                           ),
                           1,
                           100,
                         );
                     context.read<NavigationBloc>().navigateToSearch(
-                          HOME_CATEGORY_LIST[index]["name"].toString(),
+                          HOME_CATEGORY_LIST[index]["search"].toString(),
                         );
                   }
                 },

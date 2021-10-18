@@ -45,7 +45,7 @@ class BottomNavigation extends StatelessWidget {
         onPressed: () {
           setCurrentIndex(TabItem.search);
           if (context.read<NavigationBloc>().state is NavigationUnknown) {
-            context.read<NavigationBloc>().navigateToSearchDelegate("");
+            context.read<NavigationBloc>().navigateToSearchDelegate("query");
           }
         },
         icon:
@@ -55,38 +55,30 @@ class BottomNavigation extends StatelessWidget {
             : Theme.of(context).primaryColor,
         label: "Search",
       ),
-      BottomNavigationData(
-        onPressed: () {
-          setCurrentIndex(TabItem.favorites);
-        },
-        icon: currentTab == TabItem.favorites
-            ? Icons.favorite
-            : Icons.favorite_border_rounded,
-        color: currentTab == TabItem.favorites
-            ? Theme.of(context).accentColor
-            : Theme.of(context).primaryColor,
-        label: "Favorites",
-      ),
       // BottomNavigationData(
-      //     onPressed: () {
-      //       setCurrentIndex(TabItem.messages);
-      //     },
-      //     icon: Icons.message,
-      //     color: _currentTab == TabItem.messages
-      //         ? Theme.of(context).primaryColor
-      //         : Colors.grey[600],),
-      BottomNavigationData(
-        onPressed: () {
-          setCurrentIndex(TabItem.profile);
-        },
-        icon: currentTab == TabItem.profile
-            ? Icons.account_circle
-            : Icons.account_circle_outlined,
-        color: currentTab == TabItem.profile
-            ? Theme.of(context).accentColor
-            : Theme.of(context).primaryColor,
-        label: "Profile",
-      ),
+      //   onPressed: () {
+      //     setCurrentIndex(TabItem.favorites);
+      //   },
+      //   icon: currentTab == TabItem.favorites
+      //       ? Icons.favorite
+      //       : Icons.favorite_border_rounded,
+      //   color: currentTab == TabItem.favorites
+      //       ? Theme.of(context).accentColor
+      //       : Theme.of(context).primaryColor,
+      //   label: "Favorites",
+      // ),
+      // BottomNavigationData(
+      //   onPressed: () {
+      //     setCurrentIndex(TabItem.profile);
+      //   },
+      //   icon: currentTab == TabItem.profile
+      //       ? Icons.account_circle
+      //       : Icons.account_circle_outlined,
+      //   color: currentTab == TabItem.profile
+      //       ? Theme.of(context).accentColor
+      //       : Theme.of(context).primaryColor,
+      //   label: "Profile",
+      // ),
     ];
 
     final List<Widget> bottomNavigationList = bottomNavigationData

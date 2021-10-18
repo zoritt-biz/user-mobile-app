@@ -7,8 +7,9 @@ import 'package:zoritt_mobile_app_user/src/models/filter.dart';
 class Subcategory extends StatelessWidget {
   static const String pathName = "/subcategories";
   final List<String> subCategories;
+  final BuildContext localNavigator;
 
-  const Subcategory(this.subCategories);
+  const Subcategory(this.subCategories, this.localNavigator);
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +17,7 @@ class Subcategory extends StatelessWidget {
       appBar: AppBar(title: Text("Subcategory")),
       body: ListView.builder(
         itemCount: subCategories.length,
-        itemBuilder: (context, index) {
+        itemBuilder: (ctx, index) {
           return ListTile(
             onTap: () {
               context.read<BusinessBloc>().filterBusinesses(

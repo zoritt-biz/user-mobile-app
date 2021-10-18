@@ -11,18 +11,15 @@ import 'package:zoritt_mobile_app_user/src/models/models.dart';
 import 'package:zoritt_mobile_app_user/src/screens/components/loading/shimmers.dart';
 import 'package:zoritt_mobile_app_user/src/screens/components/search-filter/search-filter.dart';
 import 'package:zoritt_mobile_app_user/src/screens/components/search-item/search-item.dart';
+import 'package:zoritt_mobile_app_user/src/screens/pages/categories/category-list.dart';
 
 import 'business-search-delegate.dart';
 
 class SearchPage extends StatefulWidget {
   final BuildContext globalNavigator;
-  final BuildContext localBuildContext;
 
-  const SearchPage({
-    Key key,
-    this.globalNavigator,
-    this.localBuildContext,
-  }) : super(key: key);
+  const SearchPage({Key key, this.globalNavigator})
+      : super(key: key);
 
   @override
   _SearchPageState createState() => _SearchPageState();
@@ -30,6 +27,7 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   String query = "";
+  String _chosenValue;
 
   Location location = new Location();
 
@@ -66,6 +64,12 @@ class _SearchPageState extends State<SearchPage> {
     context.read<BusinessBloc>().filterBusinesses(filter, 1, 100);
   }
 
+  setQuery(String q) async {
+    setState(() {
+      query = q;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<NavigationBloc, NavigationState>(
@@ -80,9 +84,10 @@ class _SearchPageState extends State<SearchPage> {
           );
         }
         if (state is NavigationSuccess) {
-          setState(() {
-            query = state.query;
-          });
+          setQuery(state.query);
+        }
+        if (state is NavigatedToSearch) {
+          setQuery(state.query);
         }
       },
       child: Scaffold(
@@ -95,6 +100,7 @@ class _SearchPageState extends State<SearchPage> {
                   delegate: BusinessSearchDelegate(
                     buildContext: context,
                     setFilter: setFilter,
+                    setQuery: setQuery,
                   ),
                   context: context,
                 );
@@ -126,6 +132,7 @@ class _SearchPageState extends State<SearchPage> {
                 delegate: BusinessSearchDelegate(
                   buildContext: context,
                   setFilter: setFilter,
+                  setQuery: setQuery,
                 ),
                 context: context,
               );
@@ -153,35 +160,71 @@ class _SearchPageState extends State<SearchPage> {
       }
     }
 
+    List<dynamic> icons = [...HOME_CATEGORY_LIST.map((e) => e["small_icon"])];
+
+    List<String> categories = [...HOME_CATEGORY_LIST.map((e) => e["name"])];
+
+    List<String> search = [...HOME_CATEGORY_LIST.map((e) => e["search"])];
+
     return ListView(
       children: [
         Container(
-          padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+          padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pushNamed(
-                    context,
-                    "/categories",
-                  );
-                },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      "Categories",
-                      style: TextStyle(color: Colors.black, fontSize: 20),
-                    ),
-                    Icon(
-                      Icons.arrow_right_rounded,
-                      size: 30,
-                      color: Colors.black,
-                    ),
-                  ],
+              Expanded(
+                child: DropdownButton<String>(
+                  focusColor: Colors.red,
+                  value: _chosenValue,
+                  elevation: 25,
+                  style: TextStyle(color: Colors.yellow),
+                  dropdownColor: Colors.grey[200],
+                  iconSize: 30,
+                  isDense: false,
+                  underline: Container(),
+                  icon: Container(),
+                  iconEnabledColor: Colors.black,
+                  items: categories.map<DropdownMenuItem<String>>(
+                    (String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: SizedBox(
+                          width: 300,
+                          height: 60,
+                          child: ListTile(
+                            dense: true,
+                            leading: Icon(icons[categories.indexOf(value)]),
+                            title: Text(
+                              value,
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 20),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ).toList(),
+                  hint: Row(
+                    children: [
+                      Text(
+                        "Categories",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      Icon(Icons.arrow_drop_down_rounded, size: 30)
+                    ],
+                  ),
+                  onChanged: (String value) {
+                    setQuery(search[categories.indexOf(value)]);
+                    setFilter(
+                      new Filter(category: [search[categories.indexOf(value)]]),
+                    );
+                  },
                 ),
               ),
               IconButton(
@@ -193,9 +236,10 @@ class _SearchPageState extends State<SearchPage> {
                     barrierColor: Colors.black.withOpacity(0.8),
                     barrierDismissible: true,
                     builder: (BuildContext context) => SearchFilterDialog(
-                        setFilter: setFilter,
-                        query: query,
-                        locationData: _locationData),
+                      setFilter: setFilter,
+                      query: query,
+                      locationData: _locationData,
+                    ),
                   );
                 },
               )
@@ -209,7 +253,7 @@ class _SearchPageState extends State<SearchPage> {
         SizedBox(height: 10),
         if (newBusinesses.length > 0)
           Padding(
-            padding: const EdgeInsets.only(left: 15),
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
             child: Row(
               children: [
                 Text(
@@ -236,7 +280,7 @@ class _SearchPageState extends State<SearchPage> {
         if (newBusinesses.length > 0)
           ListView.builder(
             padding: EdgeInsets.symmetric(horizontal: 8),
-            itemBuilder: (context, index) {
+            itemBuilder: (ctx, index) {
               return GestureDetector(
                 onTap: () {
                   Navigator.pushNamed(

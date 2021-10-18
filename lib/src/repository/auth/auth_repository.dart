@@ -1,13 +1,17 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:zoritt_mobile_app_user/src/client/mutations/auth-mutations.dart';
 import 'package:zoritt_mobile_app_user/src/models/user.dart' as user_model;
 import 'package:zoritt_mobile_app_user/src/repository/repository.dart';
 
 class AuthenticationRepository {
   final FirebaseAuth firebaseAuth;
   final UserRepository userRepository;
+  final GraphQLClient client;
 
-  AuthenticationRepository({this.firebaseAuth, this.userRepository});
+  AuthenticationRepository(
+      {@required this.client, this.firebaseAuth, this.userRepository});
 
   Stream<user_model.User> get user {
     return firebaseAuth.authStateChanges().map(
@@ -17,6 +21,24 @@ class AuthenticationRepository {
             : user_model.User(email: user.email, firebaseId: user.uid);
       },
     );
+  }
+
+  Future<String> login(String email, String password) async {
+    final result = await client.query(
+      QueryOptions(
+        document: gql(SIGN_IN),
+        variables: {
+          "email": email,
+          "password": password,
+        },
+        fetchPolicy: FetchPolicy.networkOnly,
+      ),
+    );
+    if (result.hasException) {
+      throw result.exception;
+    }
+    final data = result.data['accessToken'];
+    return data;
   }
 
   Future<user_model.User> signUp({

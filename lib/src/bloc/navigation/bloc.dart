@@ -10,19 +10,27 @@ class NavigationBloc extends Cubit<NavigationState> {
   }
 
   void navigateToSearch(String query) {
-    emit(NavigatedToSearch());
+    emit(NavigatedToSearch(query));
     emit(NavigationSuccess(query));
   }
 }
 
 abstract class NavigationState extends Equatable {
+  const NavigationState();
   @override
   List<Object> get props => [];
 }
 
 class NavigatedToSearchDelegate extends NavigationState {}
 
-class NavigatedToSearch extends NavigationState {}
+class NavigatedToSearch extends NavigationState {
+  final String query;
+
+  NavigatedToSearch(this.query);
+
+  @override
+  List<Object> get props => [query];
+}
 
 class NavigationSuccess extends NavigationState {
   final String query;
