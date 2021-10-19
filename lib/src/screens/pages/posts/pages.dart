@@ -398,29 +398,27 @@ class _BusinessInfoState extends State<BusinessInfo> {
                 onPressed: () {
                   if (context.read<AuthenticationBloc>().state.status ==
                       AuthenticationStatus.authenticated) {
-                    String userId =
-                        (context.read<UserBloc>().state.props[0] as User).id;
                     if (postState is! PostLiking &&
                         postState is! PostUnliking) {
                       if (localChange) {
                         if (value) {
                           context
                               .read<PostLikeBloc>()
-                              .unlikePost(userId, widget.post.id);
+                              .unlikePost(widget.post.id);
                         } else {
                           context
                               .read<PostLikeBloc>()
-                              .likePost(userId, widget.post.id);
+                              .likePost(widget.post.id);
                         }
                       } else {
                         if (widget.post.isLiked) {
                           context
                               .read<PostLikeBloc>()
-                              .unlikePost(userId, widget.post.id);
+                              .unlikePost(widget.post.id);
                         } else {
                           context
                               .read<PostLikeBloc>()
-                              .likePost(userId, widget.post.id);
+                              .likePost(widget.post.id);
                         }
                       }
                     }

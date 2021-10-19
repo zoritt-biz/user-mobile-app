@@ -12,10 +12,10 @@ class ProfileBloc extends Cubit<ProfileState> {
 
   ProfileBloc(this.userRepository) : super(ProfileUnknown());
 
-  void getUserProfile(String id) async {
+  void getUserProfile() async {
     emit(ProfileLoading());
     try {
-      User user = await userRepository.getUserProfile(id);
+      User user = await userRepository.getUser();
       emit(ProfileLoadSuccessful(user));
     } catch (e) {
       emit(ProfileFailure(e.toString()));

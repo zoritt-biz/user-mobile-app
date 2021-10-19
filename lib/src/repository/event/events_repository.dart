@@ -28,11 +28,11 @@ class EventsRepository {
     return data.map((e) => Events.fromJson(e)).toList();
   }
 
-  Future<bool> likeEvent(String userId, String eventId) async {
+  Future<bool> likeEvent(String eventId) async {
     final result = await client.query(
       QueryOptions(
         document: gql(LIKE_EVENT),
-        variables: {"user_id": userId, "event_id": eventId},
+        variables: {"eventId": eventId},
         fetchPolicy: FetchPolicy.networkOnly,
       ),
     );
@@ -42,11 +42,11 @@ class EventsRepository {
     return true;
   }
 
-  Future<bool> unlikeEvent(String userId, String eventId) async {
+  Future<bool> unlikeEvent(String eventId) async {
     final result = await client.query(
       QueryOptions(
-          document: gql(UNLIKE_EVENT),
-          variables: {"user_id": userId, "event_id": eventId},
+          document: gql(LIKE_EVENT),
+          variables: {"eventId": eventId},
           fetchPolicy: FetchPolicy.networkOnly),
     );
     if (result.hasException) {

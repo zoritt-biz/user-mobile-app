@@ -11,20 +11,20 @@ class BusinessLikeBloc extends Cubit<BusinessLikeState> {
   BusinessLikeBloc({@required this.businessRepository})
       : super(BusinessLikeUnknown());
 
-  Future<void> likeBusiness(String userId, String businessId) async {
+  Future<void> likeBusiness(String businessId) async {
     emit(BusinessLiking());
     try {
-      await businessRepository.likeBusiness(userId, businessId);
+      businessRepository.likeBusiness(businessId);
       emit(BusinessLikingSuccessful());
     } catch (e) {
       emit(BusinessLikingFailure(e.toString()));
     }
   }
 
-  Future<void> unlikeBusiness(String userId, String businessId) async {
+  Future<void> unlikeBusiness(String businessId) async {
     emit(BusinessUnliking());
     try {
-      await businessRepository.unlikeBusiness(userId, businessId);
+      businessRepository.unlikeBusiness(businessId);
       emit(BusinessUnlikingSuccessful());
     } catch (e) {
       emit(BusinessUnlikingFailure(e.toString()));

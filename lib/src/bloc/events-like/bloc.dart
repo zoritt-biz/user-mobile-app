@@ -9,20 +9,20 @@ class EventsLikeBloc extends Cubit<EventsLikeState> {
 
   EventsLikeBloc({@required this.eventRepository}) : super(EventsLikeUnknown());
 
-  Future<void> likeEvent(String userId, String eventId) async {
+  Future<void> likeEvent(String eventId) async {
     emit(EventsLiking());
     try {
-      await eventRepository.likeEvent(userId, eventId);
+      eventRepository.likeEvent(eventId);
       emit(EventsLikingSuccessful());
     } catch (e) {
       emit(EventsLikingFailure(e.toString()));
     }
   }
 
-  Future<void> unlikeEvent(String userId, String eventId) async {
+  Future<void> unlikeEvent(String eventId) async {
     emit(EventsUnliking());
     try {
-      await eventRepository.unlikeEvent(userId, eventId);
+      eventRepository.unlikeEvent(eventId);
       emit(EventsUnlikingSuccessful());
     } catch (e) {
       emit(EventsUnlikingFailure(e.toString()));

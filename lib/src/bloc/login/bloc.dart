@@ -11,29 +11,26 @@ import 'package:zoritt_mobile_app_user/src/repository/repository.dart';
 part 'state.dart';
 
 class LoginBloc extends Cubit<LoginState> {
-  LoginBloc({
-    @required AuthenticationRepository authenticationRepository,
-    @required AuthenticationBloc authenticationBloc,
-  })  : assert(authenticationRepository != null),
-        _authenticationRepository = authenticationRepository,
-        _authenticationBloc = authenticationBloc,
-        super(LoginUnknown());
-
-  final AuthenticationRepository _authenticationRepository;
+  final UserRepository _userRepository;
   final AuthenticationBloc _authenticationBloc;
+
+  LoginBloc({
+    @required AuthenticationBloc authenticationBloc,
+    @required UserRepository userRepository,
+  })  : _authenticationBloc = authenticationBloc,
+        _userRepository = userRepository,
+        super(LoginUnknown());
 
   Future<void> logInWithCredentials({String email, String password}) async {
     emit(LoginLoading());
     try {
-      _authenticationBloc.pauseSubscription();
-      User newUser = await _authenticationRepository.logInWithEmailAndPassword(
+      User newUser = await _userRepository.authenticate(
         email: email,
         password: password,
       );
-      _authenticationBloc.resumeSubscription();
+      _authenticationBloc.add(AuthenticationStatusChanged(user: newUser));
       emit(LoginSuccessful(user: newUser));
     } catch (e) {
-      _authenticationBloc.resumeSubscription();
       emit(LoginFailure(e.toString()));
     }
   }

@@ -1,7 +1,7 @@
-// import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:location/location.dart';
 import 'package:zoritt_mobile_app_user/src/app-theme.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/bloc.dart';
@@ -25,19 +25,20 @@ class _ZorittAppState extends State<ZorittApp> {
   bool _serviceEnabled;
   PermissionStatus _permissionGranted;
 
-  // final UserRepository userRepository = UserRepository(
-  //   client: Client().connect,
-  //   firebaseStorage: FirebaseStorage.instance,
-  // );
+  final UserRepository userRepository = UserRepository(
+    client: Client().connect,
+    firebaseStorage: FirebaseStorage.instance,
+    storage: FlutterSecureStorage(),
+  );
 
-  // final AuthenticationRepository authenticationRepository =
-  //     AuthenticationRepository(
-  //   firebaseAuth: FirebaseAuth.instance,
-  //   userRepository: UserRepository(
-  //     client: Client().connect,
-  //     firebaseStorage: FirebaseStorage.instance,
-  //   ),
-  // );
+  final AuthenticationRepository authenticationRepository =
+      AuthenticationRepository(
+    userRepository: UserRepository(
+      client: Client().connect,
+      firebaseStorage: FirebaseStorage.instance,
+      storage: FlutterSecureStorage(),
+    ),
+  );
 
   final EventsRepository eventsRepository = EventsRepository(
     client: Client().connect,
@@ -86,34 +87,35 @@ class _ZorittAppState extends State<ZorittApp> {
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
       providers: [
-        // RepositoryProvider.value(value: authenticationRepository),
+        RepositoryProvider.value(value: authenticationRepository),
         RepositoryProvider.value(value: eventsRepository),
         RepositoryProvider.value(value: postRepository),
         RepositoryProvider.value(value: businessRepository),
-        // RepositoryProvider.value(value: userRepository),
+        RepositoryProvider.value(value: userRepository),
         RepositoryProvider.value(value: homeRepository),
         RepositoryProvider.value(value: categoryRepository),
       ],
       child: MultiBlocProvider(
         providers: [
-          // BlocProvider<AuthenticationBloc>(
-          //   create: (context) => AuthenticationBloc(
-          //     authenticationRepository: authenticationRepository,
-          //     userRepository: userRepository,
-          //   ),
-          //   lazy: false,
-          // ),
+          BlocProvider<AuthenticationBloc>(
+            create: (context) => AuthenticationBloc(
+              authenticationRepository: authenticationRepository,
+              userRepository: userRepository,
+            ),
+            lazy: false,
+          ),
           BlocProvider<NavigationBloc>(
             create: (context) => NavigationBloc(),
             lazy: false,
           ),
           BlocProvider<BusinessBloc>(
-            create: (context) =>
-                BusinessBloc(businessRepository: businessRepository,),
+            create: (context) => BusinessBloc(
+              businessRepository: businessRepository,
+            ),
           ),
-          // BlocProvider<UserBloc>(
-          //   create: (context) => UserBloc(userRepository: userRepository),
-          // ),
+          BlocProvider<UserBloc>(
+            create: (context) => UserBloc(userRepository: userRepository),
+          ),
         ],
         child: AppTheme(),
       ),

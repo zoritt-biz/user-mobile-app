@@ -9,10 +9,10 @@ class UserEventsBloc extends Cubit<UserEventsState> {
 
   UserEventsBloc(this.userRepository) : super(UserEventsUnknown());
 
-  void getUserEvents(String id) async {
+  void getUserEvents() async {
     emit(UserEventsLoading());
     try {
-      List<Events> events = await userRepository.getUserEvents(id);
+      List<Events> events = await userRepository.getUserEvents();
       emit(UserEventsSuccessful(events: events));
     } catch (e) {
       emit(UserEventsFailure(e.toString()));

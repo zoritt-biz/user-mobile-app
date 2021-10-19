@@ -55,30 +55,30 @@ class BottomNavigation extends StatelessWidget {
             : Theme.of(context).primaryColor,
         label: "Search",
       ),
-      // BottomNavigationData(
-      //   onPressed: () {
-      //     setCurrentIndex(TabItem.favorites);
-      //   },
-      //   icon: currentTab == TabItem.favorites
-      //       ? Icons.favorite
-      //       : Icons.favorite_border_rounded,
-      //   color: currentTab == TabItem.favorites
-      //       ? Theme.of(context).accentColor
-      //       : Theme.of(context).primaryColor,
-      //   label: "Favorites",
-      // ),
-      // BottomNavigationData(
-      //   onPressed: () {
-      //     setCurrentIndex(TabItem.profile);
-      //   },
-      //   icon: currentTab == TabItem.profile
-      //       ? Icons.account_circle
-      //       : Icons.account_circle_outlined,
-      //   color: currentTab == TabItem.profile
-      //       ? Theme.of(context).accentColor
-      //       : Theme.of(context).primaryColor,
-      //   label: "Profile",
-      // ),
+      BottomNavigationData(
+        onPressed: () {
+          setCurrentIndex(TabItem.favorites);
+        },
+        icon: currentTab == TabItem.favorites
+            ? Icons.favorite
+            : Icons.favorite_border_rounded,
+        color: currentTab == TabItem.favorites
+            ? Theme.of(context).accentColor
+            : Theme.of(context).primaryColor,
+        label: "Favorites",
+      ),
+      BottomNavigationData(
+        onPressed: () {
+          setCurrentIndex(TabItem.profile);
+        },
+        icon: currentTab == TabItem.profile
+            ? Icons.account_circle
+            : Icons.account_circle_outlined,
+        color: currentTab == TabItem.profile
+            ? Theme.of(context).accentColor
+            : Theme.of(context).primaryColor,
+        label: "Profile",
+      ),
     ];
 
     final List<Widget> bottomNavigationList = bottomNavigationData

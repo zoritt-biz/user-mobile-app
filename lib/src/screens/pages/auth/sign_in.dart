@@ -77,9 +77,7 @@ class _SignInState extends State<SignIn> {
       child: ListView(
         padding: const EdgeInsets.only(right: 20, left: 20, bottom: 0),
         children: [
-          SizedBox(
-            height: 40.0,
-          ),
+          SizedBox(height: 40.0),
           Center(
             child: Text(
               "Sign in to your account",
@@ -90,9 +88,7 @@ class _SignInState extends State<SignIn> {
               ),
             ),
           ),
-          SizedBox(
-            height: 20.0,
-          ),
+          SizedBox(height: 20.0),
           InputController(
             hintText: "Email Address",
             icon: Icons.email_outlined,
@@ -102,9 +98,7 @@ class _SignInState extends State<SignIn> {
             labelText: null,
             keyboardType: TextInputType.emailAddress,
           ),
-          SizedBox(
-            height: 10.0,
-          ),
+          SizedBox(height: 10.0),
           InputController(
             labelText: null,
             hintText: "Password",
@@ -114,9 +108,7 @@ class _SignInState extends State<SignIn> {
             controller: passwordController,
             keyboardType: TextInputType.text,
           ),
-          SizedBox(
-            height: 10.0,
-          ),
+          SizedBox(height: 10.0),
           // Align(
           //   alignment: Alignment.centerRight,
           //   child: TextButton(
@@ -132,9 +124,7 @@ class _SignInState extends State<SignIn> {
           //     ),
           //   ),
           // ),
-          SizedBox(
-            height: 35.0,
-          ),
+          SizedBox(height: 35.0),
           CustomButton(
             onPressed: () {
               if (_formKey.currentState.validate()) {
@@ -147,24 +137,18 @@ class _SignInState extends State<SignIn> {
             },
             text: "Sign In",
           ),
-          SizedBox(
-            height: 35.0,
-          ),
+          SizedBox(height: 35.0),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                "Don't have a account?",
-              ),
+              Text("Don't have a account?"),
               TextButton(
                 onPressed: () {
                   Navigator.pushNamed(context, "/sign_up");
                 },
                 child: Text(
                   "Register",
-                  style: TextStyle(
-                    color: Colors.blue[700],
-                  ),
+                  style: TextStyle(color: Colors.blue[700]),
                 ),
               ),
             ],

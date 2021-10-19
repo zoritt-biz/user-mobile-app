@@ -9,10 +9,10 @@ class FavoritesBloc extends Cubit<FavoritesState> {
 
   FavoritesBloc(this.businessRepository) : super(FavoritesUnknown());
 
-  void getBusinessList(String id) async {
+  void getBusinessList() async {
     emit(FavoritesLoading());
     try {
-      List<Business> business = await businessRepository.getFavoritesList(id);
+      List<Business> business = await businessRepository.getFavoritesList();
       emit(FavoritesLoadSuccessful(business: business));
     } catch (e) {
       emit(FavoritesFailure(e.toString()));

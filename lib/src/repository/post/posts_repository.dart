@@ -28,30 +28,29 @@ class PostRepository {
     return data.map((e) => Post.fromJson(e)).toList();
   }
 
-  Future<bool> likePost(String userId, String postId) async {
+  Future<bool> likePost(String postId) async {
     final result = await client.query(
       QueryOptions(
         document: gql(LIKE_POST),
-        variables: {"user_id": userId, "post_id": postId},
+        variables: {"postId": postId},
         fetchPolicy: FetchPolicy.networkOnly,
       ),
     );
     if (result.hasException) {
-      print(result.exception);
       throw result.exception;
     }
     return true;
   }
 
-  Future<bool> unlikePost(String userId, String postId) async {
+  Future<bool> unlikePost(String postId) async {
     final result = await client.query(
       QueryOptions(
-          document: gql(UNLIKE_POST),
-          variables: {"user_id": userId, "post_id": postId},
-          fetchPolicy: FetchPolicy.networkOnly),
+        document: gql(LIKE_POST),
+        variables: {"postId": postId},
+        fetchPolicy: FetchPolicy.networkOnly,
+      ),
     );
     if (result.hasException) {
-      print(result.exception);
       throw result.exception;
     }
     return true;

@@ -15,17 +15,13 @@ import 'package:zoritt_mobile_app_user/src/bloc/profile/user-posts/bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/profile/user-posts/state.dart';
 import 'package:zoritt_mobile_app_user/src/models/user.dart';
 import 'package:zoritt_mobile_app_user/src/repository/repository.dart';
+import 'package:zoritt_mobile_app_user/src/screens/components/event-card/event-card.dart';
 import 'package:zoritt_mobile_app_user/src/screens/components/post-item/post-item.dart';
-import 'package:zoritt_mobile_app_user/src/screens/pages/events/events_page.dart';
 
 class ProfilePage extends StatefulWidget {
-  final String firebaseId;
-  final String userId;
   final BuildContext globalNavigator;
 
-  const ProfilePage(
-      {Key key, this.firebaseId, this.userId, this.globalNavigator})
-      : super(key: key);
+  const ProfilePage({Key key, this.globalNavigator}) : super(key: key);
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
@@ -242,7 +238,7 @@ class _ProfilePageState extends State<ProfilePage>
                       BlocProvider(
                         create: (context) => UserPostsBloc(
                           context.read<UserRepository>(),
-                        )..getUserPosts(widget.firebaseId),
+                        )..getUserPosts(),
                         child: BlocBuilder<UserPostsBloc, UserPostsState>(
                             builder: (postsCtx, postsState) {
                           if (postsState is UserPostsSuccessful) {
@@ -265,7 +261,7 @@ class _ProfilePageState extends State<ProfilePage>
                       BlocProvider(
                         create: (context) => UserEventsBloc(
                           context.read<UserRepository>(),
-                        )..getUserEvents(widget.firebaseId),
+                        )..getUserEvents(),
                         child: BlocBuilder<UserEventsBloc, UserEventsState>(
                           builder: (eventsCtx, eventsState) {
                             if (eventsState is UserEventsSuccessful) {
@@ -287,7 +283,6 @@ class _ProfilePageState extends State<ProfilePage>
                                         child: EventCard(
                                           events: eventsState.events[index],
                                           context: context,
-                                          userId: widget.userId,
                                           globalNavigator:
                                               widget.globalNavigator,
                                         ),

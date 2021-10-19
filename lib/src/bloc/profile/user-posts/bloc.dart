@@ -9,10 +9,10 @@ class UserPostsBloc extends Cubit<UserPostsState> {
 
   UserPostsBloc(this.userRepository) : super(UserPostsUnknown());
 
-  void getUserPosts(String id) async {
+  void getUserPosts() async {
     emit(UserPostsLoading());
     try {
-      List<Post> posts = await userRepository.getUserPosts(id);
+      List<Post> posts = await userRepository.getUserPosts();
       emit(UserPostsSuccessful(posts: posts));
     } catch (e) {
       emit(UserPostsFailure(e.toString()));

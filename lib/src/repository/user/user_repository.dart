@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:meta/meta.dart';
 import 'package:zoritt_mobile_app_user/src/client/mutations/mutations.dart';
@@ -9,74 +10,109 @@ import 'package:zoritt_mobile_app_user/src/models/models.dart';
 
 class UserRepository {
   final GraphQLClient client;
+  final FlutterSecureStorage storage;
   final FirebaseStorage firebaseStorage;
 
   UserRepository({
     @required this.client,
+    @required this.storage,
     @required this.firebaseStorage,
-  }) : assert(client != null && firebaseStorage != null);
+  }) : assert(client != null && storage != null && firebaseStorage != null);
 
-  Future<User> userCreate(User user) async {
-    final result = await client.mutate(
-      MutationOptions(
-        document: gql(CREATE_USER),
+  Future<User> authenticate({
+    @required String email,
+    @required String password,
+  }) async {
+    final result = await client.query(
+      QueryOptions(
+        document: gql(SIGN_IN),
         variables: {
-          "firstName": user.firstName,
-          "lastName": user.lastName,
-          "userType": "Normal",
-          "email": user.email,
-          "phoneNumber": user.phoneNumber,
-          "firebaseId": user.firebaseId
+          "email": "nathnael.user@gmail.com",
+          "password": "nati@1234",
         },
+        fetchPolicy: FetchPolicy.networkOnly,
       ),
     );
     if (result.hasException) {
       throw result.exception;
-    } else {
-      final data = result.data['userCreateOne']['record'];
-      return User.fromJson(data);
     }
+    final data = result.data['signIn'];
+    User user = new User.fromJson(data['user']);
+    user.token = data['accessToken'];
+    return user;
   }
 
-  Future<User> getUser(String firebaseId) async {
+  Future<void> deleteToken() async {
+    await storage.delete(key: "jwt");
+    return;
+  }
+
+  Future<void> persistToken(String token) async {
+    await storage.write(key: "jwt", value: token);
+    return;
+  }
+
+  Future<String> hasToken() async {
+    var jwt = await storage.read(key: "jwt");
+    if (jwt == null) return null;
+    return jwt;
+  }
+
+  Future<User> getUser() async {
     final result = await client.query(
       QueryOptions(
         document: gql(GET_USER),
-        variables: {
-          'firebaseId': firebaseId,
-        },
+        fetchPolicy: FetchPolicy.cacheFirst,
       ),
     );
     if (result.hasException) {
-      throw result.exception;
+      return null;
     }
-    final data = result.data['userOne'];
-    return User.fromJson(data);
+    final data = result.data['user'];
+    return new User.fromJson(data);
   }
 
-  Future<User> getUserProfile(String firebaseId) async {
+  Future<User> signUp({
+    @required String email,
+    @required String password,
+    @required String firstName,
+    @required String middleName,
+    @required String lastName,
+    @required String phoneNumber,
+  }) async {
+    assert(email != null &&
+        password != null &&
+        firstName != null &&
+        middleName != null &&
+        lastName != null &&
+        phoneNumber != null);
     final result = await client.query(
       QueryOptions(
-        document: gql(GET_USER_PROFILE),
+        document: gql(SIGN_UP),
         variables: {
-          'firebaseId': firebaseId,
+          "email": email,
+          "password": password,
+          "firstName": firstName,
+          "middleName": middleName,
+          "lastName": lastName,
+          "phoneNumber": phoneNumber,
         },
+        fetchPolicy: FetchPolicy.networkOnly,
       ),
     );
     if (result.hasException) {
       throw result.exception;
     }
-    final data = result.data['userOne'];
-    return User.fromJson(data);
+    final data = result.data['signUp'];
+    User user = new User.fromJson(data['user']);
+    user.token = data['accessToken'];
+    return user;
   }
 
-  Future<List<Events>> getUserEvents(String firebaseId) async {
+  Future<List<Events>> getUserEvents() async {
     final result = await client.query(
       QueryOptions(
         document: gql(GET_USER_EVENTS),
-        variables: {
-          'firebaseId': firebaseId,
-        },
         fetchPolicy: FetchPolicy.networkOnly,
       ),
     );
@@ -90,13 +126,10 @@ class UserRepository {
     return data.map((e) => Events.fromJson(e)).toList();
   }
 
-  Future<List<Post>> getUserPosts(String firebaseId) async {
+  Future<List<Post>> getUserPosts() async {
     final result = await client.query(
       QueryOptions(
         document: gql(GET_USER_POSTS),
-        variables: {
-          'firebaseId': firebaseId,
-        },
         fetchPolicy: FetchPolicy.networkOnly,
       ),
     );
@@ -139,20 +172,15 @@ class UserRepository {
       final results = await client.mutate(
         MutationOptions(
           document: gql(USER_ADD_LOGO),
-          variables: {
-            "id": user.id,
-            "image": downloadUrl,
-          },
+          variables: {"id": user.id, "image": downloadUrl},
         ),
       );
       if (results.hasException) {
-        print(results.exception);
         throw results.exception;
       }
       final data = results.data['userUpdateById']['record'];
       return new User.fromJson(data);
     } catch (e) {
-      print(e);
       throw Exception(e);
     }
   }

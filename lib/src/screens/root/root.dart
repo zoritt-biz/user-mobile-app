@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/navigation/bloc.dart';
 import 'package:zoritt_mobile_app_user/src/screens/components/bottom-navigation/bottom-navigation.dart';
+import 'package:zoritt_mobile_app_user/src/screens/navigators/favorites.dart';
+import 'package:zoritt_mobile_app_user/src/screens/navigators/profile.dart';
 
 import '../screens.dart';
 
@@ -20,8 +22,8 @@ class _HomePageState extends State<HomePage> {
   final tabNavigatorKeys = [
     GlobalKey<NavigatorState>(),
     GlobalKey<NavigatorState>(),
-    // GlobalKey<NavigatorState>(),
-    // GlobalKey<NavigatorState>(),
+    GlobalKey<NavigatorState>(),
+    GlobalKey<NavigatorState>(),
   ];
 
   List<TabNavigator> tabNavigators;
@@ -39,14 +41,14 @@ class _HomePageState extends State<HomePage> {
         navigatorKey: tabNavigatorKeys[TabItem.search.index],
         globalNavigator: _globalNavigatorContext,
       ),
-      // FavoritesNavigator(
-      //   navigatorKey: tabNavigatorKeys[TabItem.favorites.index],
-      //   globalNavigator: _globalNavigatorContext,
-      // ),
-      // ProfileNavigator(
-      //   navigatorKey: tabNavigatorKeys[TabItem.profile.index],
-      //   globalNavigator: _globalNavigatorContext,
-      // ),
+      FavoritesNavigator(
+        navigatorKey: tabNavigatorKeys[TabItem.favorites.index],
+        globalNavigator: _globalNavigatorContext,
+      ),
+      ProfileNavigator(
+        navigatorKey: tabNavigatorKeys[TabItem.profile.index],
+        globalNavigator: _globalNavigatorContext,
+      ),
     ];
     super.initState();
   }
@@ -96,8 +98,8 @@ class _HomePageState extends State<HomePage> {
             children: [
               _buildOffstageNavigator(TabItem.home, true),
               _buildOffstageNavigator(TabItem.search, true),
-              // _buildOffstageNavigator(TabItem.favorites, false),
-              // _buildOffstageNavigator(TabItem.profile, true),
+              _buildOffstageNavigator(TabItem.favorites, false),
+              _buildOffstageNavigator(TabItem.profile, true),
             ],
           ),
           bottomNavigationBar: BottomNavigation(

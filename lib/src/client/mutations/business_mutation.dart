@@ -75,17 +75,9 @@ const record = """
 """;
 
 const LIKE_BUSINESS = r"""
-mutation($user_id: String, $business_id: String){
-  businessAddToFavorite(user_id: $user_id, business_id: $business_id){
-    _id
-  }
-}
-""";
-
-const UNLIKE_BUSINESS = r"""
-mutation($user_id: String, $business_id: String){
-  businessRemoveFromFavorite(user_id: $user_id, business_id: $business_id ){
-    _id
+mutation($businessId: String!){
+  businessLikeUnLike(businessId: $businessId){
+    businessName
   }
 }
 """;

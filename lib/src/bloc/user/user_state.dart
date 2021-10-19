@@ -1,4 +1,5 @@
-part of 'user_bloc.dart';
+import 'package:equatable/equatable.dart';
+import 'package:zoritt_mobile_app_user/src/models/user.dart';
 
 class UserState extends Equatable {
   const UserState();
@@ -8,8 +9,6 @@ class UserState extends Equatable {
 }
 
 class UserLoading extends UserState {}
-
-class UserCreating extends UserState {}
 
 class UserUpdating extends UserState {}
 
@@ -21,8 +20,6 @@ class UserLoadSuccess extends UserState {
   @override
   List<Object> get props => [user];
 }
-
-class UserDeleteSuccess extends UserState {}
 
 class UserOperationFailure extends UserState {
   final String message;

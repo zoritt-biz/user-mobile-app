@@ -57,6 +57,7 @@ class BusinessSearchDelegate extends SearchDelegate<String> {
           100,
         );
     close(context, query);
+    setQuery(query);
     super.showResults(context);
   }
 

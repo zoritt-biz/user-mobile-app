@@ -126,28 +126,6 @@ query{
 }
 """;
 
-const GET_FAVORITES_LIST_MANY = r"""
-query($id: MongoID!){
-  userOne(filter: {_id: $id}){
-    favorites{
-      _id
-      businessName
-      phoneNumber
-      location
-      isLiked
-      state
-      emails
-      website
-      logoPics
-      pictures
-      locationDescription
-      lat
-      lng
-    }
-  }
-}
-""";
-
 const GET_SPONSORED_BUSINESSES = r"""
 query($limit: Int){
   sponsoredMany(

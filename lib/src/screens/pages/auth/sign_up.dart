@@ -66,7 +66,6 @@ class _SignUpState extends State<SignUp> {
     return BlocConsumer<SignUpBloc, SignUpState>(
       builder: (signUpCtx, signUpState) {
         return Scaffold(
-          // backgroundColor: Colors.white,
           resizeToAvoidBottomInset: true,
           appBar: AppBar(title: Text("Sign up")),
           body: signUpState is SignUpLoading || signUpState is SignUpSuccessful
@@ -95,9 +94,7 @@ class _SignUpState extends State<SignUp> {
         child: ListView(
           padding: const EdgeInsets.only(right: 20, left: 20, bottom: 0),
           children: [
-            SizedBox(
-              height: 40.0,
-            ),
+            SizedBox(height: 40.0),
             Center(
               child: Text(
                 "Create your account",
@@ -108,9 +105,7 @@ class _SignUpState extends State<SignUp> {
                 ),
               ),
             ),
-            SizedBox(
-              height: 20.0,
-            ),
+            SizedBox(height: 20.0),
             InputController(
               hintText: "First Name",
               labelText: null,
@@ -120,12 +115,7 @@ class _SignUpState extends State<SignUp> {
               validator: _usernameValidator,
               keyboardType: TextInputType.text,
             ),
-            SizedBox(
-              height: 10.0,
-            ),
-            SizedBox(
-              height: 10.0,
-            ),
+            SizedBox(height: 10.0),
             InputController(
               hintText: "Last Name",
               labelText: null,
@@ -135,9 +125,7 @@ class _SignUpState extends State<SignUp> {
               validator: _usernameValidator,
               keyboardType: TextInputType.text,
             ),
-            SizedBox(
-              height: 10.0,
-            ),
+            SizedBox(height: 10.0),
             InputController(
               hintText: "Email Address",
               labelText: null,
@@ -147,9 +135,7 @@ class _SignUpState extends State<SignUp> {
               obscureElement: false,
               keyboardType: TextInputType.emailAddress,
             ),
-            SizedBox(
-              height: 10.0,
-            ),
+            SizedBox(height: 10.0),
             InputController(
               hintText: "Phone Number",
               labelText: null,
@@ -159,9 +145,7 @@ class _SignUpState extends State<SignUp> {
               obscureElement: false,
               keyboardType: TextInputType.phone,
             ),
-            SizedBox(
-              height: 10.0,
-            ),
+            SizedBox(height: 10.0),
             InputController(
               hintText: "Password",
               labelText: null,
@@ -171,9 +155,7 @@ class _SignUpState extends State<SignUp> {
               controller: passwordController,
               keyboardType: TextInputType.text,
             ),
-            SizedBox(
-              height: 10.0,
-            ),
+            SizedBox(height: 10.0),
             InputController(
               hintText: "Confirm Password",
               labelText: null,
@@ -183,9 +165,7 @@ class _SignUpState extends State<SignUp> {
               controller: confirmPasswordController,
               keyboardType: TextInputType.text,
             ),
-            SizedBox(
-              height: 40.0,
-            ),
+            SizedBox(height: 40.0),
             CustomButton(
               onPressed: () {
                 if (_formKey.currentState.validate()) {
@@ -195,30 +175,25 @@ class _SignUpState extends State<SignUp> {
                         password: passwordController.text,
                         firstName: firstNameController.text,
                         lastName: lastNameController.text,
+                        middleName: "",
                         phoneNumber: phoneNumberController.text,
                       );
                 }
               },
               text: "Sign Up",
             ),
-            SizedBox(
-              height: 20.0,
-            ),
+            SizedBox(height: 20.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  "Do you have an account?",
-                ),
+                Text("Do you have an account?"),
                 TextButton(
                   onPressed: () {
                     Navigator.pushNamed(context, "/sign_in");
                   },
                   child: Text(
                     "Sign In",
-                    style: TextStyle(
-                      color: Colors.blue[700],
-                    ),
+                    style: TextStyle(color: Colors.blue[700]),
                   ),
                 ),
               ],

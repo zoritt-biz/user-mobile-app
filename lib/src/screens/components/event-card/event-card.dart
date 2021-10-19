@@ -2,44 +2,45 @@ import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share/share.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/auth/auth_bloc.dart';
-import 'package:zoritt_mobile_app_user/src/bloc/post-like/bloc.dart';
-import 'package:zoritt_mobile_app_user/src/bloc/post-like/state.dart';
-import 'package:zoritt_mobile_app_user/src/models/post.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/events-like/bloc.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/events-like/state.dart';
+import 'package:zoritt_mobile_app_user/src/models/event.dart';
 
-class PostCard extends StatefulWidget {
-  final Post post;
+class EventCard extends StatefulWidget {
+  final Events events;
   final BuildContext context;
   final BuildContext globalNavigator;
-  final String userId;
 
-  PostCard({
-    @required this.post,
+  EventCard({
+    @required this.events,
     this.context,
-    this.userId,
     this.globalNavigator,
   });
 
   @override
-  _PostCardState createState() => _PostCardState();
+  _EventCardState createState() => _EventCardState();
 }
 
-class _PostCardState extends State<PostCard> {
+class _EventCardState extends State<EventCard> {
   int _current = 0;
   bool localChange = false;
   bool value = false;
 
-  void share(BuildContext context, Post post) {
-    String subject = "${post.description} ";
-    Share.share(subject, subject: post.description);
+  void share(BuildContext context, Events events) {
+    String subject =
+        "${events.title} \n ${events.description} \n ${events.link} ";
+    Share.share(subject, subject: events.description);
   }
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> imageSliders = widget.post.photos
+    final List<Widget> imageSliders = widget.events.photos
         .map(
           (item) => ClipRRect(
             borderRadius: BorderRadius.only(
@@ -89,21 +90,21 @@ class _PostCardState extends State<PostCard> {
           ),
         )
         .toList();
-    return BlocConsumer<PostLikeBloc, PostLikeState>(
-      listener: (postBloc, postState) {
-        if (postState is PostLikingSuccessful) {
+    return BlocConsumer<EventsLikeBloc, EventsLikeState>(
+      listener: (eventBloc, eventState) {
+        if (eventState is EventsLikingSuccessful) {
           setState(() {
             localChange = true;
             value = true;
           });
-        } else if (postState is PostUnlikingSuccessful) {
+        } else if (eventState is EventsUnlikingSuccessful) {
           setState(() {
             localChange = true;
             value = false;
           });
         }
       },
-      builder: (postBloc, postState) => Padding(
+      builder: (eventBloc, eventState) => Padding(
         padding: const EdgeInsets.only(bottom: 10, left: 10, right: 10),
         child: Card(
           elevation: 1,
@@ -122,7 +123,7 @@ class _PostCardState extends State<PostCard> {
                           return Stack(
                             children: [
                               CachedNetworkImage(
-                                imageUrl: widget.post.photos[_current],
+                                imageUrl: widget.events.photos[_current],
                                 placeholder: (context, url) {
                                   return Container(
                                     child: Center(
@@ -170,16 +171,14 @@ class _PostCardState extends State<PostCard> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     mainAxisSize: MainAxisSize.max,
-                    children: widget.post.photos.map(
+                    children: widget.events.photos.map(
                       (url) {
-                        int index = widget.post.photos.indexOf(url);
+                        int index = widget.events.photos.indexOf(url);
                         return Container(
                           width: 8.0,
                           height: 8.0,
                           margin: EdgeInsets.symmetric(
-                            vertical: 10.0,
-                            horizontal: 2.0,
-                          ),
+                              vertical: 10.0, horizontal: 2.0),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color:
@@ -193,11 +192,7 @@ class _PostCardState extends State<PostCard> {
               ),
               Padding(
                 padding: const EdgeInsets.only(
-                  left: 10,
-                  top: 15,
-                  bottom: 10,
-                  right: 10,
-                ),
+                    left: 10, top: 15, bottom: 10, right: 10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -208,21 +203,20 @@ class _PostCardState extends State<PostCard> {
                           Navigator.pushNamed(
                             widget.globalNavigator,
                             "/business_detail",
-                            arguments: [widget.post.owner],
+                            arguments: [widget.events.owner],
                           );
                         },
                         child: Row(
                           children: [
                             CircleAvatar(
-                              radius: 20,
-                              backgroundImage: NetworkImage(
-                                widget.post.businessLogo != null &&
-                                        widget.post.businessLogo != ""
-                                    ? widget.post.businessLogo
-                                    : "https://firebasestorage.googleapis.com/v0/b/zoritt-app.appspot.com/o/ic_launcher.jpg?alt=media&token=37ef2fe4-bf31-43e4-87ca-9bab1b724483",
-                                scale: 1,
-                              ),
-                            ),
+                                radius: 20,
+                                backgroundImage: NetworkImage(
+                                  widget.events.businessLogo != null &&
+                                          widget.events.businessLogo != ""
+                                      ? widget.events.businessLogo
+                                      : "https://firebasestorage.googleapis.com/v0/b/zoritt-app.appspot.com/o/ic_launcher.jpg?alt=media&token=37ef2fe4-bf31-43e4-87ca-9bab1b724483",
+                                  scale: 1,
+                                )),
                             SizedBox(width: 10),
                             SizedBox(
                               width: 200,
@@ -230,13 +224,14 @@ class _PostCardState extends State<PostCard> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    widget.post.description,
+                                    widget.events.title,
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 18),
                                   ),
                                   SizedBox(height: 2),
+                                  Text(widget.events.location)
                                 ],
                               ),
                             )
@@ -253,11 +248,11 @@ class _PostCardState extends State<PostCard> {
                               icon: Icon(
                                 localChange
                                     ? value
-                                        ? Icons.favorite_rounded
-                                        : Icons.favorite_border_rounded
-                                    : widget.post.isLiked
-                                        ? Icons.favorite_rounded
-                                        : Icons.favorite_border_rounded,
+                                        ? Icons.bookmark_rounded
+                                        : Icons.bookmark_border_rounded
+                                    : widget.events.isInterested
+                                        ? Icons.bookmark_rounded
+                                        : Icons.bookmark_border_rounded,
                                 color: Colors.orange,
                                 size: 30,
                               ),
@@ -267,35 +262,33 @@ class _PostCardState extends State<PostCard> {
                                         .state
                                         .status ==
                                     AuthenticationStatus.authenticated) {
-                                  if (postState is! PostLiking &&
-                                      postState is! PostUnliking) {
+                                  if (eventState is! EventsLiking &&
+                                      eventState is! EventsUnliking) {
                                     if (localChange) {
                                       if (value) {
-                                        context.read<PostLikeBloc>().unlikePost(
-                                              widget.post.id,
-                                            );
+                                        context
+                                            .read<EventsLikeBloc>()
+                                            .unlikeEvent(widget.events.id);
                                       } else {
-                                        context.read<PostLikeBloc>().likePost(
-                                              widget.post.id,
-                                            );
+                                        context
+                                            .read<EventsLikeBloc>()
+                                            .likeEvent(widget.events.id);
                                       }
                                     } else {
-                                      if (widget.post.isLiked) {
-                                        context.read<PostLikeBloc>().unlikePost(
-                                              widget.post.id,
-                                            );
+                                      if (widget.events.isInterested) {
+                                        context
+                                            .read<EventsLikeBloc>()
+                                            .unlikeEvent(widget.events.id);
                                       } else {
-                                        context.read<PostLikeBloc>().likePost(
-                                              widget.post.id,
-                                            );
+                                        context
+                                            .read<EventsLikeBloc>()
+                                            .likeEvent(widget.events.id);
                                       }
                                     }
                                   }
                                 } else {
                                   Navigator.pushNamed(
-                                    widget.context,
-                                    "/sign_in",
-                                  );
+                                      widget.context, "/sign_in");
                                 }
                               },
                             ),
@@ -304,7 +297,7 @@ class _PostCardState extends State<PostCard> {
                           Expanded(
                             child: GestureDetector(
                               child: Icon(Icons.share, size: 25),
-                              onTap: () => share(context, widget.post),
+                              onTap: () => share(context, widget.events),
                             ),
                           ),
                         ],
@@ -315,21 +308,30 @@ class _PostCardState extends State<PostCard> {
               ),
               Padding(
                 padding: const EdgeInsets.only(
-                  left: 10,
-                  right: 10,
-                  bottom: 15,
-                  top: 10,
-                ),
+                    left: 10, right: 10, bottom: 15, top: 10),
                 child: Column(
                   children: [
                     Row(
                       children: [
                         Expanded(
-                          child: Text(
-                            widget.post.description,
-                            style: TextStyle(
-                              color: Colors.grey[600],
-                              fontSize: 15,
+                          child: RichText(
+                            text: TextSpan(
+                              text: widget.events.description,
+                              style: TextStyle(
+                                  color: Colors.grey[600], fontSize: 15),
+                              children: <TextSpan>[
+                                TextSpan(text: "  "),
+                                TextSpan(
+                                    text: widget.events.link,
+                                    style: TextStyle(
+                                      color: Colors.blue,
+                                      fontSize: 15,
+                                    ),
+                                    recognizer: new TapGestureRecognizer()
+                                      ..onTap = () async {
+                                        await launch(widget.events.link);
+                                      }),
+                              ],
                             ),
                           ),
                         ),
@@ -340,8 +342,36 @@ class _PostCardState extends State<PostCard> {
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(top: 8.0),
+                          child: Row(
+                            children: [
+                              Text(
+                                widget.events.startDate.split("T")[0],
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
+                              Text(
+                                " - ",
+                                style: TextStyle(
+                                  fontSize: 17,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
+                              Text(
+                                widget.events.endDate.split("T")[0],
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
                           child: Text(
-                            widget.post.businessName,
+                            widget.events.businessName,
                             style: TextStyle(
                               fontSize: 17,
                               fontStyle: FontStyle.italic,

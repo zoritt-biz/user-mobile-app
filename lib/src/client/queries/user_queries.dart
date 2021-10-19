@@ -1,19 +1,21 @@
 const GET_USER = r"""
-query($firebaseId: String){
-  userOne(filter: {firebaseId: $firebaseId}){
+query{
+  user{
     _id
     firstName
     middleName
     lastName
     email
     phoneNumber
-    firebaseId
-    password
     image
-    userType
-    businesses {
-      _id
+    firebaseId
+    roles
+    account{
+      verification{
+        verified
+      }
     }
+    status
   }
 }
 """;
@@ -34,51 +36,90 @@ query($firebaseId: String){
 }
 """;
 
+const GET_FAVORITES_LIST_MANY = r"""
+query{
+  user{
+    businesses{
+      _id
+      businessName
+      distance
+      branch
+      phoneNumbers
+      emails
+      website
+      logoPics
+      location
+      locationDescription
+      lngLat{
+        coordinates
+      }
+      description
+      pictures
+      isLiked
+      favoriteList
+      categories{
+        name
+        parent
+        autocompleteTerm
+      }
+      createdAt
+      updatedAt
+    }
+  }
+}
+""";
+
 const GET_USER_EVENTS = r"""
-query($firebaseId: String){
-  userOne(filter: {firebaseId: $firebaseId}){
-    _id
+query{
+  user{
     interestedInEvents{
       _id
       title
       description
       location
       link
-      photos
-      isInterested
       startDate
       endDate
       startTime
       endTime
       videos
-      owner {
-          _id
-          businessName
-          location
-          logoPics
-       }
+      photos
+      isInterested
+      interestedUsers
+      likeCount
+      owner{
+        _id
+        businessName
+        location
+        logoPics
+      }
     }
   }
 }
 """;
 
 const GET_USER_POSTS = r"""
-query($firebaseId: String){
-  userOne(filter: {firebaseId: $firebaseId}){
-    _id
+query{
+  user{
     likedPosts{
-      _id
-    description
-    photos
-    videos
-    isLiked
-    createdAt
-    owner {
+     _id
+      description
+      descriptionList{
+        field
+        value
+      }
+      photos
+      videos
+      isLiked
+      createdAt
+      likeCount
+      likeList
+      owner {
         _id
         businessName
         location
         logoPics
-      }
+      } 
     }
   }
 }

@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 
 export 'home.dart';
 export 'search.dart';
-// export 'favorites.dart';
-// export 'profile.dart';
+export 'favorites.dart';
+export 'profile.dart';
 
 abstract class TabNavigator extends StatelessWidget {}
 

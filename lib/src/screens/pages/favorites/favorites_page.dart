@@ -7,9 +7,8 @@ import 'package:zoritt_mobile_app_user/src/models/business.dart';
 
 class FavoritesPage extends StatefulWidget {
   final BuildContext globalNavigator;
-  final String id;
 
-  const FavoritesPage(this.globalNavigator, this.id);
+  const FavoritesPage(this.globalNavigator);
 
   @override
   _FavoritesPageState createState() => _FavoritesPageState();
@@ -17,7 +16,7 @@ class FavoritesPage extends StatefulWidget {
 
 class _FavoritesPageState extends State<FavoritesPage> {
   Future<void> load() async {
-    context.read<FavoritesBloc>().getBusinessList(widget.id);
+    context.read<FavoritesBloc>().getBusinessList();
   }
 
   Future<void> _onRefresh() async {

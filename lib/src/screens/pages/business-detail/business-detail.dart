@@ -10,9 +10,7 @@ import 'package:zoritt_mobile_app_user/src/bloc/business-detail/bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/business-like/bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/pop-up/bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/pop-up/state.dart';
-import 'package:zoritt_mobile_app_user/src/bloc/user/user_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/models/business.dart';
-import 'package:zoritt_mobile_app_user/src/models/user.dart';
 import 'package:zoritt_mobile_app_user/src/screens/components/business-detail/detail.dart';
 import 'package:zoritt_mobile_app_user/src/screens/components/error-message/error-message.dart';
 import 'package:zoritt_mobile_app_user/src/screens/components/loading/loading.dart';
@@ -69,8 +67,8 @@ class _BusinessDetailState extends State<BusinessDetail> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<PopUpBloc, PopUpState>(
-      listener: (popUpCtx, popUpState){
-        if(popUpState is PopUpLoadSuccess){
+      listener: (popUpCtx, popUpState) {
+        if (popUpState is PopUpLoadSuccess) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             showModalBottomSheet(
               shape: RoundedRectangleBorder(
@@ -89,18 +87,20 @@ class _BusinessDetailState extends State<BusinessDetail> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Align(
-                        alignment: Alignment.centerRight,
-                        child: ElevatedButton(
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all(Colors.white),
-                            padding: MaterialStateProperty.all(EdgeInsets.zero),
-                            shape: MaterialStateProperty.all(CircleBorder()),
-                          ),
-                          child: Icon(Icons.close, color: Colors.black),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                        ),),
+                      alignment: Alignment.centerRight,
+                      child: ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(Colors.white),
+                          padding: MaterialStateProperty.all(EdgeInsets.zero),
+                          shape: MaterialStateProperty.all(CircleBorder()),
+                        ),
+                        child: Icon(Icons.close, color: Colors.black),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ),
                     Card(
                       elevation: 3,
                       clipBehavior: Clip.hardEdge,
@@ -207,34 +207,27 @@ class _BusinessDetailState extends State<BusinessDetail> {
                                     .state
                                     .status ==
                                 AuthenticationStatus.authenticated) {
-                              var userId = (context
-                                      .read<UserBloc>()
-                                      .state
-                                      .props
-                                      .first as User)
-                                  .id;
-
                               if (bizState is! BusinessLiking &&
                                   bizState is! BusinessUnliking) {
                                 if (localChange) {
                                   if (value) {
                                     context
                                         .read<BusinessLikeBloc>()
-                                        .unlikeBusiness(userId, widget.id);
+                                        .unlikeBusiness(widget.id);
                                   } else {
                                     context
                                         .read<BusinessLikeBloc>()
-                                        .likeBusiness(userId, widget.id);
+                                        .likeBusiness(widget.id);
                                   }
                                 } else {
                                   if (business.isLiked) {
                                     context
                                         .read<BusinessLikeBloc>()
-                                        .unlikeBusiness(userId, widget.id);
+                                        .unlikeBusiness(widget.id);
                                   } else {
                                     context
                                         .read<BusinessLikeBloc>()
-                                        .likeBusiness(userId, widget.id);
+                                        .likeBusiness(widget.id);
                                   }
                                 }
                               }
@@ -292,7 +285,8 @@ class _BusinessDetailState extends State<BusinessDetail> {
                                         child: Container(
                                           color: Colors.white10,
                                         ),
-                                        filter: ImageFilter.blur(sigmaY: 2, sigmaX: 2),
+                                        filter: ImageFilter.blur(
+                                            sigmaY: 2, sigmaX: 2),
                                       ),
                                       CachedNetworkImage(
                                         imageUrl: business.pictures[0],

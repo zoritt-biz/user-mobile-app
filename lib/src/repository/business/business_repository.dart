@@ -58,18 +58,17 @@ class BusinessRepository {
     return data.map((e) => BusinessList.fromJson(e)).toList();
   }
 
-  Future<List<Business>> getFavoritesList(String id) async {
+  Future<List<Business>> getFavoritesList() async {
     final results = await client.query(
       QueryOptions(
-        document: gql(GET_FAVORITES_LIST_MANY),
-        variables: {"id": id},
-        fetchPolicy: FetchPolicy.networkOnly,
+        document: gql(GET_FAVORITES_LIST_MANY)
       ),
     );
     if (results.hasException) {
+      print(results.exception);
       throw results.exception;
     }
-    final data = results.data['userOne']['favorites'] as List;
+    final data = results.data['user']['businesses'] as List;
     return data.map((e) => Business.fromJson(e)).toList();
   }
 
@@ -137,11 +136,11 @@ class BusinessRepository {
         li["geometry"]["location"]["lat"], li["geometry"]["location"]["lng"]);
   }
 
-  Future<bool> likeBusiness(String userId, String businessId) async {
+  Future<bool> likeBusiness(String businessId) async {
     final result = await client.query(
       QueryOptions(
         document: gql(LIKE_BUSINESS),
-        variables: {"user_id": userId, "business_id": businessId},
+        variables: {"businessId": businessId},
         fetchPolicy: FetchPolicy.networkOnly,
       ),
     );
@@ -151,11 +150,11 @@ class BusinessRepository {
     return true;
   }
 
-  Future<bool> unlikeBusiness(String userId, String businessId) async {
+  Future<bool> unlikeBusiness(String businessId) async {
     final result = await client.query(
       QueryOptions(
-        document: gql(UNLIKE_BUSINESS),
-        variables: {"user_id": userId, "business_id": businessId},
+        document: gql(LIKE_BUSINESS),
+        variables: {"businessId": businessId},
         fetchPolicy: FetchPolicy.networkOnly,
       ),
     );
