@@ -4,13 +4,14 @@ import 'package:zoritt_mobile_app_user/src/bloc/bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/pop-up/bloc.dart';
 import 'package:zoritt_mobile_app_user/src/models/models.dart';
 import 'package:zoritt_mobile_app_user/src/repository/repository.dart';
-import 'package:zoritt_mobile_app_user/src/screens/components/business-detail/location-page.dart';
+import 'package:zoritt_mobile_app_user/src/screens/pages/business-detail/location-page.dart';
 import 'package:zoritt_mobile_app_user/src/screens/components/menu/business_more_info.dart';
-import 'package:zoritt_mobile_app_user/src/screens/components/menu/menu_info.dart';
+import 'package:zoritt_mobile_app_user/src/screens/pages/business-detail/menu-display-page.dart';
 
 // import 'package:zoritt_mobile_app_user/src/screens/pages/auth/reset.dart';
 import 'package:zoritt_mobile_app_user/src/screens/pages/auth/sign_in.dart';
 import 'package:zoritt_mobile_app_user/src/screens/pages/auth/sign_up.dart';
+import 'package:zoritt_mobile_app_user/src/screens/pages/business-detail/business-branches.dart';
 import 'package:zoritt_mobile_app_user/src/screens/pages/business-detail/business-detail.dart';
 import 'package:zoritt_mobile_app_user/src/screens/pages/posts/posts_page.dart';
 
@@ -48,7 +49,23 @@ class RouteGenerator {
       case LocationPage.pathName:
         return MaterialPageRoute(builder: (_) => LocationPage(arguments[0]));
       case MenuDisplay.pathName:
-        return MaterialPageRoute(builder: (_) => MenuDisplay());
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider<BusinessDetailBloc>(
+            create: (context) => BusinessDetailBloc(
+              businessRepository: context.read<BusinessRepository>(),
+            )..getBusinessMenus(arguments[0]),
+            child: MenuDisplay(),
+          ),
+        );
+        case BusinessBranches.pathName:
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider<BusinessDetailBloc>(
+            create: (context) => BusinessDetailBloc(
+              businessRepository: context.read<BusinessRepository>(),
+            )..getBusinessBranches(arguments[0]),
+            child: BusinessBranches(),
+          ),
+        );
       case BusinessMoreInfo.pathName:
         return MaterialPageRoute(
             builder: (_) => BusinessMoreInfo(business: arguments[0]));

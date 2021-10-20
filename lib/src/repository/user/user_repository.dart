@@ -26,10 +26,7 @@ class UserRepository {
     final result = await client.query(
       QueryOptions(
         document: gql(SIGN_IN),
-        variables: {
-          "email": email,
-          "password": password,
-        },
+        variables: {"email": email, "password": password},
         fetchPolicy: FetchPolicy.networkOnly,
       ),
     );

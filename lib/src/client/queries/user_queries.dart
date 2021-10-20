@@ -27,7 +27,9 @@ query{
       _id
       businessName
       distance
-      branch
+      branches{
+        _id
+      }
       phoneNumbers
       emails
       website

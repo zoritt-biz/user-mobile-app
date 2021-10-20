@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:zoritt_mobile_app_user/src/models/business.dart';
 
 class BusinessLocation extends StatefulWidget {
   final String locationDescription;

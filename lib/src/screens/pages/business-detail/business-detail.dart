@@ -10,14 +10,13 @@ import 'package:zoritt_mobile_app_user/src/bloc/business-detail/bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/business-like/bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/pop-up/bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/pop-up/state.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/related_businesses/related_businesses_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/models/business.dart';
+import 'package:zoritt_mobile_app_user/src/models/filter.dart';
+import 'package:zoritt_mobile_app_user/src/repository/business/business_repository.dart';
 import 'package:zoritt_mobile_app_user/src/screens/components/business-detail/detail.dart';
 import 'package:zoritt_mobile_app_user/src/screens/components/error-message/error-message.dart';
 import 'package:zoritt_mobile_app_user/src/screens/components/loading/loading.dart';
-
-import '../../../bloc/related_businesses/related_businesses_bloc.dart';
-import '../../../models/filter.dart';
-import '../../../repository/business/business_repository.dart';
 
 class BusinessDetail extends StatefulWidget {
   static const String pathName = "/business_detail";

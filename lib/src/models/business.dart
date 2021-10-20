@@ -4,7 +4,6 @@ import 'package:zoritt_mobile_app_user/src/models/category.dart';
 import 'package:zoritt_mobile_app_user/src/models/event.dart';
 import 'package:zoritt_mobile_app_user/src/models/post.dart';
 
-@immutable
 class Business extends Equatable {
   final String id;
   final String businessName;
@@ -27,6 +26,8 @@ class Business extends Equatable {
   final String subscription;
   final String state;
   final List<OpenHours> openHours;
+  final List<String> branches;
+  final List<String> menus;
   final List<Events> events;
   final List<Post> posts;
   final List<Category> categories;
@@ -53,6 +54,8 @@ class Business extends Equatable {
     this.establishedIn,
     this.subscription,
     this.openHours,
+    this.branches,
+    this.menus,
     this.events,
     this.posts,
     this.categories,
@@ -117,6 +120,16 @@ class Business extends Equatable {
                     name: e['name'],
                     parent: e['parent'],
                   ))
+              .toList()
+          : [],
+      menus: (data['menu'] as List) != null
+          ? (data['menu'] as List)
+              .map((e) => e['_id'].toString())
+              .toList()
+          : [],
+      branches: (data['branches'] as List) != null
+          ? (data['branches'] as List)
+              .map((e) => e['_id'].toString())
               .toList()
           : [],
     );

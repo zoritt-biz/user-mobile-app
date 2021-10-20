@@ -21,9 +21,7 @@ class BusinessInfo extends StatelessWidget {
                 'Business Information',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
-              SizedBox(
-                height: 20,
-              ),
+              SizedBox(height: 20),
               Text(
                 'Category',
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.normal),
@@ -37,10 +35,7 @@ class BusinessInfo extends StatelessWidget {
                       Text(
                         e.parent,
                         overflow: TextOverflow.fade,
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.black,
-                        ),
+                        style: TextStyle(fontSize: 18, color: Colors.black),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(left: 8),
@@ -72,42 +67,23 @@ class BusinessInfo extends StatelessWidget {
                 height: 20,
               ),
               ...List.generate(
-                  business.phoneNumbers.length,
-                  (index) => Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            business.phoneNumbers[index],
-                            style: TextStyle(fontSize: 15),
-                          ),
-                          IconButton(
-                            onPressed: () async {
-                              await launch(
-                                  "tel:${business.phoneNumbers[index]}");
-                            },
-                            icon: Icon(Icons.phone_outlined),
-                          ),
-                        ],
-                      )),
-              // Divider(
-              //   color: Colors.grey,
-              //   height: 30,
-              // ),
-              // GestureDetector(
-              //   onTap: () {
-              //     Navigator.pushNamed(context, "/menu_display");
-              //   },
-              //   child: Row(
-              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //     children: [
-              //       Text(
-              //         'Explore The Menu',
-              //         style: TextStyle(fontSize: 15),
-              //       ),
-              //       Icon(Icons.search_outlined)
-              //     ],
-              //   ),
-              // ),
+                business.phoneNumbers.length,
+                (index) => Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      business.phoneNumbers[index],
+                      style: TextStyle(fontSize: 15),
+                    ),
+                    IconButton(
+                      onPressed: () async {
+                        await launch("tel:${business.phoneNumbers[index]}");
+                      },
+                      icon: Icon(Icons.phone_outlined),
+                    ),
+                  ],
+                ),
+              ),
               Divider(
                 color: Colors.grey,
                 height: 30,
@@ -116,10 +92,7 @@ class BusinessInfo extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      business.website,
-                      style: TextStyle(fontSize: 15),
-                    ),
+                    Text(business.website, style: TextStyle(fontSize: 15)),
                     IconButton(
                       onPressed: () async {
                         await launch(business.website);
@@ -127,6 +100,48 @@ class BusinessInfo extends StatelessWidget {
                       icon: Icon(Icons.language_outlined),
                     ),
                   ],
+                ),
+              if (business.menus.length > 0)
+                Divider(
+                  color: Colors.grey,
+                  height: 30,
+                ),
+              if (business.menus.length > 0)
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, "/menu_display", arguments: [business.id]);
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Explore Our Menu',
+                        style: TextStyle(fontSize: 15),
+                      ),
+                      Icon(Icons.search_outlined)
+                    ],
+                  ),
+                ),
+              if (business.branches.length > 0)
+                Divider(
+                  color: Colors.grey,
+                  height: 30,
+                ),
+              if (business.branches.length > 0)
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, "/branches", arguments: [business.id]);
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Branches',
+                        style: TextStyle(fontSize: 15),
+                      ),
+                      Icon(Icons.account_tree_outlined)
+                    ],
+                  ),
                 ),
               Padding(
                 padding: const EdgeInsets.only(top: 10),
@@ -164,9 +179,7 @@ class BusinessInfo extends StatelessWidget {
                               Orientation.portrait
                           ? 1
                           : 4,
-                      child: Container(
-                        child: null,
-                      ),
+                      child: Container(),
                     ),
                   ],
                 ),

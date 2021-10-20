@@ -6,9 +6,14 @@ query ($id: MongoID!){
     phoneNumbers
     location
     locationDescription
-    branch
+    branches{
+      _id
+    }
     lngLat{
       coordinates
+    }
+    menu{
+      _id
     }
     emails
     website
@@ -90,7 +95,6 @@ query(
       _id
       businessName
       distance
-      branch
       phoneNumbers
       emails
       website
@@ -113,6 +117,45 @@ query(
       updatedAt
     }
     total
+  }
+}
+""";
+
+const GET_BUSINESS_MENUS = r"""
+query ($id: MongoID!){
+  businessById(_id: $id){
+    menu{
+      _id
+      category
+      menuList{
+        _id
+        image
+        name
+        price
+        discount
+        description
+      }
+    }
+  }
+}
+""";
+
+const GET_BUSINESS_BRANCHES = r"""
+query ($id: MongoID!){
+  businessById(_id: $id){
+    branches{
+      _id
+      businessName
+      location
+      locationDescription
+      phoneNumbers
+      lngLat{
+        coordinates
+      }
+      categories{
+        name
+      }
+    }
   }
 }
 """;

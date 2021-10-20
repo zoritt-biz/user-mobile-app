@@ -10,6 +10,7 @@ import 'package:zoritt_mobile_app_user/src/client/queries/pop-up.dart';
 import 'package:zoritt_mobile_app_user/src/client/queries/queries.dart';
 import 'package:zoritt_mobile_app_user/src/models/filter.dart';
 import 'package:zoritt_mobile_app_user/src/models/location.dart';
+import 'package:zoritt_mobile_app_user/src/models/menus.dart';
 import 'package:zoritt_mobile_app_user/src/models/models.dart';
 import 'package:zoritt_mobile_app_user/src/models/pop-up.dart';
 
@@ -27,6 +28,7 @@ class BusinessRepository {
       ),
     );
     if (result.hasException) {
+      print(result.exception);
       throw result.exception;
     }
     final data = result.data['businessById'];
@@ -66,6 +68,7 @@ class BusinessRepository {
       ),
     );
     if (results.hasException) {
+      print(results.exception);
       throw results.exception;
     }
     final data = results.data['user']['favorites'] as List;
@@ -178,5 +181,35 @@ class BusinessRepository {
     final data = result.data['popUpOne'];
     print(data);
     return new PopUp.fromJson(data);
+  }
+
+  Future<List<Menu>> getBusinessMenus(String id) async {
+    final result = await client.query(
+      QueryOptions(
+        document: gql(GET_BUSINESS_MENUS),
+        variables: {"id": id},
+        fetchPolicy: FetchPolicy.noCache,
+      ),
+    );
+    if (result.hasException) {
+      throw result.exception;
+    }
+    final data = result.data['businessById']['menu'] as List;
+    return data.map((d) => Menu.fromJson(d)).toList();
+  }
+
+  Future<List<Business>> getBusinessBranches(String id) async {
+    final result = await client.query(
+      QueryOptions(
+        document: gql(GET_BUSINESS_BRANCHES),
+        variables: {"id": id},
+        fetchPolicy: FetchPolicy.noCache,
+      ),
+    );
+    if (result.hasException) {
+      throw result.exception;
+    }
+    final data = result.data['businessById']['branches'] as List;
+    return data.map((d) => new Business.fromJson(d)).toList();
   }
 }
