@@ -1,16 +1,18 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:zoritt_mobile_app_user/src/config/local-storage.dart';
 
 final HttpLink _httpLink = HttpLink(
   // 'http://192.168.1.107:8080/',
-  'https://zoritt-new-api.herokuapp.com/',
+  'http://192.168.161.4:8080/',
+  // 'https://zoritt-new-api.herokuapp.com/',
 );
 
 final AuthLink authLink = AuthLink(
   getToken: () async {
-    FlutterSecureStorage storage = FlutterSecureStorage();
+    FlutterSecureStorage storage = LocalStorage().storage;
     var jwt = await storage.read(key: "jwt");
-    if (jwt == null) return 'Bearer ';
+    if (jwt == null) return '';
     return 'Bearer $jwt';
   },
 );

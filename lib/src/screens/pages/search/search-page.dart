@@ -79,6 +79,7 @@ class _SearchPageState extends State<SearchPage> {
             delegate: BusinessSearchDelegate(
               buildContext: context,
               setFilter: setFilter,
+              setQuery: setQuery,
             ),
             context: context,
           );

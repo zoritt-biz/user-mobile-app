@@ -1,16 +1,15 @@
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:location/location.dart';
 import 'package:zoritt_mobile_app_user/src/app-theme.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/navigation/bloc.dart';
+import 'package:zoritt_mobile_app_user/src/client/client.dart';
+import 'package:zoritt_mobile_app_user/src/config/local-storage.dart';
 import 'package:zoritt_mobile_app_user/src/repository/event/events_repository.dart';
 import 'package:zoritt_mobile_app_user/src/repository/home/home_repository.dart';
 import 'package:zoritt_mobile_app_user/src/repository/repository.dart';
-
-import 'client/client.dart';
 
 class ZorittApp extends StatefulWidget {
   const ZorittApp({Key key}) : super(key: key);
@@ -28,7 +27,7 @@ class _ZorittAppState extends State<ZorittApp> {
   final UserRepository userRepository = UserRepository(
     client: Client().connect,
     firebaseStorage: FirebaseStorage.instance,
-    storage: FlutterSecureStorage(),
+    storage: LocalStorage().storage,
   );
 
   final AuthenticationRepository authenticationRepository =
@@ -36,7 +35,7 @@ class _ZorittAppState extends State<ZorittApp> {
     userRepository: UserRepository(
       client: Client().connect,
       firebaseStorage: FirebaseStorage.instance,
-      storage: FlutterSecureStorage(),
+      storage: LocalStorage().storage,
     ),
   );
 

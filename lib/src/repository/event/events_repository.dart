@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:zoritt_mobile_app_user/src/client/mutations/event_mutations.dart';
+import 'package:zoritt_mobile_app_user/src/client/mutations/user_mutations.dart';
 import 'package:zoritt_mobile_app_user/src/client/queries/event_queries.dart';
 import 'package:zoritt_mobile_app_user/src/models/models.dart';
 
@@ -45,12 +45,13 @@ class EventsRepository {
   Future<bool> unlikeEvent(String eventId) async {
     final result = await client.query(
       QueryOptions(
-          document: gql(LIKE_EVENT),
-          variables: {"eventId": eventId},
-          fetchPolicy: FetchPolicy.networkOnly),
+        document: gql(LIKE_EVENT),
+        variables: {"eventId": eventId},
+        fetchPolicy: FetchPolicy.networkOnly,
+      ),
     );
     if (result.hasException) {
-      throw result.exception;
+      return false;
     }
     return true;
   }

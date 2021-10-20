@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:zoritt_mobile_app_user/src/models/businessList.dart';
+import 'package:zoritt_mobile_app_user/src/models/business-list.dart';
 
 import '../bloc.dart';
 

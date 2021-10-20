@@ -61,14 +61,14 @@ class BusinessRepository {
   Future<List<Business>> getFavoritesList() async {
     final results = await client.query(
       QueryOptions(
-        document: gql(GET_FAVORITES_LIST_MANY)
+        document: gql(GET_FAVORITES_LIST_MANY),
+        fetchPolicy: FetchPolicy.noCache,
       ),
     );
     if (results.hasException) {
-      print(results.exception);
       throw results.exception;
     }
-    final data = results.data['user']['businesses'] as List;
+    final data = results.data['user']['favorites'] as List;
     return data.map((e) => Business.fromJson(e)).toList();
   }
 
@@ -145,7 +145,7 @@ class BusinessRepository {
       ),
     );
     if (result.hasException) {
-      throw result.exception;
+      return false;
     }
     return true;
   }

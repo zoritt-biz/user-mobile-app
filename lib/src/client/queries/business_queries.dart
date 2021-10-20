@@ -148,13 +148,10 @@ query($limit: Int){
     slogan
     description
     pictures
-    isLiked
-    favoriteList
     categories{
       name
       parent
     }
-    likeCount
   }
 }
 """;

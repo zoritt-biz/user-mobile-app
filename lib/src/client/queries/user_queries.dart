@@ -20,26 +20,10 @@ query{
 }
 """;
 
-const GET_USER_PROFILE = r"""
-query($firebaseId: String){
-  userOne(filter: {firebaseId: $firebaseId}){
-    _id
-    firstName
-    middleName
-    lastName
-    email
-    image
-    phoneNumber
-    firebaseId
-    userType
-  }
-}
-""";
-
 const GET_FAVORITES_LIST_MANY = r"""
 query{
   user{
-    businesses{
+    favorites{
       _id
       businessName
       distance

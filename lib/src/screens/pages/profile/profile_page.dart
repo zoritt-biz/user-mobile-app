@@ -9,10 +9,8 @@ import 'package:zoritt_mobile_app_user/src/bloc/auth/auth_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/events-like/bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/profile/bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/profile/state.dart';
-import 'package:zoritt_mobile_app_user/src/bloc/profile/user-events/bloc.dart';
-import 'package:zoritt_mobile_app_user/src/bloc/profile/user-events/state.dart';
-import 'package:zoritt_mobile_app_user/src/bloc/profile/user-posts/bloc.dart';
-import 'package:zoritt_mobile_app_user/src/bloc/profile/user-posts/state.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/user/user_bloc.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/user/user_state.dart';
 import 'package:zoritt_mobile_app_user/src/models/user.dart';
 import 'package:zoritt_mobile_app_user/src/repository/repository.dart';
 import 'package:zoritt_mobile_app_user/src/screens/components/event-card/event-card.dart';
@@ -100,7 +98,7 @@ class _ProfilePageState extends State<ProfilePage>
                                       profileState.user.image != ""
                                   ? NetworkImage(profileState.user.image)
                                   : AssetImage("assets/images/user_image.png"),
-                              fit: BoxFit.cover,
+                              fit: BoxFit.fitWidth,
                             ),
                           ),
                           child: Center(
@@ -122,7 +120,7 @@ class _ProfilePageState extends State<ProfilePage>
                                     shape: BoxShape.circle,
                                     image: DecorationImage(
                                       image: FileImage(_image),
-                                      fit: BoxFit.cover,
+                                      fit: BoxFit.contain,
                                     ),
                                   ),
                                 ),
@@ -170,7 +168,7 @@ class _ProfilePageState extends State<ProfilePage>
                       child: ElevatedButton(
                         style: ButtonStyle(
                             backgroundColor: MaterialStateProperty.all(
-                                Theme.of(context).accentColor)),
+                                Theme.of(context).accentColor,),),
                         onPressed: () {
                           final profileBloc =
                               BlocProvider.of<ProfileBloc>(context).state;
@@ -194,8 +192,10 @@ class _ProfilePageState extends State<ProfilePage>
                   child: Container(
                     child: ElevatedButton(
                       style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(
-                              Theme.of(context).accentColor)),
+                        backgroundColor: MaterialStateProperty.all(
+                          Theme.of(context).accentColor,
+                        ),
+                      ),
                       onPressed: () async {
                         await launch("https://business.zoritt.com");
                       },
@@ -209,9 +209,7 @@ class _ProfilePageState extends State<ProfilePage>
                 SizedBox(height: 10),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Divider(
-                    color: Colors.grey[400],
-                  ),
+                  child: Divider(color: Colors.grey[400]),
                 ),
                 TabBar(
                   controller: _tabController,
@@ -236,39 +234,48 @@ class _ProfilePageState extends State<ProfilePage>
                     controller: _tabController,
                     children: [
                       BlocProvider(
-                        create: (context) => UserPostsBloc(
-                          context.read<UserRepository>(),
+                        create: (context) => UserBloc(
+                          userRepository: context.read<UserRepository>(),
                         )..getUserPosts(),
-                        child: BlocBuilder<UserPostsBloc, UserPostsState>(
-                            builder: (postsCtx, postsState) {
-                          if (postsState is UserPostsSuccessful) {
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 15, horizontal: 5),
-                              child: PostItems(
-                                buildContext: widget.globalNavigator,
-                                posts: postsState.posts,
-                                isVertical: true,
-                              ),
-                            );
-                          } else if (postsState is UserPostsLoading) {
-                            return Center(child: CircularProgressIndicator());
-                          } else {
-                            return Center(child: Text('Likes'));
-                          }
-                        }),
+                        child: BlocBuilder<UserBloc, UserState>(
+                          builder: (postsCtx, postsState) {
+                            if (postsState is UserPostsSuccessful) {
+                              return Padding(
+                                padding: const EdgeInsets.only(
+                                  top: 5,
+                                  left: 5,
+                                  right: 5,
+                                  bottom: 35,
+                                ),
+                                child: PostItems(
+                                  buildContext: widget.globalNavigator,
+                                  posts: postsState.posts,
+                                  isVertical: true,
+                                ),
+                              );
+                            } else if (postsState is UserPostsLoading) {
+                              return Center(child: CircularProgressIndicator());
+                            } else {
+                              return Center(child: Text('Likes'));
+                            }
+                          },
+                        ),
                       ),
                       BlocProvider(
-                        create: (context) => UserEventsBloc(
-                          context.read<UserRepository>(),
+                        create: (context) => UserBloc(
+                          userRepository: context.read<UserRepository>(),
                         )..getUserEvents(),
-                        child: BlocBuilder<UserEventsBloc, UserEventsState>(
+                        child: BlocBuilder<UserBloc, UserState>(
                           builder: (eventsCtx, eventsState) {
                             if (eventsState is UserEventsSuccessful) {
                               return ListView(
                                 primary: true,
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 15, horizontal: 5),
+                                padding: const EdgeInsets.only(
+                                  top: 5,
+                                  left: 5,
+                                  right: 5,
+                                  bottom: 35,
+                                ),
                                 children: [
                                   ListView.builder(
                                     itemCount: eventsState.events.length,

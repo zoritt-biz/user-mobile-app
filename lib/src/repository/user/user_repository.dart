@@ -27,8 +27,8 @@ class UserRepository {
       QueryOptions(
         document: gql(SIGN_IN),
         variables: {
-          "email": "nathnael.user@gmail.com",
-          "password": "nati@1234",
+          "email": email,
+          "password": password,
         },
         fetchPolicy: FetchPolicy.networkOnly,
       ),
@@ -62,7 +62,7 @@ class UserRepository {
     final result = await client.query(
       QueryOptions(
         document: gql(GET_USER),
-        fetchPolicy: FetchPolicy.cacheFirst,
+        fetchPolicy: FetchPolicy.cacheAndNetwork,
       ),
     );
     if (result.hasException) {
@@ -101,9 +101,10 @@ class UserRepository {
       ),
     );
     if (result.hasException) {
-      throw result.exception;
+      print(result.exception);
+      throw result.exception.graphqlErrors.first.message;
     }
-    final data = result.data['signUp'];
+    final data = result.data['userSignUp'];
     User user = new User.fromJson(data['user']);
     user.token = data['accessToken'];
     return user;
@@ -113,16 +114,13 @@ class UserRepository {
     final result = await client.query(
       QueryOptions(
         document: gql(GET_USER_EVENTS),
-        fetchPolicy: FetchPolicy.networkOnly,
+        fetchPolicy: FetchPolicy.noCache,
       ),
     );
     if (result.hasException) {
       throw result.exception;
     }
-    final data = result.data['userOne']['interestedInEvents'] as List;
-    if (data.length == 0) {
-      return [];
-    }
+    final data = result.data['user']['interestedInEvents'] as List;
     return data.map((e) => Events.fromJson(e)).toList();
   }
 
@@ -130,16 +128,13 @@ class UserRepository {
     final result = await client.query(
       QueryOptions(
         document: gql(GET_USER_POSTS),
-        fetchPolicy: FetchPolicy.networkOnly,
+        fetchPolicy: FetchPolicy.noCache,
       ),
     );
     if (result.hasException) {
       throw result.exception;
     }
-    final data = result.data['userOne']['likedPosts'] as List;
-    if (data.length == 0) {
-      return [];
-    }
+    final data = result.data['user']['likedPosts'] as List;
     return data.map((e) => Post.fromJson(e)).toList();
   }
 

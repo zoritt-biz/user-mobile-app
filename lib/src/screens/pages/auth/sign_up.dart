@@ -76,7 +76,7 @@ class _SignUpState extends State<SignUp> {
       listener: (signUpCtx, signUpState) {
         if (signUpState is SignUpFailure) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Something went wrong")),
+            SnackBar(content: Text(signUpState.message)),
           );
         }
         if (signUpState is SignUpSuccessful) {
@@ -171,7 +171,7 @@ class _SignUpState extends State<SignUp> {
                 if (_formKey.currentState.validate()) {
                   _formKey.currentState.save();
                   context.read<SignUpBloc>().signUp(
-                        email: emailController.text.trim(),
+                        email: emailController.text.trim().toLowerCase(),
                         password: passwordController.text,
                         firstName: firstNameController.text,
                         lastName: lastNameController.text,

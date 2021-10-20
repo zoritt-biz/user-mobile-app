@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/favorites/bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/favorites/state.dart';
-import 'package:zoritt_mobile_app_user/src/models/business.dart';
+import 'package:zoritt_mobile_app_user/src/screens/components/search-item/search-item.dart';
 
 class FavoritesPage extends StatefulWidget {
   final BuildContext globalNavigator;
@@ -44,110 +44,45 @@ class _FavoritesPageState extends State<FavoritesPage> {
                 return ListView.builder(
                   padding: EdgeInsets.symmetric(vertical: 20),
                   itemCount: favoritesState.business.length,
-                  itemBuilder: (context, index) => FavoriteSearchResult(
-                    business: favoritesState.business[index],
-                    globalNavigator: widget.globalNavigator,
+                  itemBuilder: (context, index) => GestureDetector(
+                    onTap: () {
+                      Navigator.pushNamed(
+                        widget.globalNavigator,
+                        "/business_detail",
+                        arguments: [
+                          favoritesState.business[index].id,
+                          favoritesState.business[index].categories[0].name,
+                        ],
+                      );
+                    },
+                    child: SearchItem(
+                      business: favoritesState.business[index],
+                      globalNavigator: widget.globalNavigator,
+                    ),
                   ),
                 );
               } else {
-                return Center(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text("You have note liked any business"),
-                      TextButton(
-                          onPressed: () {
-                            load();
-                          },
-                          child: Text("Refresh!"))
-                    ],
-                  ),
-                );
+                return Center(child: Text("You haven't liked any business"));
               }
-            } else {
+            } else if (favoritesState is FavoritesFailure) {
               return Center(
-                child: CircularProgressIndicator(),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Unable to connect, please "),
+                    TextButton(
+                      onPressed: () {
+                        load();
+                      },
+                      child: Text("Retry!"),
+                    )
+                  ],
+                ),
               );
+            } else {
+              return Center(child: CircularProgressIndicator());
             }
           },
-        ),
-      ),
-    );
-  }
-}
-
-class FavoriteSearchResult extends StatefulWidget {
-  final Business business;
-  final BuildContext globalNavigator;
-
-  FavoriteSearchResult({this.business, this.globalNavigator});
-
-  @override
-  _FavoriteSearchResultSearchResultState createState() =>
-      _FavoriteSearchResultSearchResultState();
-}
-
-class _FavoriteSearchResultSearchResultState
-    extends State<FavoriteSearchResult> {
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 10, right: 10, bottom: 5),
-      child: GestureDetector(
-        onTap: () {
-          Navigator.pushNamed(
-            widget.globalNavigator,
-            "/business_detail",
-            arguments: [widget.business.id],
-          );
-        },
-        child: Card(
-          clipBehavior: Clip.hardEdge,
-          child: Row(
-            children: [
-              Expanded(
-                child: Image.network(
-                  widget.business.pictures[0],
-                  fit: BoxFit.cover,
-                  height: 100,
-                ),
-              ),
-              Expanded(
-                flex: 2,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 20, right: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        widget.business.businessName,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 18),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Text(
-                        widget.business.location,
-                        style: TextStyle(fontSize: 15),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        widget.business.phoneNumbers[0],
-                        style: TextStyle(fontSize: 15),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
         ),
       ),
     );

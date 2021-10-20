@@ -5,12 +5,15 @@ import 'package:zoritt_mobile_app_user/src/bloc/profile/bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/user/user_state.dart';
 import 'package:zoritt_mobile_app_user/src/repository/repository.dart';
 import 'package:zoritt_mobile_app_user/src/screens/pages/auth/sign_in.dart';
+import 'package:zoritt_mobile_app_user/src/screens/pages/auth/sign_up.dart';
 import 'package:zoritt_mobile_app_user/src/screens/pages/profile/profile_page.dart';
 
 import 'navigators.dart';
 
 class ProfileNavigatorRoutes {
   static const String root = "/";
+  static const String signIn = "/sign_in";
+  static const String signUp = "/sign_up";
 }
 
 class ProfileNavigator extends TabNavigator {
@@ -50,6 +53,20 @@ class ProfileNavigator extends TabNavigator {
                 );
               }
             },
+          ),
+      ProfileNavigatorRoutes.signIn: (ctx) => BlocProvider<LoginBloc>(
+            create: (context) => LoginBloc(
+              userRepository: context.read<UserRepository>(),
+              authenticationBloc: context.read<AuthenticationBloc>(),
+            ),
+            child: SignIn(),
+          ),
+      ProfileNavigatorRoutes.signUp: (ctx) => BlocProvider<SignUpBloc>(
+            create: (context) => SignUpBloc(
+              userRepository: context.read<UserRepository>(),
+              authenticationBloc: context.read<AuthenticationBloc>(),
+            ),
+            child: SignUp(),
           ),
     };
   }

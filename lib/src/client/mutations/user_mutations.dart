@@ -1,29 +1,3 @@
-const CREATE_USER = r"""
-mutation(
-  $firstName: String,
-  $lastName: String, 
-  $userType: EnumUserUserType, 
-  $email: String,
-  $phoneNumber: String,
-  $firebaseId: String,
-){
-  userCreateOne(
-    record: {
-      firstName: $firstName,
-      lastName: $lastName, 
-      userType: $userType,
-      email: $email,
-      phoneNumber: $phoneNumber,
-      firebaseId: $firebaseId,
-    }
-  ){
-    record {
-      _id
-    }
-  }
-}
-""";
-
 const USER_ADD_LOGO = r"""
 mutation(
   $id: MongoID!,
@@ -44,8 +18,31 @@ mutation(
       image
       phoneNumber
       firebaseId
-      userType
     }
+  }
+}
+""";
+
+const LIKE_POST = r"""
+mutation($postId: String!){
+  postLikeUnLike(postId: $postId){
+    description
+  }
+}
+""";
+
+const LIKE_EVENT = r"""
+mutation($eventId: String!){
+  eventLikeUnLike(eventId: $eventId){
+    title
+  }
+}
+""";
+
+const LIKE_BUSINESS = r"""
+mutation($businessId: String!){
+  businessLikeUnLike(businessId: $businessId){
+    businessName
   }
 }
 """;

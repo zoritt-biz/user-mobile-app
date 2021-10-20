@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:zoritt_mobile_app_user/src/client/mutations/post_mutations.dart';
+import 'package:zoritt_mobile_app_user/src/client/mutations/user_mutations.dart';
 import 'package:zoritt_mobile_app_user/src/client/queries/posts_queries.dart';
 import 'package:zoritt_mobile_app_user/src/models/models.dart';
 
@@ -37,7 +37,7 @@ class PostRepository {
       ),
     );
     if (result.hasException) {
-      throw result.exception;
+      return false;
     }
     return true;
   }
