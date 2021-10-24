@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:zoritt_mobile_app_user/src/models/business.dart';
 import 'package:zoritt_mobile_app_user/src/models/pop-up.dart';
 
 class PopUpState extends Equatable {

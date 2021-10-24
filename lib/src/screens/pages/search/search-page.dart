@@ -18,8 +18,7 @@ import 'business-search-delegate.dart';
 class SearchPage extends StatefulWidget {
   final BuildContext globalNavigator;
 
-  const SearchPage({Key key, this.globalNavigator})
-      : super(key: key);
+  const SearchPage({Key key, this.globalNavigator}) : super(key: key);
 
   @override
   _SearchPageState createState() => _SearchPageState();
@@ -161,7 +160,7 @@ class _SearchPageState extends State<SearchPage> {
       }
     }
 
-    List<dynamic> icons = [...HOME_CATEGORY_LIST.map((e) => e["small_icon"])];
+    List<Icon> icons = [...HOME_CATEGORY_LIST.map((e) => e["small_icon"])];
 
     List<String> categories = [...HOME_CATEGORY_LIST.map((e) => e["name"])];
 
@@ -196,7 +195,7 @@ class _SearchPageState extends State<SearchPage> {
                           height: 60,
                           child: ListTile(
                             dense: true,
-                            leading: Icon(icons[categories.indexOf(value)]),
+                            leading: icons[categories.indexOf(value)],
                             title: Text(
                               value,
                               style:

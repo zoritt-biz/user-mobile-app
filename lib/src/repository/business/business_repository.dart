@@ -24,11 +24,10 @@ class BusinessRepository {
       QueryOptions(
         document: gql(GET_BUSINESS_DETAIL),
         variables: {"id": id},
-        fetchPolicy: FetchPolicy.networkOnly,
+        fetchPolicy: FetchPolicy.noCache,
       ),
     );
     if (result.hasException) {
-      print(result.exception);
       throw result.exception;
     }
     final data = result.data['businessById'];
@@ -40,6 +39,7 @@ class BusinessRepository {
       QueryOptions(
         document: gql(GET_SPONSORED_BUSINESSES),
         variables: {"limit": limit},
+        fetchPolicy: FetchPolicy.noCache,
       ),
     );
     if (result.hasException) {
@@ -51,7 +51,10 @@ class BusinessRepository {
 
   Future<List<BusinessList>> getBusinessList() async {
     final results = await client.query(
-      QueryOptions(document: gql(GET_BUSINESS_LIST_MANY)),
+      QueryOptions(
+        document: gql(GET_BUSINESS_LIST_MANY),
+        fetchPolicy: FetchPolicy.noCache,
+      ),
     );
     if (results.hasException) {
       throw results.exception;
@@ -103,7 +106,7 @@ class BusinessRepository {
           "page": page,
           "perPage": perPage
         },
-        fetchPolicy: FetchPolicy.cacheAndNetwork,
+        fetchPolicy: FetchPolicy.noCache,
       ),
     );
     if (results.hasException) {
@@ -144,7 +147,7 @@ class BusinessRepository {
       QueryOptions(
         document: gql(LIKE_BUSINESS),
         variables: {"businessId": businessId},
-        fetchPolicy: FetchPolicy.networkOnly,
+        fetchPolicy: FetchPolicy.noCache,
       ),
     );
     if (result.hasException) {
@@ -158,7 +161,7 @@ class BusinessRepository {
       QueryOptions(
         document: gql(LIKE_BUSINESS),
         variables: {"businessId": businessId},
-        fetchPolicy: FetchPolicy.networkOnly,
+        fetchPolicy: FetchPolicy.noCache,
       ),
     );
     if (result.hasException) {
@@ -172,7 +175,7 @@ class BusinessRepository {
       QueryOptions(
         document: gql(GET_POP_UP),
         variables: {"category": category},
-        fetchPolicy: FetchPolicy.cacheFirst,
+        fetchPolicy: FetchPolicy.noCache,
       ),
     );
     if (result.hasException) {

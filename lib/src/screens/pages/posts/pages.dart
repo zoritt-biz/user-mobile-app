@@ -406,9 +406,7 @@ class _BusinessInfoState extends State<BusinessInfo> {
                               .read<PostLikeBloc>()
                               .unlikePost(widget.post.id);
                         } else {
-                          context
-                              .read<PostLikeBloc>()
-                              .likePost(widget.post.id);
+                          context.read<PostLikeBloc>().likePost(widget.post.id);
                         }
                       } else {
                         if (widget.post.isLiked) {
@@ -416,9 +414,7 @@ class _BusinessInfoState extends State<BusinessInfo> {
                               .read<PostLikeBloc>()
                               .unlikePost(widget.post.id);
                         } else {
-                          context
-                              .read<PostLikeBloc>()
-                              .likePost(widget.post.id);
+                          context.read<PostLikeBloc>().likePost(widget.post.id);
                         }
                       }
                     }

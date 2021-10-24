@@ -167,8 +167,10 @@ class _ProfilePageState extends State<ProfilePage>
                     child: Container(
                       child: ElevatedButton(
                         style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all(
-                                Theme.of(context).accentColor,),),
+                          backgroundColor: MaterialStateProperty.all(
+                            Theme.of(context).accentColor,
+                          ),
+                        ),
                         onPressed: () {
                           final profileBloc =
                               BlocProvider.of<ProfileBloc>(context).state;

@@ -18,7 +18,7 @@ class PostRepository {
       QueryOptions(
         document: gql(GET_POSTS),
         variables: {"page": page, "perPage": perPage, "filterDate": filterDate},
-        fetchPolicy: FetchPolicy.networkOnly,
+        fetchPolicy: FetchPolicy.noCache,
       ),
     );
     if (result.hasException) {
@@ -33,7 +33,7 @@ class PostRepository {
       QueryOptions(
         document: gql(LIKE_POST),
         variables: {"postId": postId},
-        fetchPolicy: FetchPolicy.networkOnly,
+        fetchPolicy: FetchPolicy.noCache,
       ),
     );
     if (result.hasException) {
@@ -47,7 +47,7 @@ class PostRepository {
       QueryOptions(
         document: gql(LIKE_POST),
         variables: {"postId": postId},
-        fetchPolicy: FetchPolicy.networkOnly,
+        fetchPolicy: FetchPolicy.noCache,
       ),
     );
     if (result.hasException) {

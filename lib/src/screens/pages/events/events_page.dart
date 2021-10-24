@@ -1,15 +1,9 @@
 import 'dart:ui';
 
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:share/share.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/events-like/bloc.dart';
-import 'package:zoritt_mobile_app_user/src/bloc/events-like/state.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/events/bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/events/state.dart';
 import 'package:zoritt_mobile_app_user/src/models/models.dart';
@@ -19,8 +13,7 @@ import 'package:zoritt_mobile_app_user/src/screens/components/event-card/event-c
 class EventsPage extends StatelessWidget {
   final BuildContext globalNavigator;
 
-  const EventsPage({Key key, @required this.globalNavigator})
-      : super(key: key);
+  const EventsPage({Key key, @required this.globalNavigator}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -95,4 +88,3 @@ class EventsPage extends StatelessWidget {
     );
   }
 }
-

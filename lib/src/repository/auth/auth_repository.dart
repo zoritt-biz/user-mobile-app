@@ -12,7 +12,7 @@ class AuthenticationRepository {
   Stream<User> get user async* {
     var controller = StreamController<User>();
     String token = await userRepository.hasToken();
-    if(token == null){
+    if (token == null) {
       yield* controller.stream;
     }
     User user = await userRepository.getUser();

@@ -62,9 +62,7 @@ class _HomeState extends State<Home> {
 
   Future<void> load() async {
     context.read<EventsBloc>().getEvents(1, 10);
-    context
-        .read<PostBloc>()
-        .getPosts(1, 10, dateTime.toIso8601String());
+    context.read<PostBloc>().getPosts(1, 10, dateTime.toIso8601String());
     context.read<SponsoredBloc>().getSponsored(5);
     context.read<HomeBloc>().getImages();
   }
@@ -114,14 +112,16 @@ class _HomeState extends State<Home> {
                                 Text(
                                   "Sponsored Posts",
                                   style: TextStyle(
-                                      fontSize: 25, color: Colors.black),
+                                    fontSize: 25,
+                                    color: Colors.black,
+                                  ),
                                 ),
                                 IconButton(
                                   icon: Icon(Icons.chevron_right,
                                       color: Colors.black),
                                   onPressed: () {
                                     Navigator.pushNamed(
-                                        context, "/what_is_new_page");
+                                        context, "/sponsored_posts");
                                   },
                                 )
                               ],

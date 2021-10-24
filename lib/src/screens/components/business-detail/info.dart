@@ -63,9 +63,7 @@ class BusinessInfo extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(
-                height: 20,
-              ),
+              SizedBox(height: 20),
               ...List.generate(
                 business.phoneNumbers.length,
                 (index) => Row(
@@ -101,6 +99,25 @@ class BusinessInfo extends StatelessWidget {
                     ),
                   ],
                 ),
+              if (business.emails.length > 0)
+                Divider(color: Colors.grey, height: 30),
+              if (business.emails.length > 0)
+                ...List.generate(
+                  business.emails.length,
+                  (index) => Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        business.emails[index],
+                        style: TextStyle(fontSize: 15),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.email_outlined),
+                        onPressed: () {},
+                      ),
+                    ],
+                  ),
+                ),
               if (business.menus.length > 0)
                 Divider(
                   color: Colors.grey,
@@ -109,7 +126,8 @@ class BusinessInfo extends StatelessWidget {
               if (business.menus.length > 0)
                 GestureDetector(
                   onTap: () {
-                    Navigator.pushNamed(context, "/menu_display", arguments: [business.id]);
+                    Navigator.pushNamed(context, "/menu_display",
+                        arguments: [business.id]);
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -130,7 +148,8 @@ class BusinessInfo extends StatelessWidget {
               if (business.branches.length > 0)
                 GestureDetector(
                   onTap: () {
-                    Navigator.pushNamed(context, "/branches", arguments: [business.id]);
+                    Navigator.pushNamed(context, "/branches",
+                        arguments: [business.id]);
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/sponsored_business/sponsored_bloc.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/sponsored_business/sponsored_state.dart';
 import 'package:zoritt_mobile_app_user/src/screens/components/sponsor-item/sponsor-item.dart';
 
 class SponsoredPostsOverview extends StatelessWidget {

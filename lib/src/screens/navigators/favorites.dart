@@ -55,19 +55,19 @@ class FavoritesNavigator extends TabNavigator {
             },
           ),
       FavoriteNavigatorRoutes.signIn: (ctx) => BlocProvider<LoginBloc>(
-        create: (context) => LoginBloc(
-          userRepository: context.read<UserRepository>(),
-          authenticationBloc: context.read<AuthenticationBloc>(),
-        ),
-        child: SignIn(),
-      ),
+            create: (context) => LoginBloc(
+              userRepository: context.read<UserRepository>(),
+              authenticationBloc: context.read<AuthenticationBloc>(),
+            ),
+            child: SignIn(),
+          ),
       FavoriteNavigatorRoutes.signUp: (ctx) => BlocProvider<SignUpBloc>(
-        create: (context) => SignUpBloc(
-          userRepository: context.read<UserRepository>(),
-          authenticationBloc: context.read<AuthenticationBloc>(),
-        ),
-        child: SignUp(),
-      ),
+            create: (context) => SignUpBloc(
+              userRepository: context.read<UserRepository>(),
+              authenticationBloc: context.read<AuthenticationBloc>(),
+            ),
+            child: SignUp(),
+          ),
     };
   }
 

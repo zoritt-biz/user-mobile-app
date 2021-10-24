@@ -27,7 +27,7 @@ class UserRepository {
       QueryOptions(
         document: gql(SIGN_IN),
         variables: {"email": email, "password": password},
-        fetchPolicy: FetchPolicy.networkOnly,
+        fetchPolicy: FetchPolicy.noCache,
       ),
     );
     if (result.hasException) {
@@ -94,11 +94,10 @@ class UserRepository {
           "lastName": lastName,
           "phoneNumber": phoneNumber,
         },
-        fetchPolicy: FetchPolicy.networkOnly,
+        fetchPolicy: FetchPolicy.noCache,
       ),
     );
     if (result.hasException) {
-      print(result.exception);
       throw result.exception.graphqlErrors.first.message;
     }
     final data = result.data['userSignUp'];
@@ -165,6 +164,7 @@ class UserRepository {
         MutationOptions(
           document: gql(USER_ADD_LOGO),
           variables: {"id": user.id, "image": downloadUrl},
+          fetchPolicy: FetchPolicy.noCache,
         ),
       );
       if (results.hasException) {

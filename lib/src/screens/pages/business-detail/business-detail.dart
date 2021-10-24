@@ -255,7 +255,7 @@ class _BusinessDetailState extends State<BusinessDetail> {
                     Container(
                       child: CarouselSlider(
                         options: CarouselOptions(
-                          autoPlayInterval: Duration(seconds: 10),
+                          autoPlayInterval: Duration(seconds: 8),
                           autoPlay: business.pictures.length > 1 ? true : false,
                           viewportFraction: 1,
                           height: double.infinity,
@@ -267,7 +267,7 @@ class _BusinessDetailState extends State<BusinessDetail> {
                                   child: Stack(
                                     children: [
                                       CachedNetworkImage(
-                                        imageUrl: business.pictures[0],
+                                        imageUrl: item,
                                         imageBuilder: (context, imageProvider) {
                                           return Container(
                                             decoration: BoxDecoration(
@@ -285,10 +285,12 @@ class _BusinessDetailState extends State<BusinessDetail> {
                                           color: Colors.white10,
                                         ),
                                         filter: ImageFilter.blur(
-                                            sigmaY: 2, sigmaX: 2),
+                                          sigmaY: 2,
+                                          sigmaX: 2,
+                                        ),
                                       ),
                                       CachedNetworkImage(
-                                        imageUrl: business.pictures[0],
+                                        imageUrl: item,
                                         imageBuilder: (context, imageProvider) {
                                           return Container(
                                             decoration: BoxDecoration(

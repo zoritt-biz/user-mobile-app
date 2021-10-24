@@ -25,7 +25,9 @@ class RelatedBusiness extends StatelessWidget {
                   children: [
                     Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 15, vertical: 20),
+                        horizontal: 15,
+                        vertical: 20,
+                      ),
                       child: Text(
                         'Related Businesses',
                         style: TextStyle(

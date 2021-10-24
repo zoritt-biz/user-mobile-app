@@ -123,14 +123,10 @@ class Business extends Equatable {
               .toList()
           : [],
       menus: (data['menu'] as List) != null
-          ? (data['menu'] as List)
-              .map((e) => e['_id'].toString())
-              .toList()
+          ? (data['menu'] as List).map((e) => e['_id'].toString()).toList()
           : [],
       branches: (data['branches'] as List) != null
-          ? (data['branches'] as List)
-              .map((e) => e['_id'].toString())
-              .toList()
+          ? (data['branches'] as List).map((e) => e['_id'].toString()).toList()
           : [],
     );
   }
@@ -148,4 +144,3 @@ class OpenHours {
 
   OpenHours({this.day, this.opens, this.closes, this.isOpen});
 }
-

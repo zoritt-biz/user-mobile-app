@@ -19,6 +19,7 @@ class EventsRepository {
           "perPage": perPage,
           "today": today.split(" ")[0],
         },
+        fetchPolicy: FetchPolicy.noCache,
       ),
     );
     if (result.hasException) {
@@ -33,7 +34,7 @@ class EventsRepository {
       QueryOptions(
         document: gql(LIKE_EVENT),
         variables: {"eventId": eventId},
-        fetchPolicy: FetchPolicy.networkOnly,
+        fetchPolicy: FetchPolicy.noCache,
       ),
     );
     if (result.hasException) {
@@ -47,7 +48,7 @@ class EventsRepository {
       QueryOptions(
         document: gql(LIKE_EVENT),
         variables: {"eventId": eventId},
-        fetchPolicy: FetchPolicy.networkOnly,
+        fetchPolicy: FetchPolicy.noCache,
       ),
     );
     if (result.hasException) {

@@ -4,15 +4,14 @@ import 'package:zoritt_mobile_app_user/src/bloc/bloc.dart';
 import 'package:zoritt_mobile_app_user/src/bloc/pop-up/bloc.dart';
 import 'package:zoritt_mobile_app_user/src/models/models.dart';
 import 'package:zoritt_mobile_app_user/src/repository/repository.dart';
-import 'package:zoritt_mobile_app_user/src/screens/pages/business-detail/location-page.dart';
 import 'package:zoritt_mobile_app_user/src/screens/components/menu/business_more_info.dart';
-import 'package:zoritt_mobile_app_user/src/screens/pages/business-detail/menu-display-page.dart';
-
 // import 'package:zoritt_mobile_app_user/src/screens/pages/auth/reset.dart';
 import 'package:zoritt_mobile_app_user/src/screens/pages/auth/sign_in.dart';
 import 'package:zoritt_mobile_app_user/src/screens/pages/auth/sign_up.dart';
 import 'package:zoritt_mobile_app_user/src/screens/pages/business-detail/business-branches.dart';
 import 'package:zoritt_mobile_app_user/src/screens/pages/business-detail/business-detail.dart';
+import 'package:zoritt_mobile_app_user/src/screens/pages/business-detail/location-page.dart';
+import 'package:zoritt_mobile_app_user/src/screens/pages/business-detail/menu-display-page.dart';
 import 'package:zoritt_mobile_app_user/src/screens/pages/posts/posts_page.dart';
 
 import '../screens.dart';
@@ -57,7 +56,7 @@ class RouteGenerator {
             child: MenuDisplay(),
           ),
         );
-        case BusinessBranches.pathName:
+      case BusinessBranches.pathName:
         return MaterialPageRoute(
           builder: (_) => BlocProvider<BusinessDetailBloc>(
             create: (context) => BusinessDetailBloc(

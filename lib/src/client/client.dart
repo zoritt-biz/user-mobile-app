@@ -3,9 +3,9 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:zoritt_mobile_app_user/src/config/local-storage.dart';
 
 final HttpLink _httpLink = HttpLink(
-  'http://192.168.1.107:8080',
+  // 'http://192.168.1.107:8080',
   // 'http://192.168.161.4:8080',
-  // 'https://zoritt-new-api.herokuapp.com/',
+  'https://zoritt-new-api.herokuapp.com/',
 );
 
 final AuthLink authLink = AuthLink(

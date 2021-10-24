@@ -17,6 +17,7 @@ class NavigationBloc extends Cubit<NavigationState> {
 
 abstract class NavigationState extends Equatable {
   const NavigationState();
+
   @override
   List<Object> get props => [];
 }

@@ -170,12 +170,12 @@ query{
 """;
 
 const GET_SPONSORED_BUSINESSES = r"""
-query($limit: Int){
+query{
   sponsoredMany(
     filter:{
     	state: ACTIVE
   	}
-    limit: $limit
+    limit: 5
   ){
     _id
     businessName
@@ -185,8 +185,9 @@ query($limit: Int){
     logoPics
     location
     locationDescription
-    lat
-    lng
+    lngLat{
+      coordinates
+    }
     distance
     slogan
     description
