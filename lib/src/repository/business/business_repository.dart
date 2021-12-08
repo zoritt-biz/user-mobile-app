@@ -182,7 +182,6 @@ class BusinessRepository {
       throw result.exception;
     }
     final data = result.data['popUpOne'];
-    print(data);
     return new PopUp.fromJson(data);
   }
 
