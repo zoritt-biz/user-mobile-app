@@ -9,11 +9,13 @@ import 'package:zoritt_mobile_app_user/src/repository/repository.dart';
 part 'auth_event.dart';
 part 'auth_state.dart';
 
-enum AuthenticationStatus { authenticated, unauthenticated, unknown }
+enum AuthenticationStatus { authenticated, unauthenticated, unknown, loading }
 
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
   final UserRepository userRepository;
+  final AuthenticationRepository _authenticationRepository;
+  StreamSubscription<User> _userSubscription;
 
   AuthenticationBloc({
     @required AuthenticationRepository authenticationRepository,
@@ -28,9 +30,6 @@ class AuthenticationBloc
     );
   }
 
-  final AuthenticationRepository _authenticationRepository;
-  StreamSubscription<User> _userSubscription;
-
   @override
   Stream<AuthenticationState> mapEventToState(
     AuthenticationEvent event,
@@ -39,20 +38,8 @@ class AuthenticationBloc
       yield* _mapAuthStatusChangedToState(event);
     }
     if (event is AuthenticationLogoutRequested) {
-      await _authenticationRepository.logOut();
+      await userRepository.deleteToken();
       yield AuthenticationState.unauthenticated();
-    }
-  }
-
-  void pauseSubscription() {
-    if (!_userSubscription.isPaused) {
-      _userSubscription.pause();
-    }
-  }
-
-  void resumeSubscription() {
-    if (_userSubscription.isPaused) {
-      _userSubscription.resume();
     }
   }
 
@@ -68,6 +55,7 @@ class AuthenticationBloc
     if (event.user == null) {
       yield AuthenticationState.unauthenticated();
     } else {
+      await userRepository.persistToken(event.user.token);
       yield AuthenticationState.authenticated(event.user);
     }
   }

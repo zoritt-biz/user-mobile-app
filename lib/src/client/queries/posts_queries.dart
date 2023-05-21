@@ -1,60 +1,47 @@
-const GET_POSTS_LOGGED_IN = r"""
+const GET_POSTS = r"""
 query(
-  $limit: Int,
-  $sort: String,
-  $fromDate: String,
-  $user_id: String
+  $page: Int
+  $perPage: Int
+  $filterDate: Date
 ){
-  getPostLoggedIn(
-    user_id: $user_id
-    limit: $limit
-    fromDate: $fromDate
-    sort: $sort
-  ){
-    _id
-    description
-    photos
-    videos
-    isLiked
-    createdAt
-    owner {
-        _id
-        businessName
-        location
-        logoPics
-    }
-  }
-}
-""";
-
-const GET_ALL_POSTS = r"""
-query(
-  $limit: Int,
-  $sort: SortFindManyPostInput,
-  $filterDate: Date,
-  $skip: Int
-){
-  postMany(
-    limit: $limit,
-    skip: $skip,
-    sort: $sort,
+  postPagination(
+    page: $page
+    perPage: $perPage
     filter: {
       _operators: {
-        createdAt: { gt: $filterDate }
+        createdAt: { gte: $filterDate }
       }
    }
+    sort: CREATEDAT_DESC
   ){
-    _id
-    description
-    photos
-    videos
-    isLiked
-    createdAt
-    owner {
+    items{
+      _id
+      description
+      descriptionList{
+        field
+        value
+      }
+      photos
+      videos
+      isLiked
+      createdAt
+      likeCount
+      likeList
+      owner {
         _id
         businessName
         location
         logoPics
+      }
+    }
+    count
+    pageInfo{
+      currentPage
+      perPage
+      pageCount
+      itemCount
+      hasNextPage
+      hasPreviousPage
     }
   }
 }

@@ -1,11 +1,8 @@
-import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/sponsored_business/sponsored_state.dart';
 import 'package:zoritt_mobile_app_user/src/models/models.dart';
 import 'package:zoritt_mobile_app_user/src/repository/repository.dart';
-
-part 'sponsored_event.dart';
-part 'sponsored_state.dart';
 
 class SponsoredBloc extends Cubit<SponsoredState> {
   final BusinessRepository businessRepository;

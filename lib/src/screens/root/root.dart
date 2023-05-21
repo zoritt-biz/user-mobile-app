@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:zoritt_mobile_app_user/src/bloc/bloc.dart';
-import 'package:zoritt_mobile_app_user/src/repository/repository.dart';
+import 'package:zoritt_mobile_app_user/src/bloc/navigation/bloc.dart';
+import 'package:zoritt_mobile_app_user/src/screens/components/bottom-navigation/bottom-navigation.dart';
+import 'package:zoritt_mobile_app_user/src/screens/navigators/favorites.dart';
+import 'package:zoritt_mobile_app_user/src/screens/navigators/profile.dart';
 
 import '../screens.dart';
 
@@ -51,86 +53,25 @@ class _HomePageState extends State<HomePage> {
     super.initState();
   }
 
+  touchCounterIncrease() {
+    setState(() {
+      touchCounter++;
+    });
+  }
+
+  touchCounterToZero() {
+    setState(() {
+      touchCounter = 0;
+    });
+  }
+
+  setCurrentIndex(TabItem item) {
+    setState(() {
+      _currentTab = item;
+    });
+  }
+
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-
-    setCurrentIndex(TabItem item) {
-      setState(() {
-        _currentTab = item;
-      });
-    }
-
-    final List<BottomNavigationData> bottomNavigationData = [
-      BottomNavigationData(
-        onPressed: () {
-          setCurrentIndex(TabItem.home);
-          setState(() {
-            touchCounter++;
-          });
-          if (touchCounter > 1) {
-            Navigator.pushNamedAndRemoveUntil(
-                _globalNavigatorContext, "/", (route) => false);
-            setState(() {
-              touchCounter = 0;
-            });
-          }
-        },
-        icon: _currentTab == TabItem.home ? Icons.home : Icons.home_outlined,
-        color: _currentTab == TabItem.home
-            ? Theme.of(context).accentColor
-            : Theme.of(context).primaryColor,
-        label: "Home",
-      ),
-      BottomNavigationData(
-        onPressed: () {
-          setCurrentIndex(TabItem.search);
-          if (context.read<NavigationBloc>().state is NavigationUnknown) {
-            context.read<NavigationBloc>().navigateToSearchDelegate();
-          }
-        },
-        icon: _currentTab == TabItem.search
-            ? Icons.search
-            : Icons.search_outlined,
-        color: _currentTab == TabItem.search
-            ? Theme.of(context).accentColor
-            : Theme.of(context).primaryColor,
-        label: "Search",
-      ),
-      BottomNavigationData(
-        onPressed: () {
-          setCurrentIndex(TabItem.favorites);
-        },
-        icon: _currentTab == TabItem.favorites
-            ? Icons.favorite
-            : Icons.favorite_border_rounded,
-        color: _currentTab == TabItem.favorites
-            ? Theme.of(context).accentColor
-            : Theme.of(context).primaryColor,
-        label: "Favorites",
-      ),
-      // BottomNavigationData(
-      //     onPressed: () {
-      //       setCurrentIndex(TabItem.messages);
-      //     },
-      //     icon: Icons.message,
-      //     color: _currentTab == TabItem.messages
-      //         ? Theme.of(context).primaryColor
-      //         : Colors.grey[600],),
-      BottomNavigationData(
-        onPressed: () {
-          setCurrentIndex(TabItem.profile);
-        },
-        icon: _currentTab == TabItem.profile
-            ? Icons.account_circle
-            : Icons.account_circle_outlined,
-        color: _currentTab == TabItem.profile
-            ? Theme.of(context).accentColor
-            : Theme.of(context).primaryColor,
-        label: "Profile",
-      ),
-    ];
-
     return BlocListener<NavigationBloc, NavigationState>(
       listener: (context, state) {
         if (state is NavigatedToSearchDelegate || state is NavigatedToSearch) {
@@ -151,107 +92,23 @@ class _HomePageState extends State<HomePage> {
         },
         child: Scaffold(
           resizeToAvoidBottomInset: true,
+          backgroundColor: Colors.grey[100],
           body: IndexedStack(
             index: _currentTab.index,
             children: [
-              BlocBuilder<AuthenticationBloc, AuthenticationState>(
-                builder: (authBloc, authState) {
-                  if (authState.status == AuthenticationStatus.authenticated) {
-                    BlocProvider.of<UserBloc>(context)
-                        .add(UserLoad(authState.user.firebaseId));
-
-                    return BlocBuilder<UserBloc, UserState>(
-                      builder: (userCtx, userState) {
-                        if (userState is UserLoadSuccess) {
-                          return MultiBlocProvider(
-                            providers: [
-                              BlocProvider<EventsBloc>(
-                                create: (context) => EventsBloc(
-                                  eventRepository:
-                                      context.read<EventsRepository>(),
-                                )..getEvents(10, "CREATEDAT_DESC",
-                                    "${dateTime.year}/${dateTime.month}/${dateTime.day}"),
-                              ),
-                              BlocProvider<PostBloc>(
-                                create: (context) => PostBloc(
-                                  postRepository:
-                                      context.read<PostRepository>(),
-                                )..getPostLoggedIn(
-                                    limit: 10,
-                                    sort: "desc",
-                                    userId: userState.user.id,
-                                  ),
-                              ),
-                              BlocProvider<SponsoredBloc>(
-                                create: (context) => SponsoredBloc(
-                                  businessRepository:
-                                      context.read<BusinessRepository>(),
-                                )..getSponsored(5),
-                              ),
-                            ],
-                            child: _buildOffstageNavigator(TabItem.home, true),
-                          );
-                        } else if (userState is UserLoading) {
-                          return Center(child: CircularProgressIndicator());
-                        } else {
-                          return Center(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text("Connection error. Please"),
-                                TextButton(
-                                  child: Text("Retry!"),
-                                  onPressed: () {
-                                    BlocProvider.of<UserBloc>(context).add(
-                                        UserLoad(authState.user.firebaseId));
-                                  },
-                                )
-                              ],
-                            ),
-                          );
-                        }
-                      },
-                    );
-                  }
-                  return MultiBlocProvider(
-                    providers: [
-                      BlocProvider<EventsBloc>(
-                        create: (context) => EventsBloc(
-                          eventRepository: context.read<EventsRepository>(),
-                        )..getEvents(10, "CREATEDAT_DESC",
-                            "${dateTime.year}/${dateTime.month}/${dateTime.day}"),
-                      ),
-                      BlocProvider<PostBloc>(
-                        create: (context) => PostBloc(
-                          postRepository: context.read<PostRepository>(),
-                        )..getPosts(
-                            10,
-                            "CREATEDAT_DESC",
-                            "${dateTime.year}/${dateTime.month}/${dateTime.day}",
-                            0,
-                          ),
-                      ),
-                      BlocProvider<SponsoredBloc>(
-                        create: (context) => SponsoredBloc(
-                          businessRepository:
-                              context.read<BusinessRepository>(),
-                        )..getSponsored(5),
-                      ),
-                    ],
-                    child: _buildOffstageNavigator(TabItem.home, true),
-                  );
-                },
-              ),
+              _buildOffstageNavigator(TabItem.home, true),
               _buildOffstageNavigator(TabItem.search, true),
               _buildOffstageNavigator(TabItem.favorites, false),
               _buildOffstageNavigator(TabItem.profile, true),
             ],
           ),
           bottomNavigationBar: BottomNavigation(
-            bottomNavigationListData: bottomNavigationData,
             currentTab: _currentTab,
-            colorScheme: colorScheme,
-            textTheme: textTheme,
+            globalNavigatorContext: _globalNavigatorContext,
+            setCurrentIndex: setCurrentIndex,
+            touchCounterIncrease: touchCounterIncrease,
+            touchCounter: touchCounter,
+            touchCounterToZero: touchCounterToZero,
           ),
         ),
       ),

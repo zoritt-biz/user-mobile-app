@@ -1,4 +1,5 @@
-part of 'sponsored_bloc.dart';
+import 'package:equatable/equatable.dart';
+import 'package:zoritt_mobile_app_user/src/models/business.dart';
 
 class SponsoredState extends Equatable {
   const SponsoredState();

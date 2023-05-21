@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:zoritt_mobile_app_user/src/client/mutations/post_mutations.dart';
+import 'package:zoritt_mobile_app_user/src/client/mutations/user_mutations.dart';
 import 'package:zoritt_mobile_app_user/src/client/queries/posts_queries.dart';
 import 'package:zoritt_mobile_app_user/src/models/models.dart';
 
@@ -10,79 +10,47 @@ class PostRepository {
   PostRepository({@required this.client});
 
   Future<List<Post>> getPosts(
-    int limit,
-    String sort,
+    int page,
+    int perPage,
     String filterDate,
-    int skip,
   ) async {
     final result = await client.query(
       QueryOptions(
-        document: gql(GET_ALL_POSTS),
-        variables: {
-          "skip": skip,
-          "limit": limit,
-          "sort": sort,
-          "filterDate": filterDate.split(" ")[0]
-        },
-        fetchPolicy: FetchPolicy.networkOnly,
+        document: gql(GET_POSTS),
+        variables: {"page": page, "perPage": perPage, "filterDate": filterDate},
+        fetchPolicy: FetchPolicy.noCache,
       ),
     );
     if (result.hasException) {
       throw result.exception;
     }
-    final data = result.data['postMany'] as List;
+    final data = result.data['postPagination']['items'] as List;
     return data.map((e) => Post.fromJson(e)).toList();
   }
 
-  Future<List<Post>> getPostLoggedIn(
-      {String userId, int limit, String sort}) async {
-    final result = await client.query(
-      QueryOptions(
-        document: gql(GET_POSTS_LOGGED_IN),
-        variables: {
-          "limit": limit,
-          "sort": sort,
-          "user_id": userId,
-          "fromDate": DateTime.now()
-              .subtract(new Duration(days: 5))
-              .toString()
-              .split(" ")[0]
-        },
-        fetchPolicy: FetchPolicy.networkOnly,
-      ),
-    );
-    if (result.hasException) {
-      print(result.exception);
-      throw result.exception;
-    }
-    final data = result.data['getPostLoggedIn'] as List;
-    return data.map((e) => Post.fromJson(e)).toList();
-  }
-
-  Future<bool> likePost(String userId, String postId) async {
+  Future<bool> likePost(String postId) async {
     final result = await client.query(
       QueryOptions(
         document: gql(LIKE_POST),
-        variables: {"user_id": userId, "post_id": postId},
-        fetchPolicy: FetchPolicy.networkOnly,
+        variables: {"postId": postId},
+        fetchPolicy: FetchPolicy.noCache,
       ),
     );
     if (result.hasException) {
-      print(result.exception);
-      throw result.exception;
+      return false;
     }
     return true;
   }
 
-  Future<bool> unlikePost(String userId, String postId) async {
+  Future<bool> unlikePost(String postId) async {
     final result = await client.query(
       QueryOptions(
-          document: gql(UNLIKE_POST),
-          variables: {"user_id": userId, "post_id": postId},
-          fetchPolicy: FetchPolicy.networkOnly),
+        document: gql(LIKE_POST),
+        variables: {"postId": postId},
+        fetchPolicy: FetchPolicy.noCache,
+      ),
     );
     if (result.hasException) {
-      print(result.exception);
       throw result.exception;
     }
     return true;

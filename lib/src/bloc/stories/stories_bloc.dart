@@ -18,11 +18,11 @@ class StoryBloc extends Cubit<StoryState> {
     emit(StoryUnknown());
   }
 
-  void getStories(int skip, int limit, String sort) async {
+  void getStories(int page, int perPage, String filterDate) async {
     emit(StoryLoading());
     try {
-      List<Post> posts = await postRepository.getPosts(limit, sort,
-          "${dateTime.month}/${dateTime.day}/${dateTime.year}", skip);
+      List<Post> posts =
+          await postRepository.getPosts(page, perPage, filterDate);
       emit(StoryLoadSuccessful(posts: posts));
     } catch (e) {
       emit(StoryLoadFailure(e.toString()));

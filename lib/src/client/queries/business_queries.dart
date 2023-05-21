@@ -3,16 +3,22 @@ query ($id: MongoID!){
   businessById(_id: $id){
     _id
     businessName
-    phoneNumber
+    phoneNumbers
     location
     locationDescription
-    lat
-    lng
+    branches{
+      _id
+    }
+    lngLat{
+      coordinates
+    }
+    menu{
+      _id
+    }
     emails
     website
     logoPics
     slogan
-    state
     description
     specialization
     history
@@ -21,36 +27,22 @@ query ($id: MongoID!){
     updatedAt
     createdAt
     isLiked
+    favoriteList
+    likeCount
     pictures
-    owner {
-      fullName
-      email
-      phoneNumber
-      firebaseId
-      businesses {
-        _id
-        businessName
-      }
-    }
     openHours {
       day
       opens
       closes
       isOpen
     }
-    branches{
-      phoneNumber
-      emails
-      location
-      lat
-      lng
-      distance
-      locationDescription
-      pictures
-    }
     posts {
       _id
       description
+      descriptionList{
+        field
+        value
+      }
       videos
       photos
       createdAt
@@ -74,180 +66,96 @@ query ($id: MongoID!){
       name
       parent
     }
-  }
-}
-""";
-
-const GET_BUSINESS_DETAIL_LOGGED_IN = r"""
-query ($user_id: String, $business_id: String){
-  businessByIdLoggedIn(user_id: $user_id, business_id: $business_id){
-    _id
-    businessName
-    phoneNumber
-    location
-    locationDescription
-    lat
-    lng
-    emails
-    website
-    logoPics
-    slogan
-    description
-    specialization
-    history
-    isLiked
-    state
-    establishedIn
-    subscription
-    updatedAt
-    createdAt
-    pictures
-    owner {
-      fullName
-      email
-      phoneNumber
-      firebaseId
-      businesses {
-        _id
-        businessName
-      }
-    }
-    openHours {
-      day
-      opens
-      closes
-      isOpen
-    }
-    posts {
-      _id
-      description
-      videos
-      photos
-      createdAt
-      isLiked
-    }
-    branches{
-      phoneNumber
-      emails
-      location
-      lat
-      lng
-      distance
-      locationDescription
-      pictures
-    }
-    events {
-      _id
-      title
-      description
-      location
-      link
-      startDate
-      endDate
-      startTime
-      endTime
-      videos
-      photos
-      createdAt
-      isInterested
-    }
-    categories {
-      _id
-      name
-      parent
-    }
-  }
-}
-""";
-
-const GET_BUSINESS_MANY = r"""
-query($searchArray: [String], $limit: Int){
-  businessMany(
-    filter: {
-      state: ACTIVE,
-      _operators: {
-        searchIndex: {in: $searchArray}
-      }
-    },
-    limit: $limit,
-    sort: SUBSCRIPTION_DESC
-  ){
-    _id
-    businessName
-    phoneNumber
-    subscription
-    location
-    emails
-    website
-    logoPics
-    isLiked
-    state
-    pictures
-    locationDescription
-    lat
-    lng
-  }
-}
-""";
-
-const GET_BUSINESS_RELATED_MANY = r"""
-query($category: [String], $limit: Int, $id: MongoID){
-  businessMany(
-    filter: {
-      state: ACTIVE,
-      _operators: {
-         _id: {ne: $id},
-        searchIndex: {
-          in: $category
-        }
-      }
-    }
-    limit: $limit,
-    sort: SUBSCRIPTION_DESC
-  ){
-    _id
-    businessName
-    phoneNumber
-    location
-    emails
-    isLiked
-    state
-    website
-    logoPics
-    pictures
-    locationDescription
-    lat
-    lng
   }
 }
 """;
 
 const GET_BUSINESS_BY_FILTER = r"""
-query($searchArray: [String], $limit: Int, $day: String){
-  businessMany(
-    filter: {
-      state: ACTIVE,
-      _operators: {
-        searchIndex: {in: $searchArray},
-      }
-      openHours: {day: $day, isOpen: true}
-    }
-    limit: $limit,
-    sort: SUBSCRIPTION_DESC
+query(
+  $distance: Int
+  $category: [String]
+  $query: [String]
+  $openNow: Boolean
+  $lat: Float
+  $lng: Float
+  $page: Int!
+  $perPage: Int!
+){
+  getBusinessesByFilter(
+    distance: $distance
+    category: $category
+    query: $query
+    openNow: $openNow
+    lat: $lat
+    lng: $lng
+    page: $page
+    perPage: $perPage
   ){
-    _id
-    businessName
-    phoneNumber
-    location
-    emails
-    website
-    logoPics
-    isLiked
-    state
-    pictures
-    locationDescription
-    lat
-    lng
+    items{
+      _id
+      businessName
+      distance
+      phoneNumbers
+      emails
+      website
+      logoPics
+      location
+      locationDescription
+      lngLat{
+        coordinates
+      }
+      description
+      pictures
+      isLiked
+      favoriteList
+      categories{
+        name
+        parent
+        autocompleteTerm
+      }
+      createdAt
+      updatedAt
+    }
+    total
+  }
+}
+""";
+
+const GET_BUSINESS_MENUS = r"""
+query ($id: MongoID!){
+  businessById(_id: $id){
+    menu{
+      _id
+      category
+      menuList{
+        _id
+        image
+        name
+        price
+        discount
+        description
+      }
+    }
+  }
+}
+""";
+
+const GET_BUSINESS_BRANCHES = r"""
+query ($id: MongoID!){
+  businessById(_id: $id){
+    branches{
+      _id
+      businessName
+      location
+      locationDescription
+      phoneNumbers
+      lngLat{
+        coordinates
+      }
+      categories{
+        name
+      }
+    }
   }
 }
 """;
@@ -261,131 +169,33 @@ query{
 }
 """;
 
-const GET_FAVORITES_LIST_MANY = r"""
-query($id: MongoID!){
-  userOne(filter: {_id: $id}){
-    favorites{
-      _id
-      businessName
-      phoneNumber
-      location
-      isLiked
-      state
-      emails
-      website
-      logoPics
-      pictures
-      locationDescription
-      lat
-      lng
-    }
-  }
-}
-""";
-
 const GET_SPONSORED_BUSINESSES = r"""
-query ($subscriptions: EnumBusinessSubscription, $limit: Int){
-  businessMany(filter: {
-    subscription: $subscriptions,
-    state: ACTIVE
-  },
-    limit: $limit
+query{
+  sponsoredMany(
+    filter:{
+    	state: ACTIVE
+  	}
+    limit: 5
   ){
     _id
     businessName
-    phoneNumber
-    location
+    phoneNumbers
     emails
-    isLiked
-    state
     website
     logoPics
-    pictures
-    locationDescription
-    lat
-    lng
-  }
-}
-""";
-
-const GET_BUSINESSES_BY_FILTER_AND_LOCATION = r"""
-query(
-  $lat: Float,
-  $lng: Float,
-  $distance: Int,
-  $query: [String]
-){
-   businessFilterByLocationAndFilter(
-    lat: $lat, 
-    lng: $lng, 
-    distance: $distance,
-    query: $query
-  ){
-    _id
-    businessName
-    phoneNumber
     location
-    emails
-    isLiked
-    state
-    website
+    locationDescription
+    lngLat{
+      coordinates
+    }
     distance
-    logoPics
+    slogan
+    description
     pictures
-    locationDescription
-    lat
-    lng
-  }
-}
-""";
-
-const GET_BUSINESSES_BY_LOCATION = r"""
-query(
-  $lat: Float,
-  $lng: Float,
-  $distance: Int,
-  $query: [String]
-){
-   businessFilterByLocation(
-    lat: $lat, 
-    lng: $lng, 
-    distance: $distance,
-    query: $query
-  ){
-    _id
-    businessName
-    phoneNumber
-    location
-    emails
-    website
-    isLiked
-    state
-    logoPics
-    pictures
-    locationDescription
-    distance
-    lat
-    lng
-  }
-}
-""";
-
-const GET_BUSINESSES_BY_FILTER = r"""
-query($query: [String]){
-   businessFilterByFilter(query: $query){
-    _id
-    businessName
-    phoneNumber
-    location
-    emails
-    isLiked
-    state
-    website
-    logoPics
-    pictures
-    locationDescription
-    lat
-    lng
+    categories{
+      name
+      parent
+    }
   }
 }
 """;

@@ -8,6 +8,8 @@ class User {
   final String password;
   final String userType;
   final String image;
+  List<String> roles;
+  String token;
   final List<String> businesses;
 
   User({
@@ -20,6 +22,8 @@ class User {
     this.userType,
     this.businesses,
     this.image,
+    this.token,
+    this.roles,
     this.phoneNumber,
   });
 

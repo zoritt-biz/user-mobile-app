@@ -8,38 +8,37 @@ import 'package:zoritt_mobile_app_user/src/repository/repository.dart';
 part 'signup_state.dart';
 
 class SignUpBloc extends Cubit<SignUpState> {
-  SignUpBloc({
-    @required AuthenticationRepository authenticationRepository,
-    @required AuthenticationBloc authenticationBloc,
-  })  : assert(authenticationRepository != null),
-        _authenticationRepository = authenticationRepository,
-        _authenticationBloc = authenticationBloc,
-        super(SignUpUnknown());
-
-  final AuthenticationRepository _authenticationRepository;
+  final UserRepository _userRepository;
   final AuthenticationBloc _authenticationBloc;
+
+  SignUpBloc({
+    @required AuthenticationBloc authenticationBloc,
+    @required UserRepository userRepository,
+  })  : _authenticationBloc = authenticationBloc,
+        _userRepository = userRepository,
+        super(SignUpUnknown());
 
   Future<void> signUp({
     String email,
     String password,
     String firstName,
     String lastName,
+    String middleName,
     String phoneNumber,
   }) async {
     emit(SignUpLoading());
     try {
-      _authenticationBloc.pauseSubscription();
-      final newUser = await _authenticationRepository.signUp(
+      User newUser = await _userRepository.signUp(
         email: email,
         password: password,
         firstName: firstName,
         lastName: lastName,
+        middleName: middleName,
         phoneNumber: phoneNumber,
       );
+      _authenticationBloc.add(AuthenticationStatusChanged(user: newUser));
       emit(SignUpSuccessful(user: newUser));
-      _authenticationBloc.resumeSubscription();
     } catch (e) {
-      _authenticationBloc.resumeSubscription();
       emit(SignUpFailure(e.toString()));
     }
   }

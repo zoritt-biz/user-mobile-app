@@ -1,70 +1,50 @@
-const GET_ALL_EVENTS_LOGGED_IN = r"""
+const GET_EVENTS = r"""
 query(
-  $limit: Int, 
-  $sort: String,
-  $user_id: String,
-  $fromDate: String,
+  $page: Int
+  $perPage: Int
+  $today: Date
 ){
-  getEventsLoggedIn(
-    limit: $limit, 
-    sort: $sort, 
-    user_id: $user_id,
-    fromDate: $fromDate
-  ){
-    _id
-    title
-    description
-    location
-    link
-    photos
-    isInterested
-    startDate
-    endDate
-    startTime
-    endTime
-    videos
-    owner {
-      _id
-      businessName
-      location
-      logoPics
-    }
-  }
-}
-""";
-
-const GET_ALL_EVENTS = r"""
-query(
-  $limit: Int,
-  $filterDate: Date,
-  $now: Date
-){
-  eventMany(limit: $limit, sort: STARTDATE_DESC,
-  filter: {
+  eventPagination(
+    page: $page
+    perPage: $perPage
+    sort: STARTDATE_ASC
+    filter: {
       _operators: {
-        createdAt: { gte: $filterDate },
-        endDate: { gte: $now }
+        endDate: {gte: $today}
       }
-  },
+    }
   ){
-    _id
-    title
-    description
-    location
-    link
-    photos
-    isInterested
-    startDate
-    endDate
-    startTime
-    endTime
-    videos
-    owner {
+    count
+    items{
+      _id
+      title
+      description
+      location
+      link
+      startDate
+      endDate
+      startTime
+      endTime
+      videos
+      photos
+      isInterested
+      interestedUsers
+      likeCount
+      owner{
         _id
         businessName
         location
         logoPics
-     }
+      }
+    }
+    pageInfo{
+      currentPage
+      perPage
+      pageCount
+      itemCount
+      hasNextPage
+      hasPreviousPage
+    }
   }
 }
 """;

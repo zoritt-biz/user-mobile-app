@@ -12,5 +12,5 @@ Future<void> main() async {
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-  runApp(ZorittBusinessUser());
+  runApp(ZorittApp());
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:zoritt_mobile_app_user/src/client/mutations/event_mutations.dart';
+import 'package:zoritt_mobile_app_user/src/client/mutations/user_mutations.dart';
 import 'package:zoritt_mobile_app_user/src/client/queries/event_queries.dart';
 import 'package:zoritt_mobile_app_user/src/models/models.dart';
 
@@ -9,61 +9,32 @@ class EventsRepository {
 
   EventsRepository({@required this.client});
 
-  Future<List<Events>> getEvents(
-      int limit, String sort, String filterDate) async {
-    String dateTime = DateTime.now().toString();
+  Future<List<Events>> getEvents(int page, int perPage) async {
+    String today = DateTime.now().toString();
     final result = await client.query(
       QueryOptions(
-        document: gql(GET_ALL_EVENTS),
+        document: gql(GET_EVENTS),
         variables: {
-          "limit": limit,
-          "filterDate": filterDate,
-          "now": dateTime.split(" ")[0],
+          "page": page,
+          "perPage": perPage,
+          "today": today.split(" ")[0],
         },
+        fetchPolicy: FetchPolicy.noCache,
       ),
     );
     if (result.hasException) {
       throw result.exception;
     }
-    final data = result.data['eventMany'] as List;
+    final data = result.data['eventPagination']["items"] as List;
     return data.map((e) => Events.fromJson(e)).toList();
   }
 
-  Future<List<Events>> getEventsLoggedIn(
-      {String userId, int limit, String sort}) async {
-    print(userId);
-    print(DateTime.now()
-        .subtract(new Duration(days: 5))
-        .toString()
-        .split(" ")[0]);
-    final result = await client.query(
-      QueryOptions(
-        document: gql(GET_ALL_EVENTS_LOGGED_IN),
-        variables: {
-          "limit": limit,
-          "sort": sort,
-          "user_id": userId,
-          "fromDate": DateTime.now()
-              .subtract(new Duration(days: 50))
-              .toString()
-              .split(" ")[0]
-        },
-      ),
-    );
-    if (result.hasException) {
-      print(result.exception);
-      throw result.exception;
-    }
-    final data = result.data['getEventsLoggedIn'] as List;
-    return data.map((e) => Events.fromJson(e)).toList();
-  }
-
-  Future<bool> likeEvent(String userId, String eventId) async {
+  Future<bool> likeEvent(String eventId) async {
     final result = await client.query(
       QueryOptions(
         document: gql(LIKE_EVENT),
-        variables: {"user_id": userId, "event_id": eventId},
-        fetchPolicy: FetchPolicy.networkOnly,
+        variables: {"eventId": eventId},
+        fetchPolicy: FetchPolicy.noCache,
       ),
     );
     if (result.hasException) {
@@ -72,15 +43,16 @@ class EventsRepository {
     return true;
   }
 
-  Future<bool> unlikeEvent(String userId, String eventId) async {
+  Future<bool> unlikeEvent(String eventId) async {
     final result = await client.query(
       QueryOptions(
-          document: gql(UNLIKE_EVENT),
-          variables: {"user_id": userId, "event_id": eventId},
-          fetchPolicy: FetchPolicy.networkOnly),
+        document: gql(LIKE_EVENT),
+        variables: {"eventId": eventId},
+        fetchPolicy: FetchPolicy.noCache,
+      ),
     );
     if (result.hasException) {
-      throw result.exception;
+      return false;
     }
     return true;
   }
